@@ -1,0 +1,45 @@
+name: publish-package
+on:
+  push:
+    branches:
+      - main
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+env:
+    "PipelineEnvironment": true
+
+jobs:
+  publish-package:
+    runs-on: ubuntu-latest
+
+#{Services}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setting up build version
+        run: |
+          version=$(($GITHUB_RUN_NUMBER))
+          echo "BUILD_VERSION=2.1.$version" >> ${GITHUB_ENV}
+
+      - name: Setup .NET Core 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test test/Soenneker.Utils.AutoBogus.Tests.csproj --no-restore --verbosity normal
+
+      - name: Pack
+        run: dotnet pack --no-build --configuration Release --output .
+
+      - name: Publish to nuGet
+        run: dotnet nuget push **\*.nupkg --source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET_TOKEN}} --skip-duplicate
