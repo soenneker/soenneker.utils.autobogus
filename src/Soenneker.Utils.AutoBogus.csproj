@@ -40,6 +40,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bogus" Version="35.3.1" />
+        <PackageReference Include="Bogus" Version="35.3.2" />
     </ItemGroup>
 </Project>
