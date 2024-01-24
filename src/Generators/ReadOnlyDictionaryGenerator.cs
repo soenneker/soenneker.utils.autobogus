@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Soenneker.Utils.AutoBogus.Abstract;
-using Soenneker.Utils.AutoBogus.Util;
+using Soenneker.Utils.AutoBogus.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
@@ -13,7 +13,7 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoGenerator
 
         Type generateType = context.GenerateType;
 
-        if (ReflectionHelper.IsInterface(generateType))
+        if (generateType.IsInterface())
             generateType = typeof(Dictionary<TKey, TValue>);
 
         // Generate a standard dictionary and create the read only dictionary

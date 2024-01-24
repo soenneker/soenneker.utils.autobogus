@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Soenneker.Reflection.Cache;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Extensions;
 
@@ -11,10 +12,12 @@ namespace Soenneker.Utils.AutoBogus;
 public sealed class AutoFaker : IAutoFaker
 {
     internal static AutoConfig DefaultConfig = new AutoConfig();
+    public static ReflectionCache Cache;
 
     private AutoFaker(AutoConfig config)
     {
         Config = config;
+        Cache = new ReflectionCache();
     }
 
     internal AutoConfig Config { get; }
@@ -58,7 +61,7 @@ public sealed class AutoFaker : IAutoFaker
     /// </summary>
     /// <param name="configure">A handler to build the faker configuration.</param>
     /// <returns>The configured <see cref="IAutoFaker"/> instance.</returns>
-    public static IAutoFaker Create(Action<IAutoGenerateConfigBuilder> configure = null)
+    public static IAutoFaker Create(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         var config = new AutoConfig(DefaultConfig);
         var builder = new AutoConfigBuilder(config);
@@ -116,7 +119,7 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="count">The number of instances to generate.</param>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated collection of instances.</returns>
-    public static List<TType> Generate<TType, TFaker>(int count, Action<IAutoFakerConfigBuilder> configure = null)
+    public static List<TType> Generate<TType, TFaker>(int count, Action<IAutoFakerConfigBuilder>? configure = null)
         where TType : class
         where TFaker : AutoFaker<TType>
     {
@@ -124,7 +127,7 @@ public sealed class AutoFaker : IAutoFaker
         return faker.Generate<TType, TFaker>(count, configure);
     }
 
-    private AutoGenerateContext CreateContext(Action<IAutoGenerateConfigBuilder> configure)
+    private AutoGenerateContext CreateContext(Action<IAutoGenerateConfigBuilder>? configure)
     {
         var config = new AutoConfig(Config);
         var builder = new AutoConfigBuilder(config);
@@ -134,7 +137,7 @@ public sealed class AutoFaker : IAutoFaker
         return new AutoGenerateContext(config);
     }
 
-    private AutoFaker<TType> CreateFaker<TType, TFaker>(Action<IAutoFakerConfigBuilder> configure)
+    private AutoFaker<TType> CreateFaker<TType, TFaker>(Action<IAutoFakerConfigBuilder>? configure)
         where TType : class
         where TFaker : AutoFaker<TType>
     {

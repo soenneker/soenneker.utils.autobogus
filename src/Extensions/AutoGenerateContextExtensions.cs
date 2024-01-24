@@ -83,7 +83,7 @@ public static class AutoGenerateContextExtensions
         }
     }
 
-    internal static void GenerateMany<TType>(AutoGenerateContext context, int? count, List<TType> items, bool unique, int attempt = 1, Func<TType> generate = null)
+    internal static void GenerateMany<TType>(AutoGenerateContext context, int? count, List<TType> items, bool unique, int attempt = 1, Func<TType>? generate = null)
     {
         // Apply any defaults
         if (count == null)
@@ -91,7 +91,7 @@ public static class AutoGenerateContextExtensions
             count = context.Config.RepeatCount.Invoke(context);
         }
 
-        generate = generate ?? (() => context.Generate<TType>());
+        generate ??= context.Generate<TType>;
 
         // Generate a list of items
         int? required = count - items.Count;

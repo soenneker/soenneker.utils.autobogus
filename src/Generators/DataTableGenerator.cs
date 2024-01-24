@@ -16,7 +16,7 @@ internal abstract class DataTableGenerator : IAutoGenerator
 
       while (type != null)
       {
-        if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(TypedTableBase<>)))
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(TypedTableBase<>))
         {
           rowType = type.GetGenericArguments()[0];
           return true;
@@ -34,19 +34,19 @@ internal abstract class DataTableGenerator : IAutoGenerator
 
       if (tableType == typeof(DataTable))
         generator = new UntypedDataTableGenerator();
-      else if (IsTypedDataTableType(tableType, out var rowType))
+      else if (IsTypedDataTableType(tableType, out Type? rowType))
       {
-        var generatorType = typeof(TypedDataTableGenerator<,>).MakeGenericType(tableType, rowType);
+        Type? generatorType = typeof(TypedDataTableGenerator<,>).MakeGenericType(tableType, rowType);
 
         generator = (DataTableGenerator)Activator.CreateInstance(generatorType);
       }
 
-      return (generator != null);
+      return generator != null;
     }
 
     public object Generate(AutoGenerateContext context)
     {
-      var table = CreateTable(context);
+      DataTable? table = CreateTable(context);
 
       context.Instance = table;
 
@@ -80,7 +80,7 @@ internal abstract class DataTableGenerator : IAutoGenerator
       var constraintHasUniqueColumns = new HashSet<ForeignKeyConstraint>();
       var referencedRowByConstraint = new Dictionary<ForeignKeyConstraint, DataRow>();
 
-      foreach (var foreignKey in table.Constraints.OfType<ForeignKeyConstraint>())
+      foreach (ForeignKeyConstraint? foreignKey in table.Constraints.OfType<ForeignKeyConstraint>())
       {
         bool containsUniqueColumns = foreignKey.Columns.Any(col =>
           col.Unique ||
@@ -88,8 +88,8 @@ internal abstract class DataTableGenerator : IAutoGenerator
 
         for (int i = 0; i < foreignKey.Columns.Length; i++)
         {
-          var column = foreignKey.Columns[i];
-          var relatedColumn = foreignKey.RelatedColumns[i];
+          DataColumn? column = foreignKey.Columns[i];
+          DataColumn? relatedColumn = foreignKey.RelatedColumns[i];
 
           if (constrainedColumns.ContainsKey(column))
             throw new Exception($"Column is constrained in multiple foreign key relationships simultaneously: {column.ColumnName} in DataTable {table.TableName}");
@@ -102,7 +102,7 @@ internal abstract class DataTableGenerator : IAutoGenerator
             };
         }
 
-        if ((foreignKey.RelatedTable == table)
+        if (foreignKey.RelatedTable == table
          && foreignKey.Columns.Any(col => !col.AllowDBNull))
           throw new Exception($"Self-reference columns must be nullable so that at least one record can be added when the table is initially empty: DataTable {table.TableName}");
 
@@ -113,8 +113,8 @@ internal abstract class DataTableGenerator : IAutoGenerator
         referencedRowByConstraint[foreignKey] = default;
 
         if (containsUniqueColumns
-         && (foreignKey.RelatedTable != table)
-         && (foreignKey.RelatedTable.Rows.Count < rowCount))
+         && foreignKey.RelatedTable != table
+         && foreignKey.RelatedTable.Rows.Count < rowCount)
         {
           if (rowCountIsSpecified)
           {
@@ -130,18 +130,18 @@ internal abstract class DataTableGenerator : IAutoGenerator
         }
       }
 
-      var allConstraints = referencedRowByConstraint.Keys.ToList();
+      List<ForeignKeyConstraint>? allConstraints = referencedRowByConstraint.Keys.ToList();
 
       while (rowCount > 0)
       {
         int rowIndex = table.Rows.Count;
 
-        foreach (var foreignKey in allConstraints)
+        foreach (ForeignKeyConstraint? foreignKey in allConstraints)
         {
           referencedRowByConstraint[foreignKey] =
             constraintHasUniqueColumns.Contains(foreignKey)
             ? foreignKey.RelatedTable.Rows[rowIndex]
-            : (foreignKey.RelatedTable.Rows.Count == 0)
+            : foreignKey.RelatedTable.Rows.Count == 0
               ? null
               : foreignKey.RelatedTable.Rows[context.Faker.Random.Number(0, foreignKey.RelatedTable.Rows.Count - 1)];
         }
@@ -150,7 +150,7 @@ internal abstract class DataTableGenerator : IAutoGenerator
 
         for (int i = 0; i < table.Columns.Count; i++)
         {
-          if (constrainedColumns.TryGetValue(table.Columns[i], out var constraintInfo))
+          if (constrainedColumns.TryGetValue(table.Columns[i], out ConstrainedColumnInformation? constraintInfo))
             columnValues[i] = referencedRowByConstraint[constraintInfo.Constraint]?[constraintInfo.RelatedColumn] ?? DBNull.Value;
           else
             columnValues[i] = GenerateColumnValue(table.Columns[i], context);
@@ -176,9 +176,8 @@ internal abstract class DataTableGenerator : IAutoGenerator
         case TypeCode.UInt16: return context.Faker.Random.UShort();
         case TypeCode.Int32:
         {
-          if (dataColumn.ColumnName.EndsWith("ID", StringComparison.OrdinalIgnoreCase))
+            if (dataColumn.ColumnName.EndsWith("ID", StringComparison.OrdinalIgnoreCase))
             return Interlocked.Increment(ref context.Faker.IndexFaker);
-          else
             return context.Faker.Random.Int();
         }
         case TypeCode.UInt32: return context.Faker.Random.UInt();
@@ -193,14 +192,11 @@ internal abstract class DataTableGenerator : IAutoGenerator
         default:
           if (dataColumn.DataType == typeof(TimeSpan))
             return context.Faker.Date.Future() - context.Faker.Date.Future();
-          else if (dataColumn.DataType == typeof(Guid))
-            return context.Faker.Random.Guid();
-          else
-          {
-            var proxy = (Proxy)Activator.CreateInstance(typeof(Proxy<>).MakeGenericType(dataColumn.DataType));
+          if (dataColumn.DataType == typeof(Guid))
+              return context.Faker.Random.Guid();
+          var proxy = (Proxy)Activator.CreateInstance(typeof(Proxy<>).MakeGenericType(dataColumn.DataType));
 
-            return proxy.Generate(context);
-          }
+          return proxy.Generate(context);
       }
     }
 

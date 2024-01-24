@@ -17,7 +17,7 @@ internal sealed class AutoMember
       Name = memberInfo.Name;
 
       // Extract the required member info
-      if (ReflectionHelper.IsField(memberInfo))
+      if (memberInfo.IsField())
       {
         var fieldInfo = memberInfo as FieldInfo;
 
@@ -26,7 +26,7 @@ internal sealed class AutoMember
         Getter = fieldInfo.GetValue;
         Setter = fieldInfo.SetValue;
       }
-      else if (ReflectionHelper.IsProperty(memberInfo))
+      else if (memberInfo.IsProperty())
       {
         var propertyInfo = memberInfo as PropertyInfo;
 

@@ -5,6 +5,8 @@ using System.Net;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Util;
+using Soenneker.Utils.AutoBogus.Enums;
+using Soenneker.Utils.AutoBogus.Extensions;
 
 namespace Soenneker.Utils.AutoBogus;
 
@@ -22,7 +24,7 @@ internal static class AutoGeneratorFactory
         {typeof(float), new FloatGenerator()},
         {typeof(Guid), new GuidGenerator()},
         {typeof(int), new IntGenerator()},
-        {typeof(IPAddress), new IPAddressGenerator()},
+        {typeof(IPAddress), new IpAddressGenerator()},
         {typeof(long), new LongGenerator()},
         {typeof(sbyte), new SByteGenerator()},
         {typeof(short), new ShortGenerator()},
@@ -60,7 +62,7 @@ internal static class AutoGeneratorFactory
 
         // Check if an expando object needs to generator
         // This actually means an existing dictionary needs to be populated
-        if (ReflectionHelper.IsExpandoObject(type))
+        if (type.IsExpandoObject())
         {
             return new ExpandoObjectGenerator();
         }
@@ -82,64 +84,64 @@ internal static class AutoGeneratorFactory
             return dataSetGenerator;
         }
 
-        if (ReflectionHelper.IsEnum(type))
+        if (type.IsEnum())
         {
             return CreateGenericGenerator(typeof(EnumGenerator<>), type);
         }
 
-        if (ReflectionHelper.IsNullable(type))
+        if (type.IsNullable())
         {
-            type = ReflectionHelper.GetGenericArguments(type).Single();
+            type = type.GetGenericArguments().Single();
             return CreateGenericGenerator(typeof(NullableGenerator<>), type);
         }
 
-        Type genericCollectionType = ReflectionHelper.GetGenericCollectionType(type);
+        (Type? collectionType, GenericCollectionType? genericCollectionType) = ReflectionHelper.GetGenericCollectionType(type);
 
-        if (genericCollectionType != null)
+        if (collectionType != null)
         {
             // For generic types we need to interrogate the inner types
-            IEnumerable<Type> generics = ReflectionHelper.GetGenericArguments(genericCollectionType);
+            Type[] generics = ReflectionHelper.GetGenericArguments(collectionType);
 
-            if (ReflectionHelper.IsReadOnlyDictionary(genericCollectionType))
+            switch (genericCollectionType!.Name)
             {
-                Type keyType = generics.ElementAt(0);
-                Type valueType = generics.ElementAt(1);
+                case nameof(GenericCollectionType.ReadOnlyDictionary):
+                    {
+                        Type keyType = generics[0];
+                        Type valueType = generics[1];
 
-                return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
-            }
+                        return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+                    }
+                case nameof(GenericCollectionType.ImmutableDictionary):
+                case nameof(GenericCollectionType.Dictionary):
+                case nameof(GenericCollectionType.SortedList):
+                    {
+                        return CreateDictionaryGenerator(generics);
+                    }
+                case nameof(GenericCollectionType.ReadOnlyList):
+                case nameof(GenericCollectionType.ListType):
+                case nameof(GenericCollectionType.ReadOnlyCollection):
+                case nameof(GenericCollectionType.Collection):
+                    {
+                        Type elementType = generics[0];
+                        return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
+                    }
+                case nameof(GenericCollectionType.Set):
+                    {
+                        Type elementType = generics[0];
+                        return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
+                    }
+                case nameof(GenericCollectionType.Enumerable):
+                    {
+                        if (type == collectionType)
+                        {
+                            // Not a full list type, we can't fake it if it's anything other than
+                            // the actual IEnumerable<T> interface itelf.
+                            Type elementType = generics.Single();
+                            return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
+                        }
 
-            if (ReflectionHelper.IsDictionary(genericCollectionType))
-            {
-                return CreateDictionaryGenerator(generics);
-            }
-
-            if (ReflectionHelper.IsList(genericCollectionType))
-            {
-                Type elementType = generics.Single();
-                return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
-            }
-
-            if (ReflectionHelper.IsSet(genericCollectionType))
-            {
-                Type elementType = generics.Single();
-                return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
-            }
-
-            if (ReflectionHelper.IsCollection(genericCollectionType))
-            {
-                Type elementType = generics.Single();
-                return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
-            }
-
-            if (ReflectionHelper.IsEnumerable(genericCollectionType))
-            {
-                // Not a full list type, we can't fake it if it's anything other than
-                // the actual IEnumerable<T> interface itelf.
-                if (type == genericCollectionType)
-                {
-                    Type elementType = generics.Single();
-                    return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
-                }
+                        break;
+                    }
             }
         }
 

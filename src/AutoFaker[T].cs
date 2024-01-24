@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
-using Soenneker.Utils.AutoBogus.Util;
+using Soenneker.Utils.AutoBogus.Extensions;
 
 namespace Soenneker.Utils.AutoBogus;
 
@@ -177,9 +177,9 @@ public class AutoFaker<TType>
             ruleSets = null;
         }
 
-        return (from ruleSet in ruleSets?.Split(',') ?? new[] { currentRuleSet }
+        return from ruleSet in ruleSets?.Split(',') ?? new[] { currentRuleSet }
             where !string.IsNullOrWhiteSpace(ruleSet)
-            select ruleSet.Trim());
+            select ruleSet.Trim();
     }
 
     private void PrepareCreate(AutoGenerateContext context)
@@ -231,61 +231,64 @@ public class AutoFaker<TType>
 
     private void PrepareFinish(AutoGenerateContext context)
     {
-        if (!FinishInitialized)
+        if (FinishInitialized)
+            return;
+
+        FinalizeAction<TType> finishWith = null;
+
+        // Try and get the registered finish with for the current rule
+        FinalizeActions.TryGetValue(currentRuleSet, out finishWith);
+
+        // Add an internal finish to auto populate any remaining values
+        FinishWith((faker, instance) =>
         {
-            // Try and get the registered finish with for the current rule
-            FinalizeActions.TryGetValue(currentRuleSet, out FinalizeAction<TType> finishWith);
+            // If dynamic objects are supported, populate as a dictionary
+            Type? type = instance?.GetType();
 
-            // Add an internal finish to auto populate any remaining values
-            FinishWith((faker, instance) =>
+            if (type != null && type.IsExpandoObject())
             {
-                // If dynamic objects are supported, populate as a dictionary
-                Type? type = instance?.GetType();
+                // Configure the context
+                context.ParentType = null;
+                context.GenerateType = type;
+                context.GenerateName = null;
 
-                if (ReflectionHelper.IsExpandoObject(type))
+                context.Instance = instance;
+
+                // Get the expando generator and populate the instance
+                IAutoGenerator generator = AutoGeneratorFactory.GetGenerator(context);
+                generator.Generate(context);
+
+                // Clear the context instance
+                context.Instance = null;
+
+                return;
+            }
+
+            // Otherwise continue with a standard populate
+            // Extract the unpopulated member infos
+            string[] memberNames = GetRuleSetsMemberNames(context).ToArray();
+            MemberInfo[] members = new MemberInfo[TypeProperties.Count - memberNames.Length];
+            int index = 0;
+
+            foreach (KeyValuePair<string, MemberInfo> member in TypeProperties)
+            {
+                if (Array.IndexOf(memberNames, member.Key) == -1)
                 {
-                    // Configure the context
-                    context.ParentType = null;
-                    context.GenerateType = type;
-                    context.GenerateName = null;
-
-                    context.Instance = instance;
-
-                    // Get the expando generator and populate the instance
-                    IAutoGenerator generator = AutoGeneratorFactory.GetGenerator(context);
-                    generator.Generate(context);
-
-                    // Clear the context instance
-                    context.Instance = null;
-
-                    return;
+                    members[index++] = member.Value;
                 }
+            }
 
-                // Otherwise continue with a standard populate
-                // Extract the unpopulated member infos
-                var members = new List<MemberInfo>();
-                IEnumerable<string> memberNames = GetRuleSetsMemberNames(context);
+            // Finalize the instance population
+            context.Binder.PopulateInstance<TType>(instance, context, members);
 
-                foreach (KeyValuePair<string, MemberInfo> member in TypeProperties)
-                {
-                    if (!memberNames.Contains(member.Key))
-                    {
-                        members.Add(member.Value);
-                    }
-                }
+            // Ensure the default finish with is invoked
+            if (finishWith != null)
+            {
+                finishWith.Action(faker, instance);
+            }
+        });
 
-                // Finalize the instance population
-                context.Binder.PopulateInstance<TType>(instance, context, members);
-
-                // Ensure the default finish with is invoke
-                if (finishWith != null)
-                {
-                    finishWith.Action(faker, instance);
-                }
-            });
-
-            FinishInitialized = true;
-        }
+        FinishInitialized = true;
     }
 
     private IEnumerable<string> GetRuleSetsMemberNames(AutoGenerateContext context)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Util;
 using Binder = Bogus.Binder;
 
@@ -52,7 +53,7 @@ public class AutoBinder : Binder, IAutoBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    public virtual void PopulateInstance<TType>(object instance, AutoGenerateContext context, IEnumerable<MemberInfo>? members = null)
+    public virtual void PopulateInstance<TType>(object instance, AutoGenerateContext context, MemberInfo[]? members = null)
     {
         Type type = typeof(TType);
 
@@ -92,11 +93,11 @@ public class AutoBinder : Binder, IAutoBinder
                     {
                         member.Setter.Invoke(instance, value);
                     }
-                    else if (ReflectionHelper.IsDictionary(member.Type))
+                    else if (member.Type.IsDictionary())
                     {
                         PopulateDictionary(value, instance, member);
                     }
-                    else if (ReflectionHelper.IsCollection(member.Type))
+                    else if (member.Type.IsCollection())
                     {
                         PopulateCollection(value, instance, member);
                     }
@@ -144,12 +145,12 @@ public class AutoBinder : Binder, IAutoBinder
         ConstructorInfo[] constructors = type.GetConstructors();
 
         // For dictionaries and enumerables locate a constructor that is used for populating as well
-        if (ReflectionHelper.IsDictionary(type))
+        if (type.IsDictionary())
         {
             return ResolveTypedConstructor(typeof(IDictionary<,>), constructors);
         }
 
-        if (ReflectionHelper.IsEnumerable(type))
+        if (type.IsEnumerable())
         {
             return ResolveTypedConstructor(typeof(IEnumerable<>), constructors);
         }
@@ -171,7 +172,7 @@ public class AutoBinder : Binder, IAutoBinder
             let p = c.GetParameters()
             where p.Count() == 1
             let m = p.Single()
-            where ReflectionHelper.IsGenericType(m.ParameterType)
+            where m.ParameterType.IsGenericType()
             let d = ReflectionHelper.GetGenericTypeDefinition(m.ParameterType)
             where d == type
             select c).SingleOrDefault();
@@ -206,11 +207,11 @@ public class AutoBinder : Binder, IAutoBinder
             if (!autoMembers.Any(baseMember => autoMember.Name == baseMember.Name))
             {
                 // A readonly dictionary or collection member can use the Add() method
-                if (autoMember.IsReadOnly && ReflectionHelper.IsDictionary(autoMember.Type))
+                if (autoMember.IsReadOnly && autoMember.Type.IsDictionary())
                 {
                     autoMembers.Add(autoMember);
                 }
-                else if (autoMember.IsReadOnly && ReflectionHelper.IsCollection(autoMember.Type))
+                else if (autoMember.IsReadOnly && autoMember.Type.IsCollection())
                 {
                     autoMembers.Add(autoMember);
                 }
@@ -271,7 +272,7 @@ public class AutoBinder : Binder, IAutoBinder
     {
         Type[] types = new[] { typeof(object) };
 
-        if (ReflectionHelper.IsGenericType(type))
+        if (type.IsGenericType())
         {
             IEnumerable<Type> generics = ReflectionHelper.GetGenericArguments(type);
             types = generics.ToArray();

@@ -5,20 +5,19 @@ using Soenneker.Utils.AutoBogus.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal sealed class ListGenerator<TType>
-    : IAutoGenerator
+internal sealed class ListGenerator<TType> : IAutoGenerator
 {
     object IAutoGenerator.Generate(AutoGenerateContext context)
     {
-        IList<TType> list;
+        List<TType> list;
 
         try
         {
-            list = (IList<TType>)Activator.CreateInstance(context.GenerateType);
+            list = (List<TType>)Activator.CreateInstance(context.GenerateType);
         }
         catch
         {
-            list = new List<TType>();
+            list = [];
         }
 
         List<TType> items = context.GenerateMany<TType>();

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Soenneker.Utils.AutoBogus.Abstract;
-using Soenneker.Utils.AutoBogus.Util;
+using Soenneker.Utils.AutoBogus.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
@@ -26,7 +26,7 @@ internal sealed class ExpandoObjectGenerator : IAutoGenerator
             context.GenerateType = type;
             context.GenerateName = property.Key;
 
-            if (ReflectionHelper.IsExpandoObject(type))
+            if (type.IsExpandoObject())
             {
                 context.Instance = property.Value;
             }

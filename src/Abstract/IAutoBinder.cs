@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Reflection;
 using Bogus;
 
@@ -29,5 +28,5 @@ public interface IAutoBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    void PopulateInstance<TType>(object instance, AutoGenerateContext context, IEnumerable<MemberInfo> members = null);
+    void PopulateInstance<TType>(object instance, AutoGenerateContext context, MemberInfo[]? members = null);
 }
