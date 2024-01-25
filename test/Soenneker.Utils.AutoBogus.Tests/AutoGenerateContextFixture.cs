@@ -9,15 +9,15 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoGenerateContextFixture
 {
-    private Faker _faker;
-    private IEnumerable<string> _ruleSets;
-    private AutoConfig _config;
+    private readonly Faker _faker;
+    private readonly List<string> _ruleSets;
+    private readonly AutoConfig _config;
     private AutoGenerateContext _context;
 
     public AutoGenerateContextFixture()
     {
         _faker = new Faker();
-        _ruleSets = Enumerable.Empty<string>();
+        _ruleSets = new List<string>();
         _config = new AutoConfig();
     }
 
@@ -45,7 +45,7 @@ public class AutoGenerateContextFixture
 
             _config.RepeatCount = context => count;
 
-            AutoGenerateContextExtensions.GenerateMany(_context, null, _items, false, 1, () => _value);
+            AutoGenerateContextExtension.GenerateMany(_context, null, _items, false, 1, () => _value);
 
             _items.Should().BeEquivalentTo(expected);
         }
@@ -53,7 +53,7 @@ public class AutoGenerateContextFixture
         [Fact]
         public void Should_Generate_Duplicates_If_Not_Unique()
         {
-            AutoGenerateContextExtensions.GenerateMany(_context, 2, _items, false, 1, () => _value);
+            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, false, 1, () => _value);
 
             _items.Should().BeEquivalentTo(new[] { _value, _value });
         }
@@ -64,7 +64,7 @@ public class AutoGenerateContextFixture
             int first = _value;
             int second = _faker.Random.Int();
 
-            AutoGenerateContextExtensions.GenerateMany(_context, 2, _items, true, 1, () =>
+            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, 1, () =>
             {
                 int item = _value;
                 _value = second;
@@ -80,7 +80,7 @@ public class AutoGenerateContextFixture
         {
             var attempts = 0;
 
-            AutoGenerateContextExtensions.GenerateMany(_context, 2, _items, true, 1, () =>
+            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, 1, () =>
             {
                 attempts++;
                 return _value;

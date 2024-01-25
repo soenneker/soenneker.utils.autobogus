@@ -4,9 +4,9 @@ namespace Soenneker.Utils.AutoBogus.Enums;
 
 public sealed class GenericCollectionType : SmartEnum<GenericCollectionType>
 {
-    public static GenericCollectionType ImmutableDictionary = new(nameof(ImmutableDictionary), 10);
-    public static GenericCollectionType ReadOnlyDictionary = new(nameof(ReadOnlyDictionary), 9);
-    public static GenericCollectionType Dictionary = new(nameof(Dictionary), 8);
+    public static GenericCollectionType Dictionary = new(nameof(Dictionary), 10);
+    public static GenericCollectionType ImmutableDictionary = new(nameof(ImmutableDictionary), 9);
+    public static GenericCollectionType ReadOnlyDictionary = new(nameof(ReadOnlyDictionary), 8);
     public static GenericCollectionType SortedList = new(nameof(SortedList), 7);
     public static GenericCollectionType ReadOnlyList = new(nameof(ReadOnlyList), 6);
     public static GenericCollectionType ListType = new(nameof(ListType), 5);

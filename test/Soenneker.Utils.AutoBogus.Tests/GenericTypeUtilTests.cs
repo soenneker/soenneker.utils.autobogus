@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
-public class ReflectionHelperTests
+public class GenericTypeUtilTests
 {
     [Fact]
     public void Generate_should_generate()

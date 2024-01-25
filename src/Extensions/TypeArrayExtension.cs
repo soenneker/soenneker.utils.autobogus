@@ -15,79 +15,64 @@ internal static class TypeArrayExtension
 
         Type? returnType = null;
 
-        var index = 0;
-
-        // TODO: sigh... this is ugly and it's a super hot path
         foreach (Type type in types)
         {
             switch (type.Name)
             {
                 case "SortedList`2":
-                    {
-                        return (type, GenericCollectionType.SortedList);
-                    }
-                //case "Dictionary`2":
-                //    {
-                //        return (type, GenericCollectionType.Dictionary);
-                //    }
-                case "IImmutableDictionary`2":
-                    {
-                        return (type, GenericCollectionType.ImmutableDictionary);
-                    }
-                case "IReadOnlyDictionary`2":
-                    {
-                        return (type, GenericCollectionType.ReadOnlyDictionary);
-                    }
-
+                    return (type, GenericCollectionType.SortedList);
+                case "Dictionary`2":
+                    return (type, GenericCollectionType.Dictionary);
+                case "ReadOnlyDictionary`2":
+                    return (type, GenericCollectionType.ReadOnlyDictionary);
                 case "IDictionary`2":
+                    if (genericCollectionType < GenericCollectionType.Dictionary)
                     {
-                       // if (index == 0)
-                     //       return (type, GenericCollectionType.Dictionary);
-
-                        if (genericCollectionType < GenericCollectionType.Dictionary)
-                        {
-                            genericCollectionType = GenericCollectionType.Dictionary;
-                            returnType = type;
-                        }
+                        genericCollectionType = GenericCollectionType.Dictionary;
+                        returnType = type;
+                    }
+                    break;
+                case "IImmutableDictionary`2":
+                    if (genericCollectionType < GenericCollectionType.ImmutableDictionary)
+                    {
+                        genericCollectionType = GenericCollectionType.ImmutableDictionary;
+                        returnType = type;
+                    }
+                    break;
+                case "IReadOnlyDictionary`2":
+                    if (genericCollectionType < GenericCollectionType.ReadOnlyDictionary)
+                    {
+                        genericCollectionType = GenericCollectionType.ReadOnlyDictionary;
+                        returnType = type;
                     }
                     break;
                 case "IReadOnlylist`1":
+                    if (genericCollectionType < GenericCollectionType.ReadOnlyList)
                     {
-                        if (genericCollectionType < GenericCollectionType.ReadOnlyList)
-                        {
-                            genericCollectionType = GenericCollectionType.ReadOnlyList;
-                            returnType = type;
-                        }
-
-                        break;
+                        genericCollectionType = GenericCollectionType.ReadOnlyList;
+                        returnType = type;
                     }
+                    break;
                 case "Ilist`1":
+                    if (genericCollectionType < GenericCollectionType.ListType)
                     {
-                        if (genericCollectionType < GenericCollectionType.ListType)
-                        {
-                            genericCollectionType = GenericCollectionType.ListType;
-                            returnType = type;
-                        }
-
-                        break;
+                        genericCollectionType = GenericCollectionType.ListType;
+                        returnType = type;
                     }
+                    break;
                 case "ISet`1":
+                    if (genericCollectionType < GenericCollectionType.Set)
                     {
-                        if (genericCollectionType < GenericCollectionType.Set)
-                        {
-                            genericCollectionType = GenericCollectionType.Set;
-                            returnType = type;
-                        }
-
-                        break;
+                        genericCollectionType = GenericCollectionType.Set;
+                        returnType = type;
                     }
+                    break;
                 case "IReadOnlyCollection`1":
                     if (genericCollectionType < GenericCollectionType.ReadOnlyCollection)
                     {
                         genericCollectionType = GenericCollectionType.ReadOnlyCollection;
                         returnType = type;
                     }
-
                     break;
                 case "ICollection`1":
                     if (genericCollectionType < GenericCollectionType.Collection)
@@ -95,7 +80,6 @@ internal static class TypeArrayExtension
                         genericCollectionType = GenericCollectionType.Collection;
                         returnType = type;
                     }
-
                     break;
                 case "IEnumerable`1":
                     if (genericCollectionType < GenericCollectionType.Enumerable)
@@ -103,11 +87,8 @@ internal static class TypeArrayExtension
                         genericCollectionType = GenericCollectionType.Enumerable;
                         returnType = type;
                     }
-
                     break;
             }
-
-            index++;
         }
 
         return (returnType, genericCollectionType);

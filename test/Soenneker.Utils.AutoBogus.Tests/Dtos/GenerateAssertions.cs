@@ -7,7 +7,6 @@ using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
-using Soenneker.Utils.AutoBogus.Util;
 using Soenneker.Utils.AutoBogus.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
@@ -361,10 +360,10 @@ public sealed class GenerateAssertions
         return assertion ?? AssertType;
     }
 
-    private IEnumerable<MemberInfo> GetMemberInfos(Type type)
+    private static IEnumerable<MemberInfo> GetMemberInfos(Type type)
     {
         return (from m in type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-            where ReflectionHelper.IsField(m) || ReflectionHelper.IsProperty(m)
+            where m.IsField() || m.IsProperty()
             select m);
     }
 
@@ -391,14 +390,14 @@ public sealed class GenerateAssertions
         memberGetter = null;
 
         // Extract the member type and getter action
-        if (ReflectionHelper.IsField(member))
+        if (member.IsField())
         {
             var fieldInfo = member as FieldInfo;
 
             memberType = fieldInfo.FieldType;
             memberGetter = fieldInfo.GetValue;
         }
-        else if (ReflectionHelper.IsProperty(member))
+        else if (member.IsProperty())
         {
             var propertyInfo = member as PropertyInfo;
 

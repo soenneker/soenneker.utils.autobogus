@@ -22,7 +22,7 @@ public sealed class AutoGenerateContext
 
         TypesStack = new Stack<Type>();
 
-        RuleSets = Enumerable.Empty<string>();
+        RuleSets = new List<string>();
     }
 
     internal AutoConfig Config { get; }
@@ -53,8 +53,8 @@ public sealed class AutoGenerateContext
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
-    public IEnumerable<string> RuleSets { get; internal set; }
+    public List<string> RuleSets { get; internal set; }
 
     internal IAutoBinder Binder => Config.Binder;
-    internal IEnumerable<AutoGeneratorOverride> Overrides => Config.Overrides;
+    internal List<AutoGeneratorOverride> Overrides => Config.Overrides;
 }

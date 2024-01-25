@@ -6,7 +6,6 @@ using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Soenneker.Utils.AutoBogus.Util;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
@@ -21,7 +20,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(ReadOnlyDictionary<int, string>))]
         public void Generate_Should_Return_Dictionary(Type type)
         {
-            Type[]? genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[]? genericTypes = type.GetGenericArguments();
             Type? keyType = genericTypes.ElementAt(0);
             Type? valueType = genericTypes.ElementAt(1);
             IAutoGenerator? generator = CreateGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
@@ -48,7 +47,7 @@ public partial class AutoGeneratorsFixture
         public void GetGenerator_Should_Return_ReadOnlyDictionaryGenerator(Type type)
         {
             AutoGenerateContext? context = CreateContext(type);
-            Type[]? genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[]? genericTypes = type.GetGenericArguments();
             Type? keyType = genericTypes.ElementAt(0);
             Type? valueType = genericTypes.ElementAt(1);
             Type? generatorType = GetGeneratorType(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);

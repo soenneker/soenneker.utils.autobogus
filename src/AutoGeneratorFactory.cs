@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
-using Soenneker.Utils.AutoBogus.Util;
 using Soenneker.Utils.AutoBogus.Enums;
 using Soenneker.Utils.AutoBogus.Extensions;
+using Soenneker.Utils.AutoBogus.Utils;
 
 namespace Soenneker.Utils.AutoBogus;
 
@@ -95,12 +95,12 @@ internal static class AutoGeneratorFactory
             return CreateGenericGenerator(typeof(NullableGenerator<>), type);
         }
 
-        (Type? collectionType, GenericCollectionType? genericCollectionType) = ReflectionHelper.GetGenericCollectionType(type);
+        (Type? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(type);
 
         if (collectionType != null)
         {
             // For generic types we need to interrogate the inner types
-            Type[] generics = ReflectionHelper.GetGenericArguments(collectionType);
+            Type[] generics = collectionType.GetGenericArguments();
 
             switch (genericCollectionType!.Name)
             {
@@ -136,7 +136,7 @@ internal static class AutoGeneratorFactory
                         {
                             // Not a full list type, we can't fake it if it's anything other than
                             // the actual IEnumerable<T> interface itelf.
-                            Type elementType = generics.Single();
+                            Type elementType = generics[0];
                             return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
                         }
 
@@ -154,10 +154,10 @@ internal static class AutoGeneratorFactory
         return CreateGenericGenerator(typeof(TypeGenerator<>), type);
     }
 
-    private static IAutoGenerator CreateDictionaryGenerator(IEnumerable<Type> generics)
+    private static IAutoGenerator CreateDictionaryGenerator(Type[] generics)
     {
-        Type keyType = generics.ElementAt(0);
-        Type valueType = generics.ElementAt(1);
+        Type keyType = generics[0];
+        Type valueType = generics[1];
 
         return CreateGenericGenerator(typeof(DictionaryGenerator<,>), keyType, valueType);
     }

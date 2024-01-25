@@ -31,7 +31,7 @@ public class AutoFakerTests
     {
         IAutoFaker? faker = AutoFaker.Create();
 
-        for (var i = 0; i < 100; i++)
+        for (var i = 0; i < 1000; i++)
         {
             var order = faker.Generate<Order>();
         }

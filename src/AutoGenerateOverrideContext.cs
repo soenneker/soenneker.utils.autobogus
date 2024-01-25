@@ -42,7 +42,7 @@ public sealed class AutoGenerateOverrideContext
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
-    public IEnumerable<string> RuleSets { get; }
+    public List<string> RuleSets { get; }
 
     internal AutoGenerateContext GenerateContext { get; }
 }

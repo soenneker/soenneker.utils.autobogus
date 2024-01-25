@@ -5,7 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Extensions;
 /// <summary>
 /// A class extending the <see cref="AutoGenerateOverrideContext"/> class.
 /// </summary>
-public static class AutoGenerateOverrideContextExtensions
+public static class AutoGenerateOverrideContextExtension
 {
     /// <summary>
     /// Generates an instance of type <typeparamref name="TType"/>.

@@ -8,7 +8,7 @@ namespace Soenneker.Utils.AutoBogus.Extensions;
 /// <summary>
 /// A class extending the <see cref="AutoGenerateContext"/> class.
 /// </summary>
-public static class AutoGenerateContextExtensions
+public static class AutoGenerateContextExtension
 {
     /// <summary>
     /// Generates an instance of type <typeparamref name="TType"/>.
@@ -85,45 +85,51 @@ public static class AutoGenerateContextExtensions
 
     internal static void GenerateMany<TType>(AutoGenerateContext context, int? count, List<TType> items, bool unique, int attempt = 1, Func<TType>? generate = null)
     {
-        // Apply any defaults
-        if (count == null)
+        while (true)
         {
-            count = context.Config.RepeatCount.Invoke(context);
-        }
-
-        generate ??= context.Generate<TType>;
-
-        // Generate a list of items
-        int? required = count - items.Count;
-
-        for (var index = 0; index < required; index++)
-        {
-            TType? item = generate.Invoke();
-
-            // Ensure the generated value is not null (which means the type couldn't be generated)
-            if (item != null)
+            // Apply any defaults
+            if (count == null)
             {
-                items.Add(item);
+                count = context.Config.RepeatCount.Invoke(context);
             }
-        }
 
-        if (unique)
-        {
-            // Remove any duplicates and generate more to match the required count
-            List<TType> filtered = items.Distinct().ToList();
+            generate ??= context.Generate<TType>;
 
-            if (filtered.Count < count)
+            // Generate a list of items
+            int? required = count - items.Count;
+
+            for (var index = 0; index < required; index++)
             {
-                // To maintain the items reference, clear and reapply the filtered list
-                items.Clear();
-                items.AddRange(filtered);
+                TType? item = generate.Invoke();
 
-                // Only continue to generate more if the attempts threshold is not reached
-                if (attempt < AutoConfig.GenerateAttemptsThreshold)
+                // Ensure the generated value is not null (which means the type couldn't be generated)
+                if (item != null)
                 {
-                    GenerateMany(context, count, items, unique, attempt + 1, generate);
+                    items.Add(item);
                 }
             }
+
+            if (unique)
+            {
+                // Remove any duplicates and generate more to match the required count
+                List<TType> filtered = items.Distinct().ToList();
+
+                if (filtered.Count < count)
+                {
+                    // To maintain the items reference, clear and reapply the filtered list
+                    items.Clear();
+                    items.AddRange(filtered);
+
+                    // Only continue to generate more if the attempts threshold is not reached
+                    if (attempt < AutoConfig.GenerateAttemptsThreshold)
+                    {
+                        attempt += 1;
+                        continue;
+                    }
+                }
+            }
+
+            break;
         }
     }
 }

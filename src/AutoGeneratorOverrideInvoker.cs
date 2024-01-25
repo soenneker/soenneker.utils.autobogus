@@ -6,14 +6,14 @@ namespace Soenneker.Utils.AutoBogus;
 internal sealed class AutoGeneratorOverrideInvoker
     : IAutoGenerator
 {
-    internal AutoGeneratorOverrideInvoker(IAutoGenerator generator, IEnumerable<AutoGeneratorOverride> overrides)
+    internal AutoGeneratorOverrideInvoker(IAutoGenerator generator, List<AutoGeneratorOverride> overrides)
     {
         Generator = generator;
         Overrides = overrides;
     }
 
     internal IAutoGenerator Generator { get; }
-    internal IEnumerable<AutoGeneratorOverride> Overrides { get; }
+    internal List<AutoGeneratorOverride> Overrides { get; }
 
     object IAutoGenerator.Generate(AutoGenerateContext context)
     {

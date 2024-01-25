@@ -22,9 +22,13 @@ internal sealed class AutoConfig
     internal Func<AutoGenerateContext, int> RecursiveDepth { get; set; }
     internal IAutoBinder Binder { get; set; }
     internal Faker FakerHub { get; set; }
-    internal IList<Type> SkipTypes { get; set; }
-    internal IList<string> SkipPaths { get; set; }
-    internal IList<AutoGeneratorOverride> Overrides { get; set; }
+
+    internal List<Type> SkipTypes { get; set; }
+
+    internal List<string> SkipPaths { get; set; }
+
+    internal List<AutoGeneratorOverride> Overrides { get; set; }
+
     public Func<AutoGenerateContext, int?> TreeDepth { get; set; }
 
     internal AutoConfig()

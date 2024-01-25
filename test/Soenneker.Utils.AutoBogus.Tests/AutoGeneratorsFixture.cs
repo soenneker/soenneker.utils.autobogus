@@ -9,7 +9,6 @@ using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Soenneker.Utils.AutoBogus.Util;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Extensions;
 
@@ -411,7 +410,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(SortedList<int, TestClass>))]
         public void Generate_Should_Return_Dictionary(Type type)
         {
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type keyType = genericTypes.ElementAt(0);
             Type valueType = genericTypes.ElementAt(1);
             IAutoGenerator generator = CreateGenerator(typeof(DictionaryGenerator<,>), keyType, valueType);
@@ -439,7 +438,7 @@ public partial class AutoGeneratorsFixture
         public void GetGenerator_Should_Return_DictionaryGenerator(Type type)
         {
             AutoGenerateContext context = CreateContext(type);
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type keyType = genericTypes.ElementAt(0);
             Type valueType = genericTypes.ElementAt(1);
             Type generatorType = GetGeneratorType(typeof(DictionaryGenerator<,>), keyType, valueType);
@@ -465,7 +464,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(List<TestClass>))]
         public void Generate_Should_Return_List(Type type)
         {
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             IAutoGenerator generator = CreateGenerator(typeof(ListGenerator<>), itemType);
             var list = InvokeGenerator(type, generator) as IEnumerable;
@@ -488,7 +487,7 @@ public partial class AutoGeneratorsFixture
         public void GetGenerator_Should_Return_ListGenerator(Type type)
         {
             AutoGenerateContext context = CreateContext(type);
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             Type generatorType = GetGeneratorType(typeof(ListGenerator<>), itemType);
 
@@ -508,7 +507,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(HashSet<TestClass>))]
         public void Generate_Should_Return_Set(Type type)
         {
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             IAutoGenerator generator = CreateGenerator(typeof(SetGenerator<>), itemType);
             var set = InvokeGenerator(type, generator) as IEnumerable;
@@ -526,7 +525,7 @@ public partial class AutoGeneratorsFixture
         public void GetGenerator_Should_Return_SetGenerator(Type type)
         {
             AutoGenerateContext context = CreateContext(type);
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             Type generatorType = GetGeneratorType(typeof(SetGenerator<>), itemType);
 
@@ -545,7 +544,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(IEnumerable<TestAbstractClass>))]
         public void Generate_Should_Return_Enumerable(Type type)
         {
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             IAutoGenerator generator = CreateGenerator(typeof(EnumerableGenerator<>), itemType);
             var enumerable = InvokeGenerator(type, generator) as IEnumerable;
@@ -562,7 +561,7 @@ public partial class AutoGeneratorsFixture
         public void GetGenerator_Should_Return_EnumerableGenerator(Type type)
         {
             AutoGenerateContext context = CreateContext(type);
-            Type[] genericTypes = ReflectionHelper.GetGenericArguments(type);
+            Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             Type generatorType = GetGeneratorType(typeof(EnumerableGenerator<>), itemType);
 
@@ -632,7 +631,7 @@ public partial class AutoGeneratorsFixture
         : AutoGeneratorsFixture
     {
         private AutoGeneratorOverride _generatorOverride;
-        private IList<AutoGeneratorOverride> _overrides;
+        private List<AutoGeneratorOverride> _overrides;
 
         private class TestGeneratorOverride
             : AutoGeneratorOverride
@@ -718,7 +717,7 @@ public partial class AutoGeneratorsFixture
         return (IAutoGenerator)Activator.CreateInstance(type);
     }
 
-    private AutoGenerateContext CreateContext(Type type, IList<AutoGeneratorOverride> generatorOverrides = null, Func<AutoGenerateContext, int> dataTableRowCountFunctor = null)
+    private AutoGenerateContext CreateContext(Type type, List<AutoGeneratorOverride> generatorOverrides = null, Func<AutoGenerateContext, int> dataTableRowCountFunctor = null)
     {
         var faker = new Faker();
         var config = new AutoConfig();

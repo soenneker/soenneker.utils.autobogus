@@ -5,9 +5,9 @@ namespace Soenneker.Utils.AutoBogus.Extensions;
 
 public static class TypeExtension
 {
-    public static bool IsOrDerivedFrom(this Type? sourceType, Type targetType)
+    internal static bool IsNullable(this Type type)
     {
-        return targetType.IsAssignableFrom(sourceType);
+        return Nullable.GetUnderlyingType(type) != null;
     }
 
     internal static bool IsEnum(this Type type)
@@ -37,20 +37,35 @@ public static class TypeExtension
 
     internal static bool IsDictionary(this Type type)
     {
-        if (type.Name == "IDictionary`2")
+        return IsGenericType(type, "IDictionary`2");
+    }
+
+    internal static bool IsReadOnlyDictionary(this Type type)
+    {
+        return IsGenericType(type, "IReadOnlyDictionary`2");
+    }
+
+    internal static bool IsCollection(this Type type)
+    {
+        return IsGenericType(type, "ICollection`1");
+    }
+
+    internal static bool IsEnumerable(this Type type)
+    {
+        return IsGenericType(type, "IEnumerable`1");
+    }
+
+    private static bool IsGenericType(Type type, string interfaceTypeName)
+    {
+        if (type.Name == interfaceTypeName)
             return true;
 
-        var interfaces = type.GetInterfaces();
+        Type[] interfaces = type.GetInterfaces();
 
-        foreach (var i in interfaces)
+        foreach (Type i in interfaces)
         {
-            switch (i.Name)
-            {
-                case "IDictionary`2":
-                    {
-                        return true;
-                    }
-            }
+            if (i.Name == interfaceTypeName)
+                return true;
         }
 
         return false;

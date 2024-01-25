@@ -2,14 +2,13 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using Soenneker.Utils.AutoBogus.Abstract;
-using Soenneker.Utils.AutoBogus.Util;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
 /// <summary>
 /// A class extending the config builder interfaces.
 /// </summary>
-public static class AutoConfigBuilderExtensions
+public static class AutoConfigBuilderExtension
 {
     #region WithBinder
 
@@ -227,29 +226,29 @@ public static class AutoConfigBuilderExtensions
 
     #endregion
 
-    private static string GetMemberName<TType>(Expression<Func<TType, object>> member)
+    private static string? GetMemberName<TType>(Expression<Func<TType, object>>? member)
     {
-        if (member != null)
+        if (member == null)
+            return null;
+
+        MemberExpression expression;
+
+        if (member.Body is UnaryExpression unary)
         {
-            MemberExpression expression;
+            expression = unary.Operand as MemberExpression;
+        }
+        else
+        {
+            expression = member.Body as MemberExpression;
+        }
 
-            if (member.Body is UnaryExpression unary)
-            {
-                expression = unary.Operand as MemberExpression;
-            }
-            else
-            {
-                expression = member.Body as MemberExpression;
-            }
+        if (expression != null)
+        {
+            MemberInfo memberInfo = expression.Member;
 
-            if (expression != null)
+            if (memberInfo.IsField() || memberInfo.IsProperty())
             {
-                MemberInfo? memberInfo = expression.Member;
-
-                if (memberInfo.IsField() || memberInfo.IsProperty())
-                {
-                    return memberInfo.Name;
-                }
+                return memberInfo.Name;
             }
         }
 

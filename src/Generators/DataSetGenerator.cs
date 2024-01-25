@@ -41,7 +41,7 @@ internal abstract class DataSetGenerator
 
     class TypedDataSetGenerator : DataSetGenerator
     {
-        Type _dataSetType;
+        private readonly Type _dataSetType;
 
         public TypedDataSetGenerator(Type dataSetType)
         {
