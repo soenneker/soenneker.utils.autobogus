@@ -17,6 +17,6 @@ dotnet add package Soenneker.Utils.AutoBogus
 
 A Bogus `Faker` takes a long time to initialize, so AutoFaker will mirror Faker in this sense. Thus, `AutoFaker<T>` was dropped from this package.
 
-⚠️ It is recommended that a single instance of `AutoFaker` be used if possible. The static usage of `AutoFaker.Generate<>()` should be avoided (as it incurs a new `Faker` allocation), but is available. 
+⚠️ It is recommended that a single instance of `AutoFaker` be used if possible. The static usage of `AutoFaker.Generate<>()` should be avoided (as it constructors a new `Faker`), but is available. 
 
 This is a work in progress. Contribution is welcomed.
