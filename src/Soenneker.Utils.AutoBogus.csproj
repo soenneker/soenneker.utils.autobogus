@@ -48,7 +48,6 @@
         <PackageReference Include="Bogus" Version="35.4.0" />
         <PackageReference Include="Bogus" Version="35.4.0" />
         <PackageReference Include="Soenneker.Reflection.Cache" Version="2.1.13" />
-        <PackageReference Include="Soenneker.Utils.ResettableLazy" Version="2.1.76" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
     </ItemGroup>
 </Project>

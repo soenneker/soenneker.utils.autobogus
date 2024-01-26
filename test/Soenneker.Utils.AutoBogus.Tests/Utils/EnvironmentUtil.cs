@@ -12,7 +12,7 @@ internal static class EnvironmentUtil
     // Init needs to be done outside of ctor because Fact evaluates before the ctor of the test
     private static readonly Lazy<bool> _isPipelineLazy = new(() =>
     {
-        string? pipelineEnv = Environment.GetEnvironmentVariable("PipelineEnvironment");
+        string? pipelineEnv = System.Environment.GetEnvironmentVariable("PipelineEnvironment");
 
         _ = bool.TryParse(pipelineEnv, out bool isPipeline);
 
