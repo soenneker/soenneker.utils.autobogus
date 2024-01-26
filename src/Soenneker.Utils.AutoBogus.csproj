@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>An updated version of AutoBogus, which is an auto creator/populator for Bogus</Description>
+        <Description>The .NET Bogus autogenerator</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">2.1.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Utils.AutoBogus</AssemblyName>
