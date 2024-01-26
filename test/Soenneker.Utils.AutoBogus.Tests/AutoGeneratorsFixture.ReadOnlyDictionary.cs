@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using FluentAssertions;
-using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Generators.Abstract;
+using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 
@@ -23,7 +25,7 @@ public partial class AutoGeneratorsFixture
             Type[]? genericTypes = type.GetGenericArguments();
             Type? keyType = genericTypes.ElementAt(0);
             Type? valueType = genericTypes.ElementAt(1);
-            IAutoGenerator? generator = CreateGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+            IAutoFakerGenerator? generator = CreateGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
             var dictionary = InvokeGenerator(type, generator) as IReadOnlyDictionary<int, string>;
 
             dictionary.Should().NotBeNull().And.NotContainNulls();
@@ -46,13 +48,13 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(ReadOnlyDictionary<int, TestClass>))]
         public void GetGenerator_Should_Return_ReadOnlyDictionaryGenerator(Type type)
         {
-            AutoGenerateContext? context = CreateContext(type);
+            AutoFakerContext? context = CreateContext(type);
             Type[]? genericTypes = type.GetGenericArguments();
             Type? keyType = genericTypes.ElementAt(0);
             Type? valueType = genericTypes.ElementAt(1);
             Type? generatorType = GetGeneratorType(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
 
-            AutoGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 }

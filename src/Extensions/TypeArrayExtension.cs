@@ -1,23 +1,23 @@
 ﻿using Soenneker.Utils.AutoBogus.Enums;
 using System.Collections.Generic;
-using System;
+using Soenneker.Reflection.Cache.Types;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
 internal static class TypeArrayExtension
 {
-    internal static (Type?, GenericCollectionType?) GetTypeOfGenericCollectionFromInterfaceTypes(this List<Type> types)
+    internal static (CachedType?, GenericCollectionType?) GetTypeOfGenericCollectionFromInterfaceTypes(this List<CachedType> types)
     {
         if (types.Count == 0)
             return (null, null);
 
         GenericCollectionType genericCollectionType = GenericCollectionType.Unknown;
 
-        Type? returnType = null;
+        CachedType? returnType = null;
 
-        foreach (Type type in types)
+        foreach (CachedType type in types)
         {
-            switch (type.Name)
+            switch (type.Type.Name)
             {
                 case "SortedList`2":
                     return (type, GenericCollectionType.SortedList);

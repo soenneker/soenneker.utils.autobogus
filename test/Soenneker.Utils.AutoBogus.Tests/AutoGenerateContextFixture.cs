@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Bogus;
 using FluentAssertions;
+using Soenneker.Utils.AutoBogus.Config;
+using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Xunit;
 
@@ -11,27 +13,27 @@ public class AutoGenerateContextFixture
 {
     private readonly Faker _faker;
     private readonly List<string> _ruleSets;
-    private readonly AutoConfig _config;
-    private AutoGenerateContext _context;
+    private readonly AutoFakerConfig _fakerConfig;
+    private AutoFakerContext _context;
 
     public AutoGenerateContextFixture()
     {
         _faker = new Faker();
         _ruleSets = new List<string>();
-        _config = new AutoConfig();
+        _fakerConfig = new AutoFakerConfig();
     }
 
     public class GenerateMany_Internal
         : AutoGenerateContextFixture
     {
         private int _value;
-        private List<int> _items;
+        private readonly List<int> _items;
 
         public GenerateMany_Internal()
         {
             _value = _faker.Random.Int();
             _items = new List<int> { _value };
-            _context = new AutoGenerateContext(_faker, _config)
+            _context = new AutoFakerContext(_fakerConfig)
             {
                 RuleSets = _ruleSets
             };
@@ -43,7 +45,7 @@ public class AutoGenerateContextFixture
             int count = _faker.Random.Int(3, 5);
             List<int>? expected = Enumerable.Range(0, count).Select(i => _value).ToList();
 
-            _config.RepeatCount = context => count;
+            _fakerConfig.RepeatCount = context => count;
 
             AutoGenerateContextExtension.GenerateMany(_context, null, _items, false, 1, () => _value);
 
@@ -86,7 +88,7 @@ public class AutoGenerateContextFixture
                 return _value;
             });
 
-            attempts.Should().Be(AutoConfig.GenerateAttemptsThreshold);
+            attempts.Should().Be(AutoFakerConfig.GenerateAttemptsThreshold);
 
             _items.Should().BeEquivalentTo(new[] { _value });
         }

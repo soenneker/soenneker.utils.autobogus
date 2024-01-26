@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Dynamic;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -7,27 +8,32 @@ public static class TypeExtension
 {
     internal static bool IsNullable(this Type type)
     {
-        return Nullable.GetUnderlyingType(type) != null;
+        return CacheService.Cache.GetCachedType(type).IsNullable;
+        //return Nullable.GetUnderlyingType(type) != null;
     }
 
     internal static bool IsEnum(this Type type)
     {
-        return type.IsEnum;
+        return CacheService.Cache.GetCachedType(type).IsEnum;
+        //return type.IsEnum;
     }
 
     internal static bool IsAbstract(this Type type)
     {
-        return type.IsAbstract;
+        return CacheService.Cache.GetCachedType(type).IsAbstract;
+        //return type.IsAbstract;
     }
 
     internal static bool IsInterface(this Type type)
     {
-        return type.IsInterface;
+        return CacheService.Cache.GetCachedType(type).IsInterface;
+        //return type.IsInterface;
     }
 
     internal static bool IsGenericType(this Type type)
     {
-        return type.IsGenericType;
+        return CacheService.Cache.GetCachedType(type).IsGenericType;
+       // return type.IsGenericType;
     }
 
     internal static bool IsExpandoObject(this Type type)
@@ -60,7 +66,7 @@ public static class TypeExtension
         if (type.Name == interfaceTypeName)
             return true;
 
-        Type[] interfaces = type.GetInterfaces();
+        Type[] interfaces = CacheService.Cache.GetCachedType(type).GetInterfaces()!;
 
         foreach (Type i in interfaces)
         {

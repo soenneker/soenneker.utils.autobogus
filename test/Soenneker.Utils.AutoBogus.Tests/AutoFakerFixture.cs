@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using Bogus;
 using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Config;
+using Soenneker.Utils.AutoBogus.Config.Abstract;
+using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
@@ -16,12 +19,8 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoFakerFixture
 {
-    private class TestFaker
-        : AutoFaker<Order>
-    { }
-
-    private class TestBinder
-        : AutoBinder
+    private class TestFakerBinder
+        : AutoFakerBinder
     { }
 
     private const string _name = "Generate";
@@ -33,14 +32,14 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Configure_Default_Config()
         {
-            AutoConfig config = null;
+            AutoFakerConfig fakerConfig = null;
             AutoFaker.Configure(builder =>
             {
-                var instance = builder as AutoConfigBuilder;
-                config = instance.Config;
+                var instance = builder as AutoFakerConfigBuilder;
+                fakerConfig = instance.FakerConfig;
             });
 
-            config.Should().Be(AutoFaker.DefaultConfig);
+            fakerConfig.Should().Be(DefaultConfigService.Config);
         }
     }
 
@@ -50,7 +49,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Configure_Child_Config()
         {
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(AutoFaker.DefaultConfig);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
             AutoFaker.Create(configure).Should().BeOfType<AutoFaker>();
         }
     }
@@ -64,21 +63,21 @@ public class AutoFakerFixture
         private static MethodInfo _generateMany = _type.GetMethod(_methodName, BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(int), typeof(Action<IAutoGenerateConfigBuilder>) }, null);
 
         private IAutoFaker _faker;
-        private AutoConfig _config;
+        private AutoFakerConfig _fakerConfig;
 
         public Generate_Instance()
         {
             var faker = AutoFaker.Create() as AutoFaker;
 
             _faker = faker;
-            _config = faker.Config;
+            _fakerConfig = faker.FakerConfig;
         }
 
         [Theory]
         [MemberData(nameof(GetTypes))]
         public void Should_Generate_Type(Type type)
         {
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_config);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
             AssertGenerate(type, _generate, _faker, configure);
         }
 
@@ -86,8 +85,8 @@ public class AutoFakerFixture
         [MemberData(nameof(GetTypes))]
         public void Should_Generate_Many_Types(Type type)
         {
-            int count = AutoConfig.DefaultRepeatCount.Invoke(null);
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_config);
+            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
 
             AssertGenerateMany(type, _generateMany, _faker, count, configure);
         }
@@ -95,64 +94,46 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Complex_Type()
         {
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_config);
+            Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
             _faker.Generate<Order>(configure).Should().BeGeneratedWithoutMocks();
         }
 
         [Fact]
         public void Should_Generate_Many_Complex_Types()
         {
-            int count = AutoConfig.DefaultRepeatCount.Invoke(null);
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_config);
+            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
             List<Order>? instances = _faker.Generate<Order>(count, configure);
 
             AssertGenerateMany(instances);
         }
     }
 
-    public class Generate_Instance_Faker
-        : AutoFakerFixture
+    public class Generate_Instance_Faker : AutoFakerFixture
     {
-        private IAutoFaker _faker;
-        private AutoConfig _config;
+        private readonly IAutoFaker _faker;
+        private AutoFakerConfig _fakerConfig;
 
         public Generate_Instance_Faker()
         {
             var faker = AutoFaker.Create() as AutoFaker;
 
             _faker = faker;
-            _config = faker.Config;
-        }
-
-        [Fact]
-        public void Should_Generate_Complex_Type()
-        {
-            Action<IAutoFakerConfigBuilder>? configure = CreateConfigure<IAutoFakerConfigBuilder>(AutoFaker.DefaultConfig);
-            _faker.Generate<Order, TestFaker>(configure).Should().BeGeneratedWithoutMocks();
-        }
-
-        [Fact]
-        public void Should_Generate_Many_Complex_Types()
-        {
-            int count = AutoConfig.DefaultRepeatCount.Invoke(null);
-            Action<IAutoFakerConfigBuilder>? configure = CreateConfigure<IAutoFakerConfigBuilder>(AutoFaker.DefaultConfig);
-            List<Order>? instances = _faker.Generate<Order, TestFaker>(count, configure);
-
-            AssertGenerateMany(instances);
+            _fakerConfig = faker.FakerConfig;
         }
     }
 
     public class Generate_Static
         : AutoFakerFixture
     {
-        private static MethodInfo _generate = _type.GetMethod(_name, BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(Action<IAutoGenerateConfigBuilder>) }, null);
-        private static MethodInfo _generateMany = _type.GetMethod(_name, BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(int), typeof(Action<IAutoGenerateConfigBuilder>) }, null);
+        private static readonly MethodInfo _generate = _type.GetMethod(_name, BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(Action<IAutoGenerateConfigBuilder>) }, null);
+        private static readonly MethodInfo _generateMany = _type.GetMethod(_name, BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(int), typeof(Action<IAutoGenerateConfigBuilder>) }, null);
 
         [Theory]
         [MemberData(nameof(GetTypes))]
         public void Should_Generate_Type(Type type)
         {
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(AutoFaker.DefaultConfig);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
             AssertGenerate(type, _generate, null, configure);
         }
 
@@ -160,8 +141,8 @@ public class AutoFakerFixture
         [MemberData(nameof(GetTypes))]
         public void Should_Generate_Many_Types(Type type)
         {
-            int count = AutoConfig.DefaultRepeatCount.Invoke(null);
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(AutoFaker.DefaultConfig);
+            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
 
             AssertGenerateMany(type, _generateMany, null, count, configure);
         }
@@ -169,191 +150,42 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Complex_Type()
         {
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(AutoFaker.DefaultConfig);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
             AutoFaker.Generate<Order>(configure).Should().BeGeneratedWithoutMocks();
         }
 
         [Fact]
         public void Should_Generate_Many_Complex_Types()
         {
-            int count = AutoConfig.DefaultRepeatCount.Invoke(null);
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(AutoFaker.DefaultConfig);
+            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
             List<Order>? instances = AutoFaker.Generate<Order>(count, configure);
 
             AssertGenerateMany(instances);
         }
     }
 
-    public class Generate_Static_Faker
-        : AutoFakerFixture
+    public class AutoFaker_WithFakerHub : AutoFakerFixture
     {
         [Fact]
-        public void Should_Generate_Complex_Type()
-        {
-            Action<IAutoFakerConfigBuilder>? configure = CreateConfigure<IAutoFakerConfigBuilder>(AutoFaker.DefaultConfig);
-            AutoFaker.Generate<Order, TestFaker>(configure).Should().BeGeneratedWithoutMocks();
-        }
-
-        [Fact]
-        public void Should_Generate_Many_Complex_Types()
-        {
-            int count = AutoConfig.DefaultRepeatCount.Invoke(null);
-            Action<IAutoFakerConfigBuilder>? configure = CreateConfigure<IAutoFakerConfigBuilder>(AutoFaker.DefaultConfig);
-            List<Order>? instances = AutoFaker.Generate<Order, TestFaker>(count, configure);
-
-            AssertGenerateMany(instances);
-        }
-    }
-
-    public class AutoFaker_T
-        : AutoFakerFixture
-    {
-        private Faker<Order> _faker;
-
-        public AutoFaker_T()
-        {
-            _faker = new AutoFaker<Order>();
-        }
-
-        [Fact]
-        public void Should_Generate_Type()
-        {
-            _faker.Generate().Should().BeGeneratedWithoutMocks();
-        }
-
-        [Fact]
-        public void Should_Populate_ExpandoObject()
-        {
-            var faker = new AutoFaker<dynamic>();
-
-            dynamic instance = new ExpandoObject();
-            dynamic child = new ExpandoObject();
-
-            instance.Property = string.Empty;
-            instance.Child = child;
-
-            child.Property = 0;
-
-            faker.Populate(instance);
-
-            string property = instance.Property;
-            int childProperty = instance.Child.Property;
-
-            property.Should().NotBeEmpty();
-            childProperty.Should().NotBe(0);
-        }
-
-        //[Fact]
-        //public void Should_Populate_Instance()
-        //{
-        //    var faker = new Faker();
-        //    var id = faker.Random.Int();
-        //    var calculator = Substitute.For<ICalculator>();
-        //    var order = new Order(id, calculator);
-
-        //    _faker.Populate(order);
-
-        //    order.Should().BeGeneratedWithMocks();
-        //    order.Id.Should().Be(id);
-        //    order.Calculator.Should().Be(calculator);
-        //}
-
-        //[Fact]
-        //public void Should_Use_Custom_Instantiator()
-        //{
-        //    var binder = Substitute.For<IAutoBinder>();
-        //    binder.GetMembers(typeof(Order)).Returns(new Dictionary<string, MemberInfo>());
-
-        //    var order = new AutoFaker<Order>(binder)
-        //        .CustomInstantiator(faker => new Order(default, default))
-        //        .Generate();
-
-        //    binder.DidNotReceive().CreateInstance<Order>(Arg.Any<AutoGenerateContext>());
-        //}
-
-        [Fact]
-        public void Should_Not_Generate_Rule_Set_Members()
-        {
-            var code = Guid.NewGuid();
-            Order? order = _faker
-                .RuleFor(o => o.Code, code)
-                .Generate();
-
-            order.Should().BeGeneratedWithoutMocks();
-            order.Code.Should().Be(code);
-        }
-
-        [Fact]
-        public void Should_Not_Generate_If_No_Default_Rule_Set()
-        {
-            _faker.RuleSet("test", rules =>
-            {
-                // No default constructor so ensure a create action is defined
-                // Make the values default so the NotBeGenerated() check passes
-                rules.CustomInstantiator(f => new Order(default, default));
-            });
-
-            _faker.Generate("test").Should().NotBeGenerated();
-        }
-
-        [Fact]
-        public void Should_Call_FinishWith()
-        {
-            Order instance = null;
-            Order? order = new AutoFaker<Order>()
-                .FinishWith((f, i) => instance = i)
-                .Generate();
-
-            order.Should().BeGeneratedWithoutMocks();
-            instance.Should().Be(order);
-        }
-
-        [Fact]
-        public void Should_Not_Initialize_Properties_Twice()
-        {
-            // Arrange
-            var random1 = new Randomizer(12345);
-            var random2 = new Randomizer(12345);
-
-            var faker = new Faker() { Random = random1 };
-
-            var autoFaker = new AutoFaker<TestClassWithSingleProperty<int>>();
-
-            autoFaker.Configure(
-                builder => builder.WithFakerHub(faker));
-
-            // Act
-            TestClassWithSingleProperty<int>? instance = autoFaker.Generate(); // Should pull one int from random1
-
-            int expectedValue = random2.Int();
-
-            // Assert
-            instance.Value.Should().Be(expectedValue);
-        }
-    }
-
-    public class AutoFaker_WithFakerHub
-        : AutoFakerFixture
-    {
-        [Fact]
-        public void Should_Use_Caller_Supplied_FakerHub()
+        public void Should_Use_Caller_Supplied_Faker()
         {
             // We infer that our FakerHub was used by reseeding it and testing that we get the same sequence both times.
-            var fakerHub = new Faker();
+            var faker = new Faker();
 
-            Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(
-                AutoFaker.DefaultConfig,
-                builder => builder.WithFakerHub(fakerHub));
+            Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>(
+                DefaultConfigService.Config,
+                builder => builder.WithFaker(faker));
 
-            IAutoFaker? faker = AutoFaker.Create(configure);
+            IAutoFaker autoFaker = AutoFaker.Create(configure);
 
-            fakerHub.Random = new Randomizer(1);
+            faker.Random = new Randomizer(1);
 
-            var instance1 = faker.Generate<TestObject>();
+            var instance1 = autoFaker.Generate<TestObject>();
 
-            fakerHub.Random = new Randomizer(1);
+            faker.Random = new Randomizer(1);
 
-            var instance2 = faker.Generate<TestObject>();
+            var instance2 = autoFaker.Generate<TestObject>();
 
             instance1.Should().BeEquivalentTo(instance2);
         }
@@ -460,7 +292,7 @@ public class AutoFakerFixture
 
     public static IEnumerable<object[]> GetTypes()
     {
-        foreach (Type? type in AutoGeneratorFactory.Generators.Keys)
+        foreach (Type? type in GeneratorFactory.Generators.Keys)
         {
             yield return new object[] { type };
         }
@@ -472,7 +304,7 @@ public class AutoFakerFixture
         yield return new object[] { typeof(int?) };
     }
 
-    private Action<TBuilder> CreateConfigure<TBuilder>(AutoConfig assertConfig, Action<TBuilder> configure = null)
+    private Action<TBuilder> CreateConfigure<TBuilder>(AutoFakerConfig assertFakerConfig, Action<TBuilder> configure = null)
     {
         return builder =>
         {
@@ -481,8 +313,8 @@ public class AutoFakerFixture
                 configure.Invoke(builder);
             }
 
-            var instance = builder as AutoConfigBuilder;
-            instance.Config.Should().NotBe(assertConfig);
+            var instance = builder as AutoFakerConfigBuilder;
+            instance.FakerConfig.Should().NotBe(assertFakerConfig);
         };
     }
 
@@ -496,7 +328,7 @@ public class AutoFakerFixture
 
     public static void AssertGenerateMany(Type type, MethodInfo methodInfo, IAutoFaker faker, params object[] args)
     {
-        int count = AutoConfig.DefaultRepeatCount.Invoke(null);
+        int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
         MethodInfo? method = methodInfo.MakeGenericMethod(type);
         var instances = method.Invoke(faker, args) as ICollection;
 
@@ -510,7 +342,7 @@ public class AutoFakerFixture
 
     public static void AssertGenerateMany(IEnumerable<Order> instances)
     {
-        int count = AutoConfig.DefaultRepeatCount.Invoke(null);
+        int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
 
         instances.Should().HaveCount(count);
 

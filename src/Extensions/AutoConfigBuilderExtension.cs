@@ -2,6 +2,9 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Config.Abstract;
+using Soenneker.Utils.AutoBogus.Context;
+using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -15,11 +18,11 @@ public static class AutoConfigBuilderExtension
     /// <summary>
     /// Registers a binder type to use when generating values.
     /// </summary>
-    /// <typeparam name="TBinder">The <see cref="IAutoBinder"/> type to use.</typeparam>
+    /// <typeparam name="TBinder">The <see cref="IAutoFakerBinder"/> type to use.</typeparam>
     /// <param name="builder">The current configuration builder instance.</param>
     /// <returns>The current configuration builder instance.</returns>
     public static IAutoFakerDefaultConfigBuilder WithBinder<TBinder>(this IAutoFakerDefaultConfigBuilder builder)
-        where TBinder : IAutoBinder, new()
+        where TBinder : AutoFakerBinder, new()
     {
         var binder = new TBinder();
         return builder?.WithBinder(binder);
@@ -28,11 +31,11 @@ public static class AutoConfigBuilderExtension
     /// <summary>
     /// Registers a binder type to use when generating values.
     /// </summary>
-    /// <typeparam name="TBinder">The <see cref="IAutoBinder"/> type to use.</typeparam>
+    /// <typeparam name="TBinder">The <see cref="IAutoFakerBinder"/> type to use.</typeparam>
     /// <param name="builder">The current configuration builder instance.</param>
     /// <returns>The current configuration builder instance.</returns>
     public static IAutoGenerateConfigBuilder WithBinder<TBinder>(this IAutoGenerateConfigBuilder builder)
-        where TBinder : IAutoBinder, new()
+        where TBinder : AutoFakerBinder, new()
     {
         var binder = new TBinder();
         return builder?.WithBinder(binder);
@@ -41,11 +44,11 @@ public static class AutoConfigBuilderExtension
     /// <summary>
     /// Registers a binder type to use when generating values.
     /// </summary>
-    /// <typeparam name="TBinder">The <see cref="IAutoBinder"/> type to use.</typeparam>
+    /// <typeparam name="TBinder">The <see cref="IAutoFakerBinder"/> type to use.</typeparam>
     /// <param name="builder">The current configuration builder instance.</param>
     /// <returns>The current configuration builder instance.</returns>
     public static IAutoFakerConfigBuilder WithBinder<TBinder>(this IAutoFakerConfigBuilder builder)
-        where TBinder : IAutoBinder, new()
+        where TBinder : AutoFakerBinder, new()
     {
         var binder = new TBinder();
         return builder?.WithBinder(binder);
@@ -141,9 +144,9 @@ public static class AutoConfigBuilderExtension
     /// <param name="builder">The current configuration builder instance.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
-    public static IAutoFakerDefaultConfigBuilder WithOverride<TType>(this IAutoFakerDefaultConfigBuilder builder, Func<AutoGenerateOverrideContext, TType> generator)
+    public static IAutoFakerDefaultConfigBuilder WithOverride<TType>(this IAutoFakerDefaultConfigBuilder builder, Func<AutoFakerContextOverride, TType> generator)
     {
-        var generatorOverride = new AutoGeneratorTypeOverride<TType>(generator);
+        var generatorOverride = new GeneratorTypeOverride<TType>(generator);
         return builder?.WithOverride(generatorOverride);
     }
 
@@ -154,9 +157,9 @@ public static class AutoConfigBuilderExtension
     /// <param name="builder">The current configuration builder instance.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
-    public static IAutoGenerateConfigBuilder WithOverride<TType>(this IAutoGenerateConfigBuilder builder, Func<AutoGenerateOverrideContext, TType> generator)
+    public static IAutoGenerateConfigBuilder WithOverride<TType>(this IAutoGenerateConfigBuilder builder, Func<AutoFakerContextOverride, TType> generator)
     {
-        var generatorOverride = new AutoGeneratorTypeOverride<TType>(generator);
+        var generatorOverride = new GeneratorTypeOverride<TType>(generator);
         return builder?.WithOverride(generatorOverride);
     }
 
@@ -167,26 +170,9 @@ public static class AutoConfigBuilderExtension
     /// <param name="builder">The current configuration builder instance.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
-    public static IAutoFakerConfigBuilder WithOverride<TType>(this IAutoFakerConfigBuilder builder, Func<AutoGenerateOverrideContext, TType> generator)
+    public static IAutoFakerConfigBuilder WithOverride<TType>(this IAutoFakerConfigBuilder builder, Func<AutoFakerContextOverride, TType> generator)
     {
-        var generatorOverride = new AutoGeneratorTypeOverride<TType>(generator);
-        return builder?.WithOverride(generatorOverride);
-    }
-
-    /// <summary>
-    /// Registers an override instance to use when generating values.
-    /// </summary>
-    /// <typeparam name="TType">The type of instance to override.</typeparam>
-    /// <typeparam name="TValue">The member type to override.</typeparam>
-    /// <param name="builder">The current configuration builder instance.</param>
-    /// <param name="member">The member to override.</param>
-    /// <param name="generator">A handler used to generate the override.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    public static IAutoFakerDefaultConfigBuilder WithOverride<TType, TValue>(this IAutoFakerDefaultConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoGenerateOverrideContext, TValue> generator)
-    {
-        string? memberName = GetMemberName(member);
-        var generatorOverride = new AutoGeneratorMemberOverride<TType, TValue>(memberName, generator);
-
+        var generatorOverride = new GeneratorTypeOverride<TType>(generator);
         return builder?.WithOverride(generatorOverride);
     }
 
@@ -199,10 +185,10 @@ public static class AutoConfigBuilderExtension
     /// <param name="member">The member to override.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
-    public static IAutoGenerateConfigBuilder WithOverride<TType, TValue>(this IAutoGenerateConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoGenerateOverrideContext, TValue> generator)
+    public static IAutoFakerDefaultConfigBuilder WithOverride<TType, TValue>(this IAutoFakerDefaultConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoFakerContextOverride, TValue> generator)
     {
         string? memberName = GetMemberName(member);
-        var generatorOverride = new AutoGeneratorMemberOverride<TType, TValue>(memberName, generator);
+        var generatorOverride = new GeneratorMemberOverride<TType, TValue>(memberName, generator);
 
         return builder?.WithOverride(generatorOverride);
     }
@@ -216,10 +202,27 @@ public static class AutoConfigBuilderExtension
     /// <param name="member">The member to override.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
-    public static IAutoFakerConfigBuilder WithOverride<TType, TValue>(this IAutoFakerConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoGenerateOverrideContext, TValue> generator)
+    public static IAutoGenerateConfigBuilder WithOverride<TType, TValue>(this IAutoGenerateConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoFakerContextOverride, TValue> generator)
     {
         string? memberName = GetMemberName(member);
-        var generatorOverride = new AutoGeneratorMemberOverride<TType, TValue>(memberName, generator);
+        var generatorOverride = new GeneratorMemberOverride<TType, TValue>(memberName, generator);
+
+        return builder?.WithOverride(generatorOverride);
+    }
+
+    /// <summary>
+    /// Registers an override instance to use when generating values.
+    /// </summary>
+    /// <typeparam name="TType">The type of instance to override.</typeparam>
+    /// <typeparam name="TValue">The member type to override.</typeparam>
+    /// <param name="builder">The current configuration builder instance.</param>
+    /// <param name="member">The member to override.</param>
+    /// <param name="generator">A handler used to generate the override.</param>
+    /// <returns>The current configuration builder instance.</returns>
+    public static IAutoFakerConfigBuilder WithOverride<TType, TValue>(this IAutoFakerConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoFakerContextOverride, TValue> generator)
+    {
+        string? memberName = GetMemberName(member);
+        var generatorOverride = new GeneratorMemberOverride<TType, TValue>(memberName, generator);
 
         return builder?.WithOverride(generatorOverride);
     }

@@ -29,7 +29,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_many_should_generate()
     {
-        IAutoFaker? faker = AutoFaker.Create();
+        IAutoFaker faker = AutoFaker.Create();
 
         for (var i = 0; i < 1000; i++)
         {

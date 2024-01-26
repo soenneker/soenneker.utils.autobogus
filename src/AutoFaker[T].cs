@@ -5,6 +5,7 @@ using System.Reflection;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Extensions;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus;
 
@@ -12,9 +13,7 @@ namespace Soenneker.Utils.AutoBogus;
 /// A class used to invoke generation requests of type <typeparamref name="TType"/>.
 /// </summary>
 /// <typeparam name="TType">The type of instance to generate.</typeparam>
-public class AutoFaker<TType>
-    : Faker<TType>
-    where TType : class
+public class AutoFaker<TType> 
 {
     private AutoConfig _config;
 
@@ -23,7 +22,8 @@ public class AutoFaker<TType>
     /// </summary>
     public AutoFaker()
         : this(null, null)
-    { }
+    {
+    }
 
     /// <summary>
     /// Instantiates an instance of the <see cref="AutoFaker{TType}"/> class.
@@ -31,7 +31,8 @@ public class AutoFaker<TType>
     /// <param name="locale">The locale to use for value generation.</param>
     public AutoFaker(string locale)
         : this(locale, null)
-    { }
+    {
+    }
 
     /// <summary>
     /// Instantiates an instance of the <see cref="AutoFaker{TType}"/> class.
@@ -39,7 +40,8 @@ public class AutoFaker<TType>
     /// <param name="binder">The <see cref="IAutoBinder"/> instance to use for the generation request.</param>
     public AutoFaker(IAutoBinder binder)
         : this(null, binder)
-    { }
+    {
+    }
 
     /// <summary>
     /// Instantiates an instance of the <see cref="AutoFaker{TType}"/> class.
@@ -74,11 +76,14 @@ public class AutoFaker<TType>
             // Also pass the binder set up to the underlying Faker
             binder = _config.Binder;
 
+            if (FakerService.IsValueCreated)
+                FakerHub = FakerService.Faker;
+
             // Apply a configured faker if set
-            if (_config.FakerHub != null)
-            {
-                FakerHub = _config.FakerHub;
-            }
+            //if (_config.FakerHub != null)
+            //{
+            //    FakerHub = _config.FakerHub;
+            //}
         }
     }
 
@@ -94,9 +99,10 @@ public class AutoFaker<TType>
     public AutoFaker<TType> Configure(Action<IAutoGenerateConfigBuilder> configure)
     {
         var config = new AutoConfig(AutoFaker.DefaultConfig);
+
         var builder = new AutoConfigBuilder(config);
 
-        configure?.Invoke(builder);
+        configure.Invoke(builder);
 
         Config = config;
 
@@ -161,7 +167,7 @@ public class AutoFaker<TType>
             config.Binder = Binder;
         }
 
-        return new AutoGenerateContext(FakerHub, config)
+        return new AutoGenerateContext(config)
         {
             RuleSets = ParseRuleSets(ruleSets)
         };
@@ -183,7 +189,7 @@ public class AutoFaker<TType>
 
         List<string> validRuleSets = new List<string>();
 
-        string[] ruleSetArray = ruleSets?.Split(',') ?? new[] { currentRuleSet };
+        string[] ruleSetArray = ruleSets?.Split(',') ?? new[] {currentRuleSet};
 
         for (int i = 0; i < ruleSetArray.Length; i++)
         {
@@ -271,9 +277,9 @@ public class AutoFaker<TType>
             List<string> memberNames = GetRuleSetsMemberNames(context);
 
             var members = new MemberInfo[TypeProperties.Count - memberNames.Count];
-            int index = 0;
+            var index = 0;
 
-            foreach (var member in TypeProperties)
+            foreach (KeyValuePair<string, MemberInfo> member in TypeProperties)
             {
                 if (!memberNames.Contains(member.Key))
                 {
@@ -296,9 +302,10 @@ public class AutoFaker<TType>
         for (int i = 0; i < context.RuleSets.Count; i++)
         {
             string? ruleSetName = context.RuleSets[i];
-            if (Actions.TryGetValue(ruleSetName, out var ruleSet))
+
+            if (Actions.TryGetValue(ruleSetName, out Dictionary<string, PopulateAction<TType>>? ruleSet))
             {
-                foreach (var keyValuePair in ruleSet)
+                foreach (KeyValuePair<string, PopulateAction<TType>> keyValuePair in ruleSet)
                 {
                     members.Add(keyValuePair.Key);
                 }

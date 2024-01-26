@@ -4,7 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
-using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Context;
+using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Services;
 using Xunit;
 using Xunit.Sdk;
 
@@ -26,8 +28,10 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
+            var cachedType = CacheService.Cache.GetCachedType(dataSetType);
+
             // Act
-            bool success = DataSetGenerator.TryCreateGenerator(dataSetType, out DataSetGenerator? generator);
+            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
             // Assert
             if (shouldSucceed)
@@ -52,9 +56,11 @@ partial class AutoGeneratorsFixture
         public void Generate_Should_Return_DataSet(Type dataSetType)
         {
             // Arrange
-            AutoGenerateContext? context = CreateContext(dataSetType);
+            AutoFakerContext? context = CreateContext(dataSetType);
 
-            bool success = DataSetGenerator.TryCreateGenerator(context.GenerateType, out DataSetGenerator? generator);
+            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+
+            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -82,8 +88,8 @@ partial class AutoGeneratorsFixture
             // Arrange
             var rowCountByTable = new Dictionary<DataTable, int>();
 
-            Func<AutoGenerateContext, int> rowCountFunctor =
-                (AutoGenerateContext ctx) =>
+            Func<AutoFakerContext, int> rowCountFunctor =
+                (AutoFakerContext ctx) =>
                 {
                     var dataTable = (DataTable)ctx.Instance;
 
@@ -103,9 +109,11 @@ partial class AutoGeneratorsFixture
                     return count;
                 };
 
-            AutoGenerateContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: rowCountFunctor);
+            AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: rowCountFunctor);
 
-            bool success = DataSetGenerator.TryCreateGenerator(context.GenerateType, out DataSetGenerator? generator);
+            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+
+            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -135,8 +143,8 @@ partial class AutoGeneratorsFixture
 
             var rowCountByTable = new Dictionary<DataTable, int>();
 
-            Func<AutoGenerateContext, int> rowCountFunctor =
-                (AutoGenerateContext ctx) =>
+            Func<AutoFakerContext, int> rowCountFunctor =
+                (AutoFakerContext ctx) =>
                 {
                     var dataTable = (DataTable)ctx.Instance;
 
@@ -157,9 +165,11 @@ partial class AutoGeneratorsFixture
                     return count;
                 };
 
-            AutoGenerateContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: rowCountFunctor);
+            AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: rowCountFunctor);
 
-            bool success = DataSetGenerator.TryCreateGenerator(context.GenerateType, out DataSetGenerator? generator);
+            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+
+            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -229,8 +239,10 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
+            var cachedType = CacheService.Cache.GetCachedType(dataTableType);
+
             // Act
-            bool success = DataTableGenerator.TryCreateGenerator(dataTableType, out DataTableGenerator? generator);
+            bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
             // Assert
             if (shouldSucceed)
@@ -254,9 +266,11 @@ partial class AutoGeneratorsFixture
         public void Generate_Should_Return_DataTable(Type dataTableType)
         {
             // Arrange
-            AutoGenerateContext? context = CreateContext(dataTableType);
+            AutoFakerContext? context = CreateContext(dataTableType);
 
-            bool success = DataTableGenerator.TryCreateGenerator(context.GenerateType, out DataTableGenerator? generator);
+            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+
+            bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
@@ -279,12 +293,14 @@ partial class AutoGeneratorsFixture
             // Arrange
             const int RowCount = 100;
 
-            Func<AutoGenerateContext, int> rowCountFunctor =
+            Func<AutoFakerContext, int> rowCountFunctor =
                 _ => RowCount;
 
-            AutoGenerateContext? context = CreateContext(dataTableType, dataTableRowCountFunctor: rowCountFunctor);
+            AutoFakerContext? context = CreateContext(dataTableType, dataTableRowCountFunctor: rowCountFunctor);
 
-            bool success = DataTableGenerator.TryCreateGenerator(context.GenerateType, out DataTableGenerator? generator);
+            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+
+            bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 

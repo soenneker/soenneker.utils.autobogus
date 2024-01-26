@@ -1,5 +1,7 @@
 using System;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Context;
+using Soenneker.Utils.AutoBogus.Generators;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,16 +32,16 @@ public class StructFixture
     }
 }
 
-class ExampleStructOverride : AutoGeneratorOverride
+class ExampleStructOverride : GeneratorOverride
 {
     public override bool Preinitialize => false;
 
-    public override bool CanOverride(AutoGenerateContext context)
+    public override bool CanOverride(AutoFakerContext context)
     {
         return context.GenerateType == typeof(ExampleStruct);
     }
 
-    public override void Generate(AutoGenerateOverrideContext context)
+    public override void Generate(AutoFakerContextOverride context)
     {
         context.Instance = new ExampleStruct(5);
     }

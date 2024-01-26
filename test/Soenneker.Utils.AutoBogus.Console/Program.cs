@@ -1,5 +1,4 @@
 ﻿using Soenneker.Utils.AutoBogus.Abstract;
-using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 
 namespace Soenneker.Utils.AutoBogus.Console;
 
@@ -9,9 +8,9 @@ public class Program
     {
         IAutoFaker? faker = AutoFaker.Create();
 
-        for (int x = 0; x < 10000; x++)
+        for (int i = 0; i < 10000; i++)
         {
-            var order = faker.Generate<Order>();
+            var order = faker.Generate<int>();
         }
     }
 }

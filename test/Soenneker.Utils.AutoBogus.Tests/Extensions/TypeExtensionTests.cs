@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Enums;
 using Soenneker.Utils.AutoBogus.Extensions;
+using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 using Xunit;
 
@@ -23,33 +25,34 @@ public class TypeExtensionTests
     [Fact]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_readonly_dictionary()
     {
-        Type derivedType = typeof(DerivedReadOnlyDictionary);
-        List<Type> interfaces = derivedType.GetInterfaces().ToList();
+        CachedType derivedType = CacheService.Cache.GetCachedType(typeof(DerivedReadOnlyDictionary));
+        List<CachedType> interfaces = derivedType.GetCachedInterfaces().ToList();
 
-        (Type?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
-        result.Item1.Should().Be(typeof(IDictionary<string, object>));
+        (CachedType?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
+        result.Item1.Type.Should().Be(typeof(IDictionary<string, object>));
         result.Item2.Should().Be(GenericCollectionType.Dictionary);
     }
 
     [Fact]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_dictionary_for_Derived()
     {
-        Type derivedType = typeof(DerivedDictionary);
-        List<Type> interfaces = derivedType.GetInterfaces().ToList();
+        CachedType derivedType = CacheService.Cache.GetCachedType(typeof(DerivedDictionary));
+        List<CachedType> interfaces = derivedType.GetCachedInterfaces().ToList();
 
-        (Type?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
-        result.Item1.Should().Be(typeof(IDictionary<string,object>));
+        (CachedType?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
+        result.Item1.Type.Should().Be(typeof(IDictionary<string,object>));
         result.Item2.Should().Be(GenericCollectionType.Dictionary);
     }
 
     [Fact]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_dictionary_for_DoubleDerived()
     {
-        Type derivedType = typeof(DoubleDerivedDictionary);
-        List<Type> interfaces = derivedType.GetInterfaces().ToList();
+        CachedType derivedType = CacheService.Cache.GetCachedType(typeof(DoubleDerivedDictionary));
 
-        (Type?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
-        result.Item1.Should().Be(typeof(IDictionary<string, object>));
+        List <CachedType> interfaces = derivedType.GetCachedInterfaces().ToList();
+
+        (CachedType?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
+        result.Item1.Type.Should().Be(typeof(IDictionary<string, object>));
         result.Item2.Should().Be(GenericCollectionType.Dictionary);
     }
 

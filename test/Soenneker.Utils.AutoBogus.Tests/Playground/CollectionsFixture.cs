@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Bogus;
 using FluentAssertions;
 using Xunit;
 
@@ -56,28 +55,29 @@ public class CollectionsFixture
         collections.C8.Should().NotBeEmpty();
     }
 
-    [Fact]
-    public void Should_Generate_Collection_Properties_With_Rules()
-    {
-        Faker<Collections>? faker = new AutoFaker<Collections>()
-            .RuleFor(c => c.C1, f => new List<string> { f.Random.Word() })
-            .RuleFor(c => c.C2, f => new Dictionary<string, string> { { f.Random.Word(), f.Random.Word() } })
-            .RuleFor(c => c.C3, f => new List<string> { f.Random.Word() })
-            .RuleFor(c => c.C4, f => new List<string> { f.Random.Word() })
-            .RuleFor(c => c.C5, f => new List<string> { f.Random.Word() })
-            .RuleFor(c => c.C6, f => new Dictionary<string, string> { { f.Random.Word(), f.Random.Word() } })
-            .RuleFor(c => c.C7, f => new List<string> { f.Random.Word() })
-            .RuleFor(c => c.C8, f => new HashSet<string> { f.Random.Word() });
+    //[Fact]
+    //public void Should_Generate_Collection_Properties_With_Rules()
+    //{
+    //    Faker<Collections>? faker = new AutoFaker<Collections>()
+    //        .RuleFor(c => c.C1, f => new List<string> { f.Random.Word() })
+    //        .RuleFor(c => c.C2, f => new Dictionary<string, string> { { f.Random.Word(), f.Random.Word() } })
+    //        .RuleFor(c => c.C3, f => new List<string> { f.Random.Word() })
+    //        .RuleFor(c => c.C4, f => new List<string> { f.Random.Word() })
+    //        .RuleFor(c => c.C5, f => new List<string> { f.Random.Word() })
+    //        .RuleFor(c => c.C6, f => new Dictionary<string, string> { { f.Random.Word(), f.Random.Word() } })
+    //        .RuleFor(c => c.C7, f => new List<string> { f.Random.Word() })
+    //        .RuleFor(c => c.C8, f => new HashSet<string> { f.Random.Word() });
 
-        Collections? collections = faker.Generate();
+    //    Collections? collections = faker.Generate();
 
-        collections.C1.Should().NotBeEmpty();
-        collections.C2.Should().NotBeEmpty();
-        collections.C3.Should().NotBeEmpty();
-        collections.C4.Should().NotBeEmpty();
-        collections.C5.Should().NotBeEmpty();
-        collections.C6.Should().NotBeEmpty();
-        collections.C7.Should().NotBeEmpty();
-        collections.C8.Should().NotBeEmpty();
-    }
+    //    collections.C1.Should().NotBeEmpty();
+    //    collections.C2.Should().NotBeEmpty();
+    //    collections.C3.Should().NotBeEmpty();
+    //    collections.C4.Should().NotBeEmpty();
+    //    collections.C5.Should().NotBeEmpty();
+    //    collections.C6.Should().NotBeEmpty();
+    //    collections.C7.Should().NotBeEmpty();
+    //    collections.C8.Should().NotBeEmpty();
+
+    //}
 }

@@ -31,6 +31,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="AutoFaker[T].cs" />
+    </ItemGroup>
     
     <ItemGroup>
         <None Include="..\CONTRIBUTING.md" Link="CONTRIBUTING.md" />
@@ -43,7 +47,8 @@
         <PackageReference Include="Ardalis.SmartEnum" Version="8.0.0" />
         <PackageReference Include="Bogus" Version="35.4.0" />
         <PackageReference Include="Bogus" Version="35.4.0" />
-        <PackageReference Include="Soenneker.Reflection.Cache" Version="2.1.7" />
+        <PackageReference Include="Soenneker.Reflection.Cache" Version="2.1.13" />
+        <PackageReference Include="Soenneker.Utils.ResettableLazy" Version="2.1.76" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
     </ItemGroup>
 </Project>

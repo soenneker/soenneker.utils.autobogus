@@ -1,5 +1,7 @@
 using System;
 using FluentAssertions;
+using Soenneker.Utils.AutoBogus.Context;
+using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 
@@ -8,23 +10,23 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 public class AutoGeneratorOverridesFixture
 {
     private sealed class TestOverride
-        : AutoGeneratorOverride
+        : GeneratorOverride
     {
-        public TestOverride(bool preinitialize, Action<AutoGenerateOverrideContext> generator)
+        public TestOverride(bool preinitialize, Action<AutoFakerContextOverride> generator)
         {
             Preinitialize = preinitialize;
             Generator = generator;
         }
 
         public override bool Preinitialize { get; }
-        private Action<AutoGenerateOverrideContext> Generator { get; }
+        private Action<AutoFakerContextOverride> Generator { get; }
 
-        public override bool CanOverride(AutoGenerateContext context)
+        public override bool CanOverride(AutoFakerContext context)
         {
             return context.GenerateType == typeof(OverrideClass);
         }
 
-        public override void Generate(AutoGenerateOverrideContext context)
+        public override void Generate(AutoFakerContextOverride context)
         {
             Generator.Invoke(context);
         }
