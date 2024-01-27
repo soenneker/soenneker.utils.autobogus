@@ -7,7 +7,6 @@ using Soenneker.Utils.AutoBogus.Enums;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
-using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Utils;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
@@ -64,8 +63,6 @@ internal static class GeneratorFactory
     {
         Type? type = context.GenerateType;
 
-        CachedType cachedType = CacheService.Cache.GetCachedType(type);
-
         // Need check if the type is an in/out parameter and adjusted accordingly
         if (type.IsByRef)
         {
@@ -74,7 +71,7 @@ internal static class GeneratorFactory
 
         // Check if an expando object needs to generator
         // This actually means an existing dictionary needs to be populated
-        if (type.IsExpandoObject())
+        if (context.CachedType.IsExpandoObject())
         {
             return new ExpandoObjectGenerator();
         }
@@ -86,28 +83,28 @@ internal static class GeneratorFactory
             return CreateGenericGenerator(typeof(ArrayGenerator<>), type);
         }
 
-        if (DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator dataTableGenerator))
+        if (DataTableGenerator.TryCreateGenerator(context.CachedType, out DataTableGenerator dataTableGenerator))
         {
             return dataTableGenerator;
         }
 
-        if (DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator dataSetGenerator))
+        if (DataSetGenerator.TryCreateGenerator(context.CachedType, out DataSetGenerator dataSetGenerator))
         {
             return dataSetGenerator;
         }
 
-        if (cachedType.IsEnum)
+        if (context.CachedType.IsEnum)
         {
             return CreateGenericGenerator(typeof(EnumGenerator<>), type);
         }
 
-        if (cachedType.IsNullable)
+        if (context.CachedType.IsNullable)
         {
-            type = cachedType.GetGenericArguments()![0];
+            type = context.CachedType.GetGenericArguments()![0];
             return CreateGenericGenerator(typeof(NullableGenerator<>), type);
         }
 
-        (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(cachedType);
+        (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(context.CachedType);
 
         if (collectionType != null)
         {

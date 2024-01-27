@@ -1,72 +1,43 @@
 ﻿using System;
 using System.Dynamic;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
 public static class TypeExtension
 {
-    internal static bool IsNullable(this Type type)
+    internal static bool IsExpandoObject(this CachedType type)
     {
-        return CacheService.Cache.GetCachedType(type).IsNullable;
-        //return Nullable.GetUnderlyingType(type) != null;
+        return type.Type == typeof(ExpandoObject);
     }
 
-    internal static bool IsEnum(this Type type)
-    {
-        return CacheService.Cache.GetCachedType(type).IsEnum;
-        //return type.IsEnum;
-    }
-
-    internal static bool IsAbstract(this Type type)
-    {
-        return CacheService.Cache.GetCachedType(type).IsAbstract;
-        //return type.IsAbstract;
-    }
-
-    internal static bool IsInterface(this Type type)
-    {
-        return CacheService.Cache.GetCachedType(type).IsInterface;
-        //return type.IsInterface;
-    }
-
-    internal static bool IsGenericType(this Type type)
-    {
-        return CacheService.Cache.GetCachedType(type).IsGenericType;
-       // return type.IsGenericType;
-    }
-
-    internal static bool IsExpandoObject(this Type type)
-    {
-        return type == typeof(ExpandoObject);
-    }
-
-    internal static bool IsDictionary(this Type type)
+    internal static bool IsDictionary(this CachedType type)
     {
         return IsGenericType(type, "IDictionary`2");
     }
 
-    internal static bool IsReadOnlyDictionary(this Type type)
+    internal static bool IsReadOnlyDictionary(this CachedType type)
     {
         return IsGenericType(type, "IReadOnlyDictionary`2");
     }
 
-    internal static bool IsCollection(this Type type)
+    internal static bool IsCollection(this CachedType type)
     {
         return IsGenericType(type, "ICollection`1");
     }
 
-    internal static bool IsEnumerable(this Type type)
+    internal static bool IsEnumerable(this CachedType type)
     {
         return IsGenericType(type, "IEnumerable`1");
     }
 
-    private static bool IsGenericType(Type type, string interfaceTypeName)
+    private static bool IsGenericType(CachedType cachedType, string interfaceTypeName)
     {
-        if (type.Name == interfaceTypeName)
+        if (cachedType.Type.Name == interfaceTypeName)
             return true;
 
-        Type[] interfaces = CacheService.Cache.GetCachedType(type).GetInterfaces()!;
+        Type[] interfaces = cachedType.GetInterfaces()!;
 
         foreach (Type i in interfaces)
         {

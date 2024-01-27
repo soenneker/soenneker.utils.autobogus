@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Bogus;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Context;
 
@@ -15,17 +17,19 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The parent type of the type associated with the current generate request.
     /// </summary>
-    public Type ParentType { get; set; }
+    public Type ParentType { get; private set; }
 
     /// <summary>
     /// The type associated with the current generate request.
     /// </summary>
-    public Type GenerateType { get; internal set; }
+    public Type GenerateType { get; private set; }
+
+    public CachedType CachedType { get; private set; }
 
     /// <summary>
     /// The name associated with the current generate request.
     /// </summary>
-    public string GenerateName { get; internal set; }
+    public string GenerateName { get; private set; }
 
     /// <summary>
     /// The underlying <see cref="Bogus.Faker"/> instance used to generate random values.
@@ -37,23 +41,41 @@ public sealed class AutoFakerContext
     /// </summary>
     public List<string> RuleSets { get; internal set; }
 
-    internal AutoFakerConfig FakerConfig { get; }
+    internal AutoFakerConfig AutoFakerConfig { get; }
+
     internal Stack<Type> TypesStack { get; }
 
     internal object Instance { get; set; }
 
-    internal IAutoFakerBinder FakerBinder => FakerConfig.FakerBinder;
+    internal IAutoFakerBinder FakerBinder => AutoFakerConfig.FakerBinder;
 
-    internal List<GeneratorOverride> Overrides => FakerConfig.Overrides;
+    internal List<GeneratorOverride> Overrides => AutoFakerConfig.Overrides;
 
-    internal AutoFakerContext(AutoFakerConfig fakerConfig)
+    internal AutoFakerContext(AutoFakerConfig autoFakerConfig, Type? type = null)
     {
-        FakerConfig = fakerConfig;
+        AutoFakerConfig = autoFakerConfig;
 
-        Faker = fakerConfig.Faker!;
+        Faker = autoFakerConfig.Faker!;
 
         TypesStack = new Stack<Type>();
 
         RuleSets = [];
+
+        if (type != null)
+            Setup(type);
+    }
+
+    internal void Setup(Type parentType, Type generateType, string name)
+    {
+        ParentType = parentType;
+        GenerateType = generateType;
+        GenerateName = name;
+        CachedType = CacheService.Cache.GetCachedType(generateType);
+    }
+
+    internal void Setup(Type generateType)
+    {
+        GenerateType = generateType;
+        CachedType = CacheService.Cache.GetCachedType(generateType);
     }
 }

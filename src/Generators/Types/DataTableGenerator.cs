@@ -73,10 +73,10 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
 
         int rowCount = -1;
 
-        if (context.FakerConfig.DataTableRowCount != null)
+        if (context.AutoFakerConfig.DataTableRowCount != null)
         {
             rowCountIsSpecified = true;
-            rowCount = context.FakerConfig.DataTableRowCount(context);
+            rowCount = context.AutoFakerConfig.DataTableRowCount(context);
         }
 
         if (rowCount < 0)

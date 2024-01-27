@@ -10,7 +10,6 @@ internal static class GenericTypeUtil
     internal static (CachedType?, GenericCollectionType?) GetGenericCollectionType(CachedType cachedType)
     {
         CachedType[] interfaces = cachedType.GetCachedInterfaces()!;
-       // Type[] interfaces = type.GetInterfaces();
 
         var interfacesList = new List<CachedType>(interfaces.Length + 1);
 

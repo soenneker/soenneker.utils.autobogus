@@ -8,11 +8,11 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using Soenneker.Utils.AutoBogus.Extensions;
+using Soenneker.Utils.AutoBogus.Tests.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
 
-public sealed class GenerateAssertions
-    : ReferenceTypeAssertions<object, GenerateAssertions>
+public sealed class GenerateAssertions : ReferenceTypeAssertions<object, GenerateAssertions>
 {
     private MethodInfo DefaultValueFactory;
     private IDictionary<Func<Type, bool>, Func<string, Type, object, string>> Assertions = new Dictionary<Func<Type, bool>, Func<string, Type, object, string>>();
@@ -180,7 +180,9 @@ public sealed class GenerateAssertions
     private static bool IsUri(Type type) => type == typeof(Uri);
     private static bool IsUShort(Type type) => type == typeof(ushort);
     private static bool IsArray(Type type) => type.IsArray;
+
     private static bool IsEnum(Type type) => type.IsEnum();
+
     private static bool IsDictionary(Type type) => IsType(type, typeof(IDictionary<,>));
     private static bool IsEnumerable(Type type) => IsType(type, typeof(IEnumerable<>));
     private static bool IsNullable(Type type) => type.IsGenericType() && type.GetGenericTypeDefinition() == typeof(Nullable<>);

@@ -28,11 +28,12 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
     /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
     public virtual TType? CreateInstance<TType>(AutoFakerContext? context)
     {
-        if (context == null) 
+        if (context == null)
             return default;
 
         Type type = typeof(TType);
-        CachedConstructor? constructor = GetConstructor<TType>();
+       
+        CachedConstructor? constructor = GetConstructor(context.CachedType);
 
         if (constructor == null)
             return default;
@@ -60,7 +61,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    public virtual void PopulateInstance<TType>(object instance, AutoFakerContext context, MemberInfo[]? members = null)
+    public virtual void PopulateInstance<TType>(object? instance, AutoFakerContext? context, MemberInfo[]? members = null)
     {
         // We can only populate non-null instances 
         if (instance == null || context == null)
@@ -86,9 +87,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
                     continue;
                 }
 
-                context.ParentType = type;
-                context.GenerateType = member.Type;
-                context.GenerateName = member.Name;
+                context.Setup(type, member.Type, member.Name);
 
                 context.TypesStack.Push(member.Type);
 
@@ -102,11 +101,11 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
                     {
                         member.Setter.Invoke(instance, value);
                     }
-                    else if (member.Type.IsDictionary())
+                    else if (member.CachedType.IsDictionary())
                     {
                         PopulateDictionary(value, instance, member);
                     }
-                    else if (member.Type.IsCollection())
+                    else if (member.CachedType.IsCollection())
                     {
                         PopulateCollection(value, instance, member);
                     }
@@ -124,19 +123,19 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
     private static bool ShouldSkip(Type type, string path, AutoFakerContext context)
     {
         // Skip if the type is found
-        if (context.FakerConfig.SkipTypes.Contains(type))
+        if (context.AutoFakerConfig.SkipTypes.Contains(type))
         {
             return true;
         }
 
         // Skip if the path is found
-        if (context.FakerConfig.SkipPaths.Contains(path))
+        if (context.AutoFakerConfig.SkipPaths.Contains(path))
         {
             return true;
         }
 
         //check if tree depth is reached
-        int? treeDepth = context.FakerConfig.TreeDepth.Invoke(context);
+        int? treeDepth = context.AutoFakerConfig.TreeDepth.Invoke(context);
 
         if (treeDepth.HasValue && context.TypesStack.Count >= treeDepth)
             return true;
@@ -144,42 +143,14 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         // Finally check if the recursive depth has been reached
 
         int count = context.TypesStack.Count(t => t == type);
-        int recursiveDepth = context.FakerConfig.RecursiveDepth.Invoke(context);
+        int recursiveDepth = context.AutoFakerConfig.RecursiveDepth.Invoke(context);
 
         return count >= recursiveDepth;
     }
 
-    //private ConstructorInfo GetConstructor<TType>()
-    //{
-    //    Type type = typeof(TType);
-    //    ConstructorInfo[] constructors = type.GetConstructors();
-
-    //    // For dictionaries and enumerables locate a constructor that is used for populating as well
-    //    if (type.IsDictionary())
-    //    {
-    //        return ResolveTypedConstructor(typeof(IDictionary<,>), constructors);
-    //    }
-
-    //    if (type.IsEnumerable())
-    //    {
-    //        return ResolveTypedConstructor(typeof(IEnumerable<>), constructors);
-    //    }
-
-    //    // Attempt to find a default constructor
-    //    // If one is not found, simply use the first in the list
-    //    ConstructorInfo? defaultConstructor = (from c in constructors
-    //        let p = c.GetParameters()
-    //        where p.Count() == 0
-    //        select c).SingleOrDefault();
-
-    //    return defaultConstructor ?? constructors.FirstOrDefault();
-    //}
-
-    private static CachedConstructor? GetConstructor<TType>()
+    private static CachedConstructor? GetConstructor(CachedType type)
     {
-        Type type = typeof(TType);
-
-        CachedConstructor[]? constructors = CacheService.Cache.GetCachedType(type).GetCachedConstructors();
+        CachedConstructor[]? constructors = type.GetCachedConstructors();
 
         if (type.IsDictionary())
         {
@@ -201,19 +172,6 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
 
         return constructors.Length > 0 ? constructors[0] : null;
     }
-
-    //private static ConstructorInfo ResolveTypedConstructor(Type type, IEnumerable<ConstructorInfo> constructors)
-    //{
-    //    // Find the first constructor that matches the passed generic definition
-    //    return (from c in constructors
-    //        let p = c.GetParameters()
-    //        where p.Count() == 1
-    //        let m = p.Single()
-    //        where m.ParameterType.IsGenericType()
-    //        let d = m.ParameterType.GetGenericTypeDefinition()
-    //        where d == type
-    //        select c).SingleOrDefault();
-    //}
 
     private static CachedConstructor? ResolveTypedConstructor(Type type, CachedConstructor[] constructors)
     {
@@ -245,9 +203,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
 
     private static IAutoFakerGenerator GetParameterGenerator(Type type, ParameterInfo parameter, AutoFakerContext context)
     {
-        context.ParentType = type;
-        context.GenerateType = parameter.ParameterType;
-        context.GenerateName = parameter.Name;
+        context.Setup(type, parameter.ParameterType, parameter.Name);
 
         return GeneratorFactory.GetGenerator(context);
     }
@@ -258,6 +214,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         if (members != null)
         {
             var autoMembersList = new List<AutoMember>(members.Length);
+
             for (int i = 0; i < members.Length; i++)
             {
                 autoMembersList.Add(new AutoMember(members[i]));
@@ -297,11 +254,11 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
             if (!found)
             {
                 // A readonly dictionary or collection member can use the Add() method
-                if (autoMember.IsReadOnly && autoMember.Type.IsDictionary())
+                if (autoMember.IsReadOnly && autoMember.CachedType.IsDictionary())
                 {
                     autoMembers.Add(autoMember);
                 }
-                else if (autoMember.IsReadOnly && autoMember.Type.IsCollection())
+                else if (autoMember.IsReadOnly && autoMember.CachedType.IsCollection())
                 {
                     autoMembers.Add(autoMember);
                 }

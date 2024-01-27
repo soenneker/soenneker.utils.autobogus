@@ -1,6 +1,6 @@
 ﻿using Soenneker.Utils.AutoBogus.Abstract;
 
-namespace Soenneker.Utils.AutoBogus.Console;
+namespace Soenneker.Utils.AutoBogus.Tests.Console;
 
 public class Program
 {

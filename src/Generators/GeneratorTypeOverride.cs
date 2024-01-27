@@ -3,8 +3,7 @@ using Soenneker.Utils.AutoBogus.Context;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal sealed class GeneratorTypeOverride<TType>
-    : GeneratorOverride
+internal sealed class GeneratorTypeOverride<TType> : GeneratorOverride
 {
     internal GeneratorTypeOverride(Func<AutoFakerContextOverride, TType> generator)
     {
@@ -13,6 +12,7 @@ internal sealed class GeneratorTypeOverride<TType>
     }
 
     private Type Type { get; }
+
     private Func<AutoFakerContextOverride, TType> Generator { get; }
 
     public override bool CanOverride(AutoFakerContext context)

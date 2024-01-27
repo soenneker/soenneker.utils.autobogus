@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Bogus;
-using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Base;
 using Soenneker.Utils.AutoBogus.Context;

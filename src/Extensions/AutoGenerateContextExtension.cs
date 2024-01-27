@@ -19,19 +19,17 @@ public static class AutoGenerateContextExtension
     /// <typeparam name="TType">The instance type to generate.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <returns>The generated instance.</returns>
-    public static TType Generate<TType>(this AutoFakerContext context)
+    public static TType? Generate<TType>(this AutoFakerContext? context)
     {
-        if (context != null)
-        {
-            // Set the generate type for the current request
-            context.GenerateType = typeof(TType);
+        if (context == null)
+            return default;
 
-            // Get the type generator and return a value
-            IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
-            return (TType)generator.Generate(context);
-        }
+        // Set the generate type for the current request
+        context.Setup(typeof(TType));
 
-        return default;
+        // Get the type generator and return a value
+        IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
+        return (TType) generator.Generate(context);
     }
 
     /// <summary>
@@ -41,14 +39,14 @@ public static class AutoGenerateContextExtension
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of instances.</returns>
-    public static List<TType> GenerateMany<TType>(this AutoFakerContext context, int? count = null)
+    public static List<TType> GenerateMany<TType>(this AutoFakerContext? context, int? count = null)
     {
         var items = new List<TType>();
 
-        if (context != null)
-        {
-            GenerateMany(context, count, items, false);
-        }
+        if (context == null)
+            return items;
+
+        GenerateMany(context, count, items, false);
 
         return items;
     }
@@ -60,30 +58,27 @@ public static class AutoGenerateContextExtension
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of unique instances.</returns>
-    public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContext context, int? count = null)
+    public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContext? context, int? count = null)
     {
         var items = new List<TType>();
 
-        if (context != null)
-        {
-            GenerateMany(context, count, items, true);
-        }
+        if (context == null)
+            return items;
+
+        GenerateMany(context, count, items, true);
 
         return items;
     }
-    
+
     /// <summary>
     /// Populates the provided instance with generated values.
     /// </summary>
     /// <typeparam name="TType">The type of instance to populate.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="instance">The instance to populate.</param>
-    public static void Populate<TType>(this AutoFakerContext context, TType instance)
+    public static void Populate<TType>(this AutoFakerContext? context, TType instance)
     {
-        if (context != null)
-        {
-            context.FakerBinder.PopulateInstance<TType>(instance, context);
-        }
+        context?.FakerBinder.PopulateInstance<TType>(instance, context);
     }
 
     internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempt = 1, Func<TType>? generate = null)
@@ -91,10 +86,7 @@ public static class AutoGenerateContextExtension
         while (true)
         {
             // Apply any defaults
-            if (count == null)
-            {
-                count = context.FakerConfig.RepeatCount.Invoke(context);
-            }
+            count ??= context.AutoFakerConfig.RepeatCount.Invoke(context);
 
             generate ??= context.Generate<TType>;
 

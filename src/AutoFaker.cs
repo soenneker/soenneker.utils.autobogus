@@ -31,7 +31,6 @@ public sealed class AutoFaker : IAutoFaker
         return context.GenerateMany<TType>(count);
     }
 
-
     /// <summary>
     /// Configures all faker instances and generate requests.
     /// </summary>
@@ -54,12 +53,12 @@ public sealed class AutoFaker : IAutoFaker
     {
         var config = new AutoFakerConfig(DefaultConfigService.Config);
 
-        if (configure != null)
-        {
-            var builder = new AutoFakerConfigBuilder(config);
+        if (configure == null) 
+            return new AutoFaker(config);
 
-            configure.Invoke(builder);
-        }
+        var builder = new AutoFakerConfigBuilder(config);
+
+        configure.Invoke(builder);
 
         return new AutoFaker(config);
     }
@@ -93,11 +92,11 @@ public sealed class AutoFaker : IAutoFaker
     {
         var config = new AutoFakerConfig(FakerConfig);
 
-        if (configure != null)
-        {
-            var builder = new AutoFakerConfigBuilder(config);
-            configure.Invoke(builder);
-        }
+        if (configure == null) 
+            return new AutoFakerContext(config);
+
+        var builder = new AutoFakerConfigBuilder(config);
+        configure.Invoke(builder);
 
         return new AutoFakerContext(config);
     }

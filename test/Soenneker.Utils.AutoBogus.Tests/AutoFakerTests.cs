@@ -23,7 +23,9 @@ public class AutoFakerTests
 
         var product = faker.Generate<Product>();
         product.Should().NotBeNull();
-        product.Reviews.Count.Should().BeGreaterThan(0);
+        product.GetRevisions.Should().NotBeNullOrEmpty();
+        // product.Reviews.Count.Should().BeGreaterThan(0);
+       // product.
     }
 
     [Fact]

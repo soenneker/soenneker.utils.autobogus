@@ -24,7 +24,7 @@ public class AutoFakerFixture
     { }
 
     private const string _name = "Generate";
-    private static Type _type = typeof(AutoFaker);
+    private static readonly Type _type = typeof(AutoFaker);
 
     public class Configure
         : AutoFakerFixture

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using Bogus;
 using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
@@ -14,6 +13,7 @@ using Xunit;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Tests.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -82,9 +82,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config);
-
-                context.GenerateType = readOnlyDictionaryType;
+                var context = new AutoFakerContext(config, readOnlyDictionaryType);
 
                 // Act
                 IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
@@ -129,9 +127,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config);
-
-                context.GenerateType = dictionaryType;
+                var context = new AutoFakerContext(config, dictionaryType);
 
                 // Act
                 IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
@@ -174,7 +170,7 @@ public partial class AutoGeneratorsFixture
 
                 var context = new AutoFakerContext(config);
 
-                context.GenerateType = setType;
+                context.Setup(setType);
 
                 // Act
                 IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
@@ -217,7 +213,7 @@ public partial class AutoGeneratorsFixture
 
                 var context = new AutoFakerContext(config);
 
-                context.GenerateType = listType;
+                context.Setup(listType);
 
                 // Act
                 IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
@@ -701,7 +697,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    private object InvokeGenerator(Type type, IAutoFakerGenerator generator, object instance = null)
+    private static object InvokeGenerator(Type type, IAutoFakerGenerator generator, object? instance = null)
     {
         AutoFakerContext context = CreateContext(type);
         context.Instance = instance;
@@ -720,9 +716,8 @@ public partial class AutoGeneratorsFixture
         return (IAutoFakerGenerator)Activator.CreateInstance(type);
     }
 
-    private AutoFakerContext CreateContext(Type type, List<GeneratorOverride> generatorOverrides = null, Func<AutoFakerContext, int> dataTableRowCountFunctor = null)
+    private static AutoFakerContext CreateContext(Type type, List<GeneratorOverride>? generatorOverrides = null, Func<AutoFakerContext, int>? dataTableRowCountFunctor = null)
     {
-        var faker = new Faker();
         var config = new AutoFakerConfig();
 
         if (generatorOverrides != null)
@@ -735,9 +730,6 @@ public partial class AutoGeneratorsFixture
             config.DataTableRowCount = dataTableRowCountFunctor;
         }
 
-        return new AutoFakerContext(config)
-        {
-            GenerateType = type
-        };
+        return new AutoFakerContext(config, type);
     }
 }

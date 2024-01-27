@@ -14,7 +14,7 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoFakerGene
 
         Type generateType = context.GenerateType;
 
-        if (generateType.IsInterface())
+        if (context.CachedType.IsInterface)
             generateType = typeof(Dictionary<TKey, TValue>);
 
         // Generate a standard dictionary and create the read only dictionary

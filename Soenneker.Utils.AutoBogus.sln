@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E355F0FD-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DD733813-BAA4-429B-90A7-8E7ADE196683}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soenneker.Utils.AutoBogus.Console", "test\Soenneker.Utils.AutoBogus.Console\Soenneker.Utils.AutoBogus.Console.csproj", "{4BC4BD23-23A3-407D-8EA7-261FAD46E653}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soenneker.Utils.AutoBogus.Tests.Console", "test\Soenneker.Utils.AutoBogus.Console\Soenneker.Utils.AutoBogus.Tests.Console.csproj", "{4BC4BD23-23A3-407D-8EA7-261FAD46E653}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
