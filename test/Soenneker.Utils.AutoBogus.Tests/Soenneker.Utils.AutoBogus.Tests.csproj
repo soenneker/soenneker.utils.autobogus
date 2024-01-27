@@ -21,7 +21,7 @@
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
         <PackageReference Include="Soenneker.Facts.Local" Version="2.1.184" />
-        <PackageReference Include="Soenneker.Facts.Manual" Version="2.1.91" />
+        <PackageReference Include="Soenneker.Facts.Manual" Version="2.1.92" />
         <PackageReference Include="xunit" Version="2.6.6" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
