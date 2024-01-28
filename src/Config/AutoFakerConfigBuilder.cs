@@ -20,6 +20,11 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     internal object[] Args { get; private set; }
 
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoFakerDefaultConfigBuilder>(locale, this);
+
+    IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind) => WithDateTimeKind(dateTimeKind, this);
+    IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithDateTimeKind(DateTimeKind dateTimeKind) => WithDateTimeKind(_ => dateTimeKind, this);
+
+    
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoFakerDefaultConfigBuilder>(context => count, this);
 
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithRepeatCount(Func<AutoFakerContext, int> count) =>
@@ -50,6 +55,10 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         WithOverride<IAutoFakerDefaultConfigBuilder>(generatorOverride, this);
 
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoGenerateConfigBuilder>(locale, this);
+    
+    IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind) => WithDateTimeKind(dateTimeKind, this);
+    IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithDateTimeKind(DateTimeKind dateTimeKind) => WithDateTimeKind<IAutoGenerateConfigBuilder>(_ => dateTimeKind, this);
+    
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoGenerateConfigBuilder>(context => count, this);
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithRepeatCount(Func<AutoFakerContext, int> count) => WithRepeatCount<IAutoGenerateConfigBuilder>(count, this);
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithDataTableRowCount(int count) => WithDataTableRowCount<IAutoGenerateConfigBuilder>(context => count, this);
@@ -71,6 +80,10 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         WithOverride<IAutoGenerateConfigBuilder>(generatorOverride, this);
 
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoFakerConfigBuilder>(locale, this);
+    
+    IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind) => WithDateTimeKind(dateTimeKind, this);
+    IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithDateTimeKind(DateTimeKind dateTimeKind) => WithDateTimeKind(_ => dateTimeKind, this);
+    
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoFakerConfigBuilder>(context => count, this);
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithRepeatCount(Func<AutoFakerContext, int> count) => WithRepeatCount<IAutoFakerConfigBuilder>(count, this);
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithDataTableRowCount(int count) => WithDataTableRowCount<IAutoFakerConfigBuilder>(context => count, this);
@@ -90,6 +103,12 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     internal TBuilder WithLocale<TBuilder>(string? locale, TBuilder builder)
     {
         FakerConfig.Locale = locale ?? AutoFakerConfig.DefaultLocale;
+        return builder;
+    }
+    
+    internal TBuilder WithDateTimeKind<TBuilder>(Func<AutoFakerContext, DateTimeKind> kind, TBuilder builder)
+    {
+        FakerConfig.DateTimeKind = kind ?? AutoFakerConfig.DefaultDateTimeKind;
         return builder;
     }
 
