@@ -13,7 +13,7 @@ public class BogusBenchmarks
         _faker = new Faker();
     }
 
-    [Benchmark(Baseline = true)]
+    [Benchmark]
     public string Bogus_string()
     {
        return _faker.Vehicle.Vin();
@@ -23,5 +23,11 @@ public class BogusBenchmarks
     public int Bogus_int()
     {
         return _faker.Random.Int();
+    }
+
+    [Benchmark]
+    public Faker Bogus_ctor()
+    {
+        return new Faker();
     }
 }

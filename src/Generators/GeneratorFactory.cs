@@ -40,23 +40,25 @@ internal static class GeneratorFactory
     {
         IAutoFakerGenerator generator = ResolveGenerator(context);
 
-        // Check if any overrides are available for this generate request
-        var overrides = new List<GeneratorOverride>();
+        List<GeneratorOverride>? overrides = null;
 
-        foreach (GeneratorOverride? o in context.Overrides)
+        if (context.Overrides != null)
         {
-            if (o.CanOverride(context))
+            overrides = [];
+
+            for (var i = 0; i < context.Overrides.Count; i++)
             {
-                overrides.Add(o);
+                GeneratorOverride? o = context.Overrides[i];
+
+                if (o.CanOverride(context))
+                    overrides.Add(o);
             }
         }
 
-        if (overrides.Count > 0)
-        {
-            return new GeneratorOverrideInvoker(generator, overrides);
-        }
+        if (overrides == null || overrides.Count == 0)
+            return generator;
 
-        return generator;
+        return new GeneratorOverrideInvoker(generator, overrides);
     }
 
     internal static IAutoFakerGenerator ResolveGenerator(AutoFakerContext context)
@@ -69,13 +71,6 @@ internal static class GeneratorFactory
             type = type.GetElementType();
         }
 
-        // Check if an expando object needs to generator
-        // This actually means an existing dictionary needs to be populated
-        if (context.CachedType.IsExpandoObject())
-        {
-            return new ExpandoObjectGenerator();
-        }
-
         // Do some type -> generator mapping
         if (type.IsArray)
         {
@@ -83,14 +78,10 @@ internal static class GeneratorFactory
             return CreateGenericGenerator(typeof(ArrayGenerator<>), type);
         }
 
-        if (DataTableGenerator.TryCreateGenerator(context.CachedType, out DataTableGenerator dataTableGenerator))
+        // Resolve the generator from the type
+        if (Generators.TryGetValue(type, out IAutoFakerGenerator? generator))
         {
-            return dataTableGenerator;
-        }
-
-        if (DataSetGenerator.TryCreateGenerator(context.CachedType, out DataSetGenerator dataSetGenerator))
-        {
-            return dataSetGenerator;
+            return generator;
         }
 
         if (context.CachedType.IsEnum)
@@ -104,12 +95,19 @@ internal static class GeneratorFactory
             return CreateGenericGenerator(typeof(NullableGenerator<>), type);
         }
 
+        // Check if an expando object needs to generator
+        // This actually means an existing dictionary needs to be populated
+        if (context.CachedType.IsExpandoObject())
+        {
+            return new ExpandoObjectGenerator();
+        }
+
         (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(context.CachedType);
 
         if (collectionType != null)
         {
             // For generic types we need to interrogate the inner types
-            Type[] generics = collectionType.GetGenericArguments();
+            Type[] generics = collectionType.GetGenericArguments()!;
 
             switch (genericCollectionType!.Name)
             {
@@ -154,10 +152,14 @@ internal static class GeneratorFactory
             }
         }
 
-        // Resolve the generator from the type
-        if (Generators.TryGetValue(type, out IAutoFakerGenerator? generator))
+        if (DataTableGenerator.TryCreateGenerator(context.CachedType, out DataTableGenerator dataTableGenerator))
         {
-            return generator;
+            return dataTableGenerator;
+        }
+
+        if (DataSetGenerator.TryCreateGenerator(context.CachedType, out DataSetGenerator dataSetGenerator))
+        {
+            return dataSetGenerator;
         }
 
         return CreateGenericGenerator(typeof(TypeGenerator<>), type);

@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Context;
@@ -17,6 +18,8 @@ public interface IAutoFakerBinder : IBinder
     /// <returns>The created instance.</returns>
     TType? CreateInstance<TType>(AutoFakerContext context);
 
+    object? CreateInstance(AutoFakerContext context, Type type);
+
     /// <summary>
     /// Populates the provided instance with generated values.
     /// </summary>
@@ -29,4 +32,6 @@ public interface IAutoFakerBinder : IBinder
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
     void PopulateInstance<TType>(object instance, AutoFakerContext context, MemberInfo[]? members = null);
+
+    void PopulateInstance(object instance, AutoFakerContext context, Type type, MemberInfo[]? members = null);
 }
