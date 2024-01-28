@@ -20,10 +20,8 @@ internal static class GeneratorFactory
         {typeof(char), new CharGenerator()},
         {typeof(DateTime), new DateTimeGenerator()},
         {typeof(DateTimeOffset), new DateTimeOffsetGenerator()},
-#if NET6_0_OR_GREATER
-      {typeof(DateOnly), new DateOnlyGenerator()},
-      {typeof(TimeOnly), new TimeOnlyGenerator()},
-#endif
+        {typeof(DateOnly), new DateOnlyGenerator()},
+        {typeof(TimeOnly), new TimeOnlyGenerator()},
         {typeof(decimal), new DecimalGenerator()},
         {typeof(double), new DoubleGenerator()},
         {typeof(float), new FloatGenerator()},
@@ -118,43 +116,43 @@ internal static class GeneratorFactory
             switch (genericCollectionType!.Name)
             {
                 case nameof(GenericCollectionType.ReadOnlyDictionary):
-                    {
-                        Type keyType = generics[0];
-                        Type valueType = generics[1];
+                {
+                    Type keyType = generics[0];
+                    Type valueType = generics[1];
 
-                        return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
-                    }
+                    return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+                }
                 case nameof(GenericCollectionType.ImmutableDictionary):
                 case nameof(GenericCollectionType.Dictionary):
                 case nameof(GenericCollectionType.SortedList):
-                    {
-                        return CreateDictionaryGenerator(generics);
-                    }
+                {
+                    return CreateDictionaryGenerator(generics);
+                }
                 case nameof(GenericCollectionType.ReadOnlyList):
                 case nameof(GenericCollectionType.ListType):
                 case nameof(GenericCollectionType.ReadOnlyCollection):
                 case nameof(GenericCollectionType.Collection):
-                    {
-                        Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
-                    }
+                {
+                    Type elementType = generics[0];
+                    return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
+                }
                 case nameof(GenericCollectionType.Set):
-                    {
-                        Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
-                    }
+                {
+                    Type elementType = generics[0];
+                    return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
+                }
                 case nameof(GenericCollectionType.Enumerable):
+                {
+                    if (collectionType.Type == type)
                     {
-                        if (collectionType.Type == type)
-                        {
-                            // Not a full list type, we can't fake it if it's anything other than
-                            // the actual IEnumerable<T> interface itelf.
-                            Type elementType = generics[0];
-                            return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
-                        }
-
-                        break;
+                        // Not a full list type, we can't fake it if it's anything other than
+                        // the actual IEnumerable<T> interface itelf.
+                        Type elementType = generics[0];
+                        return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
                     }
+
+                    break;
+                }
             }
         }
 
@@ -178,6 +176,6 @@ internal static class GeneratorFactory
     private static IAutoFakerGenerator CreateGenericGenerator(Type generatorType, params Type[] genericTypes)
     {
         Type type = generatorType.MakeGenericType(genericTypes);
-        return (IAutoFakerGenerator)Activator.CreateInstance(type);
+        return (IAutoFakerGenerator) Activator.CreateInstance(type);
     }
 }

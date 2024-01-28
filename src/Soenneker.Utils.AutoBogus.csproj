@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU</Platforms>
         <NoWarn>$(NoWarn);1591</NoWarn>
@@ -32,10 +32,6 @@
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Compile Remove="AutoFaker[T].cs" />
-    </ItemGroup>
-    
     <ItemGroup>
         <None Include="..\CONTRIBUTING.md" Link="CONTRIBUTING.md" />
         <None Include="..\README.md" Pack="true" PackagePath="\" />
