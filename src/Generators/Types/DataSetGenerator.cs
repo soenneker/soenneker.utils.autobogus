@@ -9,10 +9,9 @@ using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal abstract class DataSetGenerator
-    : IAutoFakerGenerator
+internal abstract class DataSetGenerator : IAutoFakerGenerator
 {
-    public static bool TryCreateGenerator(CachedType dataSetType, out DataSetGenerator generator)
+    public static bool TryCreateGenerator(CachedType dataSetType, out DataSetGenerator? generator)
     {
         generator = default;
 

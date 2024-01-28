@@ -3,9 +3,13 @@
 [![](https://img.shields.io/nuget/dt/soenneker.utils.autobogus.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.utils.autobogus/)
 
 # ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Utils.AutoBogus
-### The .NET Bogus autogenerator 
+### The .NET Autogenerator 
 
-This project is a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library. It's mostly plug and play. It aims to be fast, and support the latest types in .NET.
+This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus).
+
+It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library. It's mostly plug and play. 
+
+The goals are to be *fast*, and support the latest types in .NET.
 
 .NET Standard 2.1 is required. 
 
