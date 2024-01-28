@@ -15,8 +15,10 @@ internal sealed class AutoFakerConfig
     internal static readonly Func<AutoFakerContext, int> DefaultDataTableRowCount = _ => 15;
     internal static readonly Func<AutoFakerContext, int> DefaultRecursiveDepth = _ => 2;
     internal static readonly Func<AutoFakerContext, int?> DefaultTreeDepth = _ => null;
+    internal static readonly Func<AutoFakerContext, DateTimeKind> DefaultDateTimeKind = _ => System.DateTimeKind.Local;
 
     internal string Locale { get; set; }
+    internal Func<AutoFakerContext, DateTimeKind> DateTimeKind { get; set; }
     internal Func<AutoFakerContext, int> RepeatCount { get; set; }
     internal Func<AutoFakerContext, int> DataTableRowCount { get; set; }
     internal Func<AutoFakerContext, int> RecursiveDepth { get; set; }
@@ -40,6 +42,7 @@ internal sealed class AutoFakerConfig
         DataTableRowCount = DefaultDataTableRowCount;
         RecursiveDepth = DefaultRecursiveDepth;
         TreeDepth = DefaultTreeDepth;
+        DateTimeKind = DefaultDateTimeKind;
         FakerBinder = new AutoFakerBinder();
         SkipTypes = [];
         SkipPaths = [];
@@ -55,6 +58,7 @@ internal sealed class AutoFakerConfig
         DataTableRowCount = fakerConfig.DataTableRowCount;
         RecursiveDepth = fakerConfig.RecursiveDepth;
         TreeDepth = fakerConfig.TreeDepth;
+        DateTimeKind = fakerConfig.DateTimeKind;
         FakerBinder = fakerConfig.FakerBinder;
         SkipTypes = fakerConfig.SkipTypes;
         SkipPaths = fakerConfig.SkipPaths;
