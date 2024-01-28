@@ -11,7 +11,7 @@ It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/A
 
 The goals are to be *fast*, and support the latest types in .NET.
 
-.NET Standard 2.1 is required. 
+.NET 6+ is supported. 
 
 ## Installation
 
@@ -19,8 +19,8 @@ The goals are to be *fast*, and support the latest types in .NET.
 dotnet add package Soenneker.Utils.AutoBogus
 ```
 
-A Bogus `Faker` takes a long time to initialize, so AutoFaker will mirror Faker in this sense. Thus, `AutoFaker<T>` was dropped from this package.
+⚠️ A Bogus `Faker` takes a long time to initialize, so AutoFaker will mirror Faker in this sense. Thus, `AutoFaker<T>` was dropped from this package.
 
-⚠️ It is recommended that a single instance of `AutoFaker` be used if possible. The static usage of `AutoFaker.Generate<>()` should be avoided (as it constructors a new `Faker`), but is available. 
+It's recommended that a single instance of `AutoFaker` be used if possible. The static usage of `AutoFaker.Generate<>()` should be avoided (as it creates a new `Faker`), but is available. 
 
 This is a work in progress. Contribution is welcomed.

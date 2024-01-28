@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
-using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Services;
@@ -47,7 +46,7 @@ public sealed class AutoFakerContext
 
     internal object Instance { get; set; }
 
-    internal IAutoFakerBinder FakerBinder => AutoFakerConfig.FakerBinder;
+    internal AutoFakerBinder FakerBinder => AutoFakerConfig.FakerBinder;
 
     internal List<GeneratorOverride>? Overrides => AutoFakerConfig.Overrides;
 

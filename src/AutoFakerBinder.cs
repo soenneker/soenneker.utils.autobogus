@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Constructors;
@@ -70,28 +69,6 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         }
 
         return constructor.Invoke(parameters);
-    }
-
-    public virtual TType? CreateInstance<TType>(AutoFakerContext? context, Type type)
-    {
-        if (context == null)
-            return default;
-
-        CachedConstructor? constructor = GetConstructor(context.CachedType);
-
-        if (constructor == null)
-            return default;
-
-        ParameterInfo[] parametersInfo = constructor.GetParameters();
-        var parameters = new object[parametersInfo.Length];
-
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            parameters[i] = GetParameterGenerator(type, parametersInfo[i], context).Generate(context);
-        }
-
-        return (TType?)constructor.Invoke(parameters);
-
     }
 
     /// <summary>
@@ -309,7 +286,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         return GeneratorFactory.GetGenerator(context);
     }
 
-    private List<AutoMember> GetMembersToPopulate(CachedType type, MemberInfo[]? members)
+    private List<AutoMember> GetMembersToPopulate(CachedType cachedType, MemberInfo[]? members)
     {
         // If a list of members is provided, no others should be populated
         if (members != null)
@@ -327,12 +304,13 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         // Get the baseline members resolved by Bogus
         var autoMembers = new List<AutoMember>();
 
-        foreach (MemberInfo? member in GetMembers(type.Type).Values)
+        MemberInfo[] memberInfos = cachedType.GetMembers()!;
+
+        foreach (MemberInfo? member in memberInfos)
         {
             autoMembers.Add(new AutoMember(member));
         }
 
-        MemberInfo[] memberInfos = type.GetMembers()!;
         int length = memberInfos.Length;
 
         for (int i = 0; i < length; i++)

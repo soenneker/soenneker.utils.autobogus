@@ -13,6 +13,7 @@ using Xunit;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -256,7 +257,8 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void Generate_Should_Return_Value(Type type)
         {
-            IAutoFakerGenerator generator = GeneratorFactory.Generators[type];
+            var cachedType = CacheService.Cache.GetCachedType(type);
+            IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 
             InvokeGenerator(type, generator).Should().BeOfType(type);
         }
@@ -265,18 +267,16 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void GetGenerator_Should_Return_Generator(Type type)
         {
+            var cachedType = CacheService.Cache.GetCachedType(type);
             AutoFakerContext context = CreateContext(type);
-            IAutoFakerGenerator generator = GeneratorFactory.Generators[type];
+            IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 
             GeneratorFactory.GetGenerator(context).Should().Be(generator);
         }
 
         public static IEnumerable<object[]> GetRegisteredTypes()
         {
-            return GeneratorFactory.Generators.Select(g => new object[]
-            {
-                g.Key
-            });
+            return GeneratorService.GetSupportedFundamentalTypes().Select(c => new object[] { c });
         }
 
         [Theory]

@@ -1,4 +1,5 @@
 ﻿using Ardalis.SmartEnum;
+#pragma warning disable CA2211
 
 namespace Soenneker.Utils.AutoBogus.Enums;
 

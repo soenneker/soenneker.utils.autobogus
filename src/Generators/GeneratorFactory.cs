@@ -7,37 +7,13 @@ using Soenneker.Utils.AutoBogus.Enums;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Utils;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
 internal static class GeneratorFactory
 {
-    internal static readonly IDictionary<Type, IAutoFakerGenerator> Generators = new Dictionary<Type, IAutoFakerGenerator>
-    {
-        {typeof(bool), new BoolGenerator()},
-        {typeof(byte), new ByteGenerator()},
-        {typeof(char), new CharGenerator()},
-        {typeof(DateTime), new DateTimeGenerator()},
-        {typeof(DateTimeOffset), new DateTimeOffsetGenerator()},
-        {typeof(DateOnly), new DateOnlyGenerator()},
-        {typeof(TimeOnly), new TimeOnlyGenerator()},
-        {typeof(decimal), new DecimalGenerator()},
-        {typeof(double), new DoubleGenerator()},
-        {typeof(float), new FloatGenerator()},
-        {typeof(Guid), new GuidGenerator()},
-        {typeof(int), new IntGenerator()},
-        {typeof(IPAddress), new IpAddressGenerator()},
-        {typeof(long), new LongGenerator()},
-        {typeof(sbyte), new SByteGenerator()},
-        {typeof(short), new ShortGenerator()},
-        {typeof(string), new StringGenerator()},
-        {typeof(uint), new UIntGenerator()},
-        {typeof(ulong), new ULongGenerator()},
-        {typeof(Uri), new UriGenerator()},
-        {typeof(ushort), new UShortGenerator()}
-    };
-
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
     {
         IAutoFakerGenerator generator = ResolveGenerator(context);
@@ -50,7 +26,7 @@ internal static class GeneratorFactory
 
             for (var i = 0; i < context.Overrides.Count; i++)
             {
-                GeneratorOverride? o = context.Overrides[i];
+                GeneratorOverride o = context.Overrides[i];
 
                 if (o.CanOverride(context))
                     overrides.Add(o);
@@ -68,22 +44,21 @@ internal static class GeneratorFactory
         Type? type = context.GenerateType;
 
         // Need check if the type is an in/out parameter and adjusted accordingly
-        if (type.IsByRef)
+        if (context.CachedType.IsByRef)
         {
             type = type.GetElementType();
         }
 
+        IAutoFakerGenerator? systemGenerator = GeneratorService.GetFundamentalGenerator(context.CachedType);
+
+        if (systemGenerator != null)
+            return systemGenerator;
+
         // Do some type -> generator mapping
-        if (type.IsArray)
+        if (context.CachedType.IsArray)
         {
             type = type.GetElementType();
             return CreateGenericGenerator(typeof(ArrayGenerator<>), type);
-        }
-
-        // Resolve the generator from the type
-        if (Generators.TryGetValue(type, out IAutoFakerGenerator? generator))
-        {
-            return generator;
         }
 
         if (context.CachedType.IsEnum)

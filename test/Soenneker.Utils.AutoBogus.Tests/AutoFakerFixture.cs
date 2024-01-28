@@ -292,7 +292,7 @@ public class AutoFakerFixture
 
     public static IEnumerable<object[]> GetTypes()
     {
-        foreach (Type? type in GeneratorFactory.Generators.Keys)
+        foreach (Type? type in GeneratorService.GetSupportedFundamentalTypes())
         {
             yield return new object[] { type };
         }
@@ -304,7 +304,7 @@ public class AutoFakerFixture
         yield return new object[] { typeof(int?) };
     }
 
-    private Action<TBuilder> CreateConfigure<TBuilder>(AutoFakerConfig assertFakerConfig, Action<TBuilder> configure = null)
+    private static Action<TBuilder> CreateConfigure<TBuilder>(AutoFakerConfig assertFakerConfig, Action<TBuilder> configure = null)
     {
         return builder =>
         {

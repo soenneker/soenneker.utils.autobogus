@@ -14,7 +14,7 @@ internal sealed class ListGenerator<TType> : IAutoFakerGenerator
 
         try
         {
-            list = (List<TType>)Activator.CreateInstance(context.GenerateType);
+            list = context.CachedType.CreateInstance<List<TType>>();
         }
         catch
         {

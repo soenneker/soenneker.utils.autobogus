@@ -21,21 +21,21 @@ public class GenerateBenchmarks
         return _autoFaker.Generate<Order>();
     }
 
-    [Benchmark]
-    public TestClassWithSingleProperty<int> Generate_simple_reference()
-    {
-       return _autoFaker.Generate<TestClassWithSingleProperty<int>>();
-    }
+    //[Benchmark]
+    //public TestClassWithSingleProperty<int> Generate_simple_reference()
+    //{
+    //   return _autoFaker.Generate<TestClassWithSingleProperty<int>>();
+    //}
 
-    [Benchmark]
-    public int Generate_int()
-    {
-        return _autoFaker.Generate<int>();
-    }
+    //[Benchmark]
+    //public int Generate_int()
+    //{
+    //    return _autoFaker.Generate<int>();
+    //}
 
-    [Benchmark]
-    public string Generate_string()
-    {
-        return _autoFaker.Generate<string>();
-    }
+    //[Benchmark]
+    //public string Generate_string()
+    //{
+    //    return _autoFaker.Generate<string>();
+    //}
 }
