@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Constructors;
@@ -50,6 +51,49 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
 
     }
 
+    public object? CreateInstance(AutoFakerContext? context, Type type)
+    {
+        if (context == null)
+            return default;
+
+        CachedConstructor? constructor = GetConstructor(context.CachedType);
+
+        if (constructor == null)
+            return default;
+
+        ParameterInfo[] parametersInfo = constructor.GetParameters();
+        var parameters = new object[parametersInfo.Length];
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            parameters[i] = GetParameterGenerator(type, parametersInfo[i], context).Generate(context);
+        }
+
+        return constructor.Invoke(parameters);
+    }
+
+    public virtual TType? CreateInstance<TType>(AutoFakerContext? context, Type type)
+    {
+        if (context == null)
+            return default;
+
+        CachedConstructor? constructor = GetConstructor(context.CachedType);
+
+        if (constructor == null)
+            return default;
+
+        ParameterInfo[] parametersInfo = constructor.GetParameters();
+        var parameters = new object[parametersInfo.Length];
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            parameters[i] = GetParameterGenerator(type, parametersInfo[i], context).Generate(context);
+        }
+
+        return (TType?)constructor.Invoke(parameters);
+
+    }
+
     /// <summary>
     /// Populates the provided instance with generated values.
     /// </summary>
@@ -70,6 +114,63 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         }
 
         Type type = typeof(TType);
+
+        CachedType cachedType = CacheService.Cache.GetCachedType(type);
+
+        // Iterate the members and bind a generated value
+        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType, members);
+
+        foreach (AutoMember? member in autoMembers)
+        {
+            if (member.Type != null)
+            {
+                // Check if the member has a skip config or the type has already been generated as a parent
+                // If so skip this generation otherwise track it for use later in the object tree
+                if (ShouldSkip(member.Type, $"{type.FullName}.{member.Name}", context))
+                {
+                    continue;
+                }
+
+                context.Setup(type, member.Type, member.Name);
+
+                context.TypesStack.Push(member.Type);
+
+                // Generate a random value and bind it to the instance
+                IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
+                object value = generator.Generate(context);
+
+                try
+                {
+                    if (!member.IsReadOnly)
+                    {
+                        member.Setter.Invoke(instance, value);
+                    }
+                    else if (member.CachedType.IsDictionary())
+                    {
+                        PopulateDictionary(value, instance, member);
+                    }
+                    else if (member.CachedType.IsCollection())
+                    {
+                        PopulateCollection(value, instance, member);
+                    }
+                }
+                catch
+                {
+                }
+
+                // Remove the current type from the type stack so siblings can be created
+                context.TypesStack.Pop();
+            }
+        }
+    }
+
+    public void PopulateInstance(object instance, AutoFakerContext context, Type type, MemberInfo[]? members = null)
+    {
+        // We can only populate non-null instances 
+        if (instance == null || context == null)
+        {
+            return;
+        }
 
         CachedType cachedType = CacheService.Cache.GetCachedType(type);
 

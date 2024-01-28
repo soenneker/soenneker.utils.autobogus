@@ -7,29 +7,35 @@ namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
 public class GenerateBenchmarks
 {
-    private IAutoFaker _faker = default!;
+    private IAutoFaker _autoFaker = default!;
 
     [GlobalSetup]
     public void Setup()
     {
-        _faker = AutoFaker.Create();
+        _autoFaker = AutoFaker.Create();
     }
 
     [Benchmark(Baseline = true)]
     public Order Generate_complex()
     {
-        return _faker.Generate<Order>();
+        return _autoFaker.Generate<Order>();
     }
 
     [Benchmark]
     public TestClassWithSingleProperty<int> Generate_simple_reference()
     {
-       return _faker.Generate<TestClassWithSingleProperty<int>>();
+       return _autoFaker.Generate<TestClassWithSingleProperty<int>>();
     }
 
     [Benchmark]
-    public int Generate_simple_value()
+    public int Generate_int()
     {
-        return _faker.Generate<int>();
+        return _autoFaker.Generate<int>();
+    }
+
+    [Benchmark]
+    public string Generate_string()
+    {
+        return _autoFaker.Generate<string>();
     }
 }

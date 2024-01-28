@@ -3,7 +3,7 @@ using System;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Extensions;
 
-public static class TypeExtensions
+public static class TestTypeExtensions
 {
     internal static bool IsEnum(this Type type)
     {

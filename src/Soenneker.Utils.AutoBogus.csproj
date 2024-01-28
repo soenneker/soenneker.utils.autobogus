@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU</Platforms>
         <NoWarn>$(NoWarn);1591</NoWarn>
@@ -33,10 +33,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="AutoFaker[T].cs" />
-    </ItemGroup>
-    
-    <ItemGroup>
         <None Include="..\CONTRIBUTING.md" Link="CONTRIBUTING.md" />
         <None Include="..\README.md" Pack="true" PackagePath="\" />
         <None Include="..\LICENSE" Pack="true" PackagePath="\" />
@@ -45,7 +41,6 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.SmartEnum" Version="8.0.0" />
-        <PackageReference Include="Bogus" Version="35.4.0" />
         <PackageReference Include="Bogus" Version="35.4.0" />
         <PackageReference Include="Soenneker.Reflection.Cache" Version="2.1.14" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />

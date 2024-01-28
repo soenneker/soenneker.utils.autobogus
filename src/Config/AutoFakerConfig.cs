@@ -29,7 +29,7 @@ internal sealed class AutoFakerConfig
 
     internal List<string> SkipPaths { get; set; }
 
-    internal List<GeneratorOverride> Overrides { get; set; }
+    internal List<GeneratorOverride>? Overrides { get; set; }
 
     public Func<AutoFakerContext, int?> TreeDepth { get; set; }
 
@@ -48,7 +48,10 @@ internal sealed class AutoFakerConfig
         SkipPaths = [];
         Overrides = [];
 
-        Faker ??= new Faker(Locale);
+        if (Faker != null)
+            return;
+
+        Faker = new Faker(Locale);
     }
 
     internal AutoFakerConfig(AutoFakerConfig fakerConfig)
@@ -63,6 +66,9 @@ internal sealed class AutoFakerConfig
         SkipTypes = fakerConfig.SkipTypes;
         SkipPaths = fakerConfig.SkipPaths;
         Overrides = fakerConfig.Overrides;
+
+        if (Faker != null)
+            return;
 
         Faker = fakerConfig.Faker ?? new Faker(Locale);
     }

@@ -20,6 +20,8 @@ internal static class GeneratorFactory
         {typeof(char), new CharGenerator()},
         {typeof(DateTime), new DateTimeGenerator()},
         {typeof(DateTimeOffset), new DateTimeOffsetGenerator()},
+        {typeof(DateOnly), new DateOnlyGenerator()},
+        {typeof(TimeOnly), new TimeOnlyGenerator()},
         {typeof(decimal), new DecimalGenerator()},
         {typeof(double), new DoubleGenerator()},
         {typeof(float), new FloatGenerator()},
@@ -40,23 +42,25 @@ internal static class GeneratorFactory
     {
         IAutoFakerGenerator generator = ResolveGenerator(context);
 
-        // Check if any overrides are available for this generate request
-        var overrides = new List<GeneratorOverride>();
+        List<GeneratorOverride>? overrides = null;
 
-        foreach (GeneratorOverride? o in context.Overrides)
+        if (context.Overrides != null)
         {
-            if (o.CanOverride(context))
+            overrides = [];
+
+            for (var i = 0; i < context.Overrides.Count; i++)
             {
-                overrides.Add(o);
+                GeneratorOverride? o = context.Overrides[i];
+
+                if (o.CanOverride(context))
+                    overrides.Add(o);
             }
         }
 
-        if (overrides.Count > 0)
-        {
-            return new GeneratorOverrideInvoker(generator, overrides);
-        }
+        if (overrides == null || overrides.Count == 0)
+            return generator;
 
-        return generator;
+        return new GeneratorOverrideInvoker(generator, overrides);
     }
 
     internal static IAutoFakerGenerator ResolveGenerator(AutoFakerContext context)
@@ -69,13 +73,6 @@ internal static class GeneratorFactory
             type = type.GetElementType();
         }
 
-        // Check if an expando object needs to generator
-        // This actually means an existing dictionary needs to be populated
-        if (context.CachedType.IsExpandoObject())
-        {
-            return new ExpandoObjectGenerator();
-        }
-
         // Do some type -> generator mapping
         if (type.IsArray)
         {
@@ -83,14 +80,10 @@ internal static class GeneratorFactory
             return CreateGenericGenerator(typeof(ArrayGenerator<>), type);
         }
 
-        if (DataTableGenerator.TryCreateGenerator(context.CachedType, out DataTableGenerator dataTableGenerator))
+        // Resolve the generator from the type
+        if (Generators.TryGetValue(type, out IAutoFakerGenerator? generator))
         {
-            return dataTableGenerator;
-        }
-
-        if (DataSetGenerator.TryCreateGenerator(context.CachedType, out DataSetGenerator dataSetGenerator))
-        {
-            return dataSetGenerator;
+            return generator;
         }
 
         if (context.CachedType.IsEnum)
@@ -104,60 +97,71 @@ internal static class GeneratorFactory
             return CreateGenericGenerator(typeof(NullableGenerator<>), type);
         }
 
+        // Check if an expando object needs to generator
+        // This actually means an existing dictionary needs to be populated
+        if (context.CachedType.IsExpandoObject())
+        {
+            return new ExpandoObjectGenerator();
+        }
+
         (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(context.CachedType);
 
         if (collectionType != null)
         {
             // For generic types we need to interrogate the inner types
-            Type[] generics = collectionType.GetGenericArguments();
+            Type[] generics = collectionType.GetGenericArguments()!;
 
             switch (genericCollectionType!.Name)
             {
                 case nameof(GenericCollectionType.ReadOnlyDictionary):
-                    {
-                        Type keyType = generics[0];
-                        Type valueType = generics[1];
+                {
+                    Type keyType = generics[0];
+                    Type valueType = generics[1];
 
-                        return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
-                    }
+                    return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+                }
                 case nameof(GenericCollectionType.ImmutableDictionary):
                 case nameof(GenericCollectionType.Dictionary):
                 case nameof(GenericCollectionType.SortedList):
-                    {
-                        return CreateDictionaryGenerator(generics);
-                    }
+                {
+                    return CreateDictionaryGenerator(generics);
+                }
                 case nameof(GenericCollectionType.ReadOnlyList):
                 case nameof(GenericCollectionType.ListType):
                 case nameof(GenericCollectionType.ReadOnlyCollection):
                 case nameof(GenericCollectionType.Collection):
-                    {
-                        Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
-                    }
+                {
+                    Type elementType = generics[0];
+                    return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
+                }
                 case nameof(GenericCollectionType.Set):
-                    {
-                        Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
-                    }
+                {
+                    Type elementType = generics[0];
+                    return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
+                }
                 case nameof(GenericCollectionType.Enumerable):
+                {
+                    if (collectionType.Type == type)
                     {
-                        if (collectionType.Type == type)
-                        {
-                            // Not a full list type, we can't fake it if it's anything other than
-                            // the actual IEnumerable<T> interface itelf.
-                            Type elementType = generics[0];
-                            return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
-                        }
-
-                        break;
+                        // Not a full list type, we can't fake it if it's anything other than
+                        // the actual IEnumerable<T> interface itelf.
+                        Type elementType = generics[0];
+                        return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
                     }
+
+                    break;
+                }
             }
         }
 
-        // Resolve the generator from the type
-        if (Generators.TryGetValue(type, out IAutoFakerGenerator? generator))
+        if (DataTableGenerator.TryCreateGenerator(context.CachedType, out DataTableGenerator dataTableGenerator))
         {
-            return generator;
+            return dataTableGenerator;
+        }
+
+        if (DataSetGenerator.TryCreateGenerator(context.CachedType, out DataSetGenerator dataSetGenerator))
+        {
+            return dataSetGenerator;
         }
 
         return CreateGenericGenerator(typeof(TypeGenerator<>), type);
@@ -174,6 +178,6 @@ internal static class GeneratorFactory
     private static IAutoFakerGenerator CreateGenericGenerator(Type generatorType, params Type[] genericTypes)
     {
         Type type = generatorType.MakeGenericType(genericTypes);
-        return (IAutoFakerGenerator)Activator.CreateInstance(type);
+        return (IAutoFakerGenerator) Activator.CreateInstance(type);
     }
 }
