@@ -20,6 +20,10 @@ internal static class GeneratorFactory
         {typeof(char), new CharGenerator()},
         {typeof(DateTime), new DateTimeGenerator()},
         {typeof(DateTimeOffset), new DateTimeOffsetGenerator()},
+#if NET6_0_OR_GREATER
+      {typeof(DateOnly), new DateOnlyGenerator()},
+      {typeof(TimeOnly), new TimeOnlyGenerator()},
+#endif
         {typeof(decimal), new DecimalGenerator()},
         {typeof(double), new DoubleGenerator()},
         {typeof(float), new FloatGenerator()},

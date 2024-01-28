@@ -29,6 +29,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         Assertions.Add(IsChar, AssertChar);
         Assertions.Add(IsDateTime, AssertDateTime);
         Assertions.Add(IsDateTimeOffset, AssertDateTimeOffset);
+        Assertions.Add(IsDateOnly, AssertDateOnly);
+        Assertions.Add(IsTimeOnly, AssertTimeOnly);
         Assertions.Add(IsDecimal, AssertDecimal);
         Assertions.Add(IsDouble, AssertDouble);
         Assertions.Add(IsFloat, AssertFloat);
@@ -165,6 +167,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
     private static bool IsChar(Type type) => type == typeof(char);
     private static bool IsDateTime(Type type) => type == typeof(DateTime);
     private static bool IsDateTimeOffset(Type type) => type == typeof(DateTimeOffset);
+    private static bool IsDateOnly(Type type) => type == typeof(DateOnly);
+    private static bool IsTimeOnly(Type type) => type == typeof(TimeOnly);
     private static bool IsDecimal(Type type) => type == typeof(decimal);
     private static bool IsDouble(Type type) => type == typeof(double);
     private static bool IsFloat(Type type) => type == typeof(float);
@@ -194,6 +198,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
     private static string AssertChar(string path, Type type, object value) => value != null && char.TryParse(value.ToString(), out char result) && result != default(char) ? null : GetAssertionMessage(path, type, value);
     private static string AssertDateTime(string path, Type type, object value) => value != null && DateTime.TryParse(value.ToString(), out DateTime result) && result != default ? null : GetAssertionMessage(path, type, value);
     private static string AssertDateTimeOffset(string path, Type type, object value) => value != null && DateTimeOffset.TryParse(value.ToString(), out DateTimeOffset result) && result != default ? null : GetAssertionMessage(path, type, value);
+    private static string AssertDateOnly(string path, Type type, object value) => value != null && DateOnly.TryParse(value.ToString(), out DateOnly result) && result != default ? null : GetAssertionMessage(path, type, value);
+    private static string AssertTimeOnly(string path, Type type, object value) => value != null && TimeOnly.TryParse(value.ToString(), out TimeOnly result) && result != default ? null : GetAssertionMessage(path, type, value);
     private static string AssertDecimal(string path, Type type, object value) => value != null && decimal.TryParse(value.ToString(), out decimal result) && result != default ? null : GetAssertionMessage(path, type, value);
     private static string AssertDouble(string path, Type type, object value) => value != null && double.TryParse(value.ToString(), out double result) && result != default ? null : GetAssertionMessage(path, type, value);
     private static string AssertFloat(string path, Type type, object value) => value != null && float.TryParse(value.ToString(), out float result) && result != default ? null : GetAssertionMessage(path, type, value);
