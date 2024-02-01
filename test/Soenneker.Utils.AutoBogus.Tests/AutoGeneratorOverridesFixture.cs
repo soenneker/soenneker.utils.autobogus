@@ -10,7 +10,7 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 public class AutoGeneratorOverridesFixture
 {
     private sealed class TestOverride
-        : GeneratorOverride
+        : AutoFakerGeneratorOverride
     {
         public TestOverride(bool preinitialize, Action<AutoFakerContextOverride> generator)
         {

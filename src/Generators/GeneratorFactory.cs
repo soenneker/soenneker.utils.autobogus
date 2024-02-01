@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Enums;
@@ -16,9 +15,14 @@ internal static class GeneratorFactory
 {
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
     {
+        IAutoFakerGenerator? cachedGenerator = GeneratorService.GetGenerator(context.CachedType);
+
+        if (cachedGenerator != null)
+            return cachedGenerator;
+
         IAutoFakerGenerator generator = ResolveGenerator(context);
 
-        List<GeneratorOverride>? overrides = null;
+        List<AutoFakerGeneratorOverride>? overrides = null;
 
         if (context.Overrides != null)
         {
@@ -26,7 +30,7 @@ internal static class GeneratorFactory
 
             for (var i = 0; i < context.Overrides.Count; i++)
             {
-                GeneratorOverride o = context.Overrides[i];
+                AutoFakerGeneratorOverride o = context.Overrides[i];
 
                 if (o.CanOverride(context))
                     overrides.Add(o);
@@ -34,13 +38,24 @@ internal static class GeneratorFactory
         }
 
         if (overrides == null || overrides.Count == 0)
+        {
+            GeneratorService.SetGenerator(context.CachedType, generator);
             return generator;
+        }
 
-        return new GeneratorOverrideInvoker(generator, overrides);
+        var newOverrideGenerator = new AutoFakerGeneratorOverrideInvoker(generator, overrides);
+
+        GeneratorService.SetGenerator(context.CachedType, newOverrideGenerator);
+        return newOverrideGenerator;
     }
 
     internal static IAutoFakerGenerator ResolveGenerator(AutoFakerContext context)
     {
+        IAutoFakerGenerator? fundamentalGenerator = GeneratorService.GetFundamentalGenerator(context.CachedType);
+
+        if (fundamentalGenerator != null)
+            return fundamentalGenerator;
+
         Type? type = context.GenerateType;
 
         // Need check if the type is an in/out parameter and adjusted accordingly
@@ -48,11 +63,6 @@ internal static class GeneratorFactory
         {
             type = type.GetElementType();
         }
-
-        IAutoFakerGenerator? systemGenerator = GeneratorService.GetFundamentalGenerator(context.CachedType);
-
-        if (systemGenerator != null)
-            return systemGenerator;
 
         // Do some type -> generator mapping
         if (context.CachedType.IsArray)
@@ -89,43 +99,43 @@ internal static class GeneratorFactory
             switch (genericCollectionType!.Name)
             {
                 case nameof(GenericCollectionType.ReadOnlyDictionary):
-                {
-                    Type keyType = generics[0];
-                    Type valueType = generics[1];
+                    {
+                        Type keyType = generics[0];
+                        Type valueType = generics[1];
 
-                    return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
-                }
+                        return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+                    }
                 case nameof(GenericCollectionType.ImmutableDictionary):
                 case nameof(GenericCollectionType.Dictionary):
                 case nameof(GenericCollectionType.SortedList):
-                {
-                    return CreateDictionaryGenerator(generics);
-                }
+                    {
+                        return CreateDictionaryGenerator(generics);
+                    }
                 case nameof(GenericCollectionType.ReadOnlyList):
                 case nameof(GenericCollectionType.ListType):
                 case nameof(GenericCollectionType.ReadOnlyCollection):
                 case nameof(GenericCollectionType.Collection):
-                {
-                    Type elementType = generics[0];
-                    return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
-                }
-                case nameof(GenericCollectionType.Set):
-                {
-                    Type elementType = generics[0];
-                    return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
-                }
-                case nameof(GenericCollectionType.Enumerable):
-                {
-                    if (collectionType.Type == type)
                     {
-                        // Not a full list type, we can't fake it if it's anything other than
-                        // the actual IEnumerable<T> interface itelf.
                         Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
+                        return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
                     }
+                case nameof(GenericCollectionType.Set):
+                    {
+                        Type elementType = generics[0];
+                        return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
+                    }
+                case nameof(GenericCollectionType.Enumerable):
+                    {
+                        if (collectionType.Type == type)
+                        {
+                            // Not a full list type, we can't fake it if it's anything other than
+                            // the actual IEnumerable<T> interface itelf.
+                            Type elementType = generics[0];
+                            return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -153,6 +163,9 @@ internal static class GeneratorFactory
     private static IAutoFakerGenerator CreateGenericGenerator(Type generatorType, params Type[] genericTypes)
     {
         Type type = generatorType.MakeGenericType(genericTypes);
-        return (IAutoFakerGenerator) Activator.CreateInstance(type);
+
+        var cached = (IAutoFakerGenerator)CacheService.Cache.GetCachedType(type).CreateInstance();
+        return cached;
+        // return (IAutoFakerGenerator) Activator.CreateInstance(type);
     }
 }

@@ -115,7 +115,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// <summary>
     /// Registers an override instance to use when generating values.
     /// </summary>
-    /// <param name="generatorOverride">The <see cref="GeneratorOverride"/> instance to use.</param>
+    /// <param name="autoFakerGeneratorOverride">The <see cref="AutoFakerGeneratorOverride"/> instance to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithOverride(GeneratorOverride generatorOverride);
+    TBuilder WithOverride(AutoFakerGeneratorOverride autoFakerGeneratorOverride);
 }

@@ -48,7 +48,7 @@ public sealed class AutoFakerContext
 
     internal AutoFakerBinder FakerBinder => AutoFakerConfig.FakerBinder;
 
-    internal List<GeneratorOverride>? Overrides => AutoFakerConfig.Overrides;
+    internal List<AutoFakerGeneratorOverride>? Overrides => AutoFakerConfig.Overrides;
 
     internal AutoFakerContext(AutoFakerConfig autoFakerConfig, Type? type = null)
     {

@@ -3,7 +3,6 @@ using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Serilog;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;

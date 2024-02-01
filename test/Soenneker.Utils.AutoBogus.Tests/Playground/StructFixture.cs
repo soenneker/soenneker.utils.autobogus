@@ -32,7 +32,7 @@ public class StructFixture
     }
 }
 
-class ExampleStructOverride : GeneratorOverride
+class ExampleStructOverride : AutoFakerGeneratorOverride
 {
     public override bool Preinitialize => false;
 

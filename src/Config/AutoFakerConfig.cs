@@ -27,7 +27,7 @@ internal sealed class AutoFakerConfig
 
     internal List<string> SkipPaths { get; set; }
 
-    internal List<GeneratorOverride>? Overrides { get; set; }
+    internal List<AutoFakerGeneratorOverride>? Overrides { get; set; }
 
     public Func<AutoFakerContext, int?> TreeDepth { get; set; }
 

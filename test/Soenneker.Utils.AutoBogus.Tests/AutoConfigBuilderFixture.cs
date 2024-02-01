@@ -248,8 +248,8 @@ public class AutoConfigBuilderFixture
     public class WithOverride
         : AutoConfigBuilderFixture
     {
-        private class TestGeneratorOverride
-            : GeneratorOverride
+        private class TestAutoFakerGeneratorOverride
+            : AutoFakerGeneratorOverride
         {
             public override bool CanOverride(AutoFakerContext context)
             {
@@ -271,7 +271,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Override_If_Already_Added()
         {
-            var generatorOverride = new TestGeneratorOverride();
+            var generatorOverride = new TestAutoFakerGeneratorOverride();
             _fakerConfig.Overrides.Add(generatorOverride);
 
             _builder.WithOverride<ITestBuilder>(generatorOverride, null);
@@ -282,8 +282,8 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_Override_If_Equivalency_Is_Different()
         {
-            var generatorOverride1 = new TestGeneratorOverride();
-            var generatorOverride2 = new TestGeneratorOverride();
+            var generatorOverride1 = new TestAutoFakerGeneratorOverride();
+            var generatorOverride2 = new TestAutoFakerGeneratorOverride();
 
             _fakerConfig.Overrides.Add(generatorOverride1);
 

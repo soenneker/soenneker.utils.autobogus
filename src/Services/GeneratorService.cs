@@ -2,6 +2,7 @@
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,7 +11,7 @@ namespace Soenneker.Utils.AutoBogus.Services;
 
 internal static class GeneratorService
 {
-    private static readonly Lazy<Dictionary<Type, IAutoFakerGenerator>> _cachedGenerators = new(() =>
+    private static readonly Lazy<Dictionary<Type, IAutoFakerGenerator>> _cachedFundamentalGenerators = new(() =>
     {
         var generatorMap = new Dictionary<Type, IAutoFakerGenerator>
         {
@@ -40,9 +41,9 @@ internal static class GeneratorService
         return generatorMap;
     });
 
-    private static readonly Lazy<Dictionary<int, IAutoFakerGenerator>> _cachedGeneratorsByInt = new(() =>
+    private static readonly Lazy<Dictionary<int, IAutoFakerGenerator>> _cachedFundamentalGeneratorsByInt = new(() =>
     {
-        var hashCodesMap = _cachedGenerators.Value.ToDictionary(
+        Dictionary<int, IAutoFakerGenerator> hashCodesMap = _cachedFundamentalGenerators.Value.ToDictionary(
             kvp => kvp.Key.GetHashCode(),
             kvp => kvp.Value
         );
@@ -50,15 +51,43 @@ internal static class GeneratorService
         return hashCodesMap;
     }, true);
 
-    public static IAutoFakerGenerator GetFundamentalGenerator(CachedType cachedType)
+    private static readonly ConcurrentDictionary<int, IAutoFakerGenerator> _cachedGenerators = [];
+
+    public static IAutoFakerGenerator? GetFundamentalGenerator(CachedType cachedType)
     {
         int hashCode = cachedType.CacheKey.Value;
 
-        return _cachedGeneratorsByInt.Value.GetValueOrDefault(hashCode);
+        IAutoFakerGenerator? result = _cachedFundamentalGeneratorsByInt.Value.GetValueOrDefault(hashCode);
+        return result;
     }
 
+    public static IAutoFakerGenerator? GetGenerator(CachedType cachedType)
+    {
+        int hashCode = cachedType.CacheKey.Value;
+
+        IAutoFakerGenerator? result = _cachedGenerators.GetValueOrDefault(hashCode);
+
+        return result;
+    }
+
+    public static void SetGenerator(CachedType cachedType, IAutoFakerGenerator generator)
+    {
+        int hashCode = cachedType.CacheKey.Value;
+
+        _cachedGenerators.TryAdd(hashCode, generator);
+    }
+
+    /// <summary>
+    /// For test only!
+    /// </summary>
+    /// <returns></returns>
     public static List<Type> GetSupportedFundamentalTypes()
     {
-        return _cachedGenerators.Value.Select(c => c.Key).ToList();
+        return _cachedFundamentalGenerators.Value.Select(c => c.Key).ToList();
+    }
+
+    public static void Clear()
+    {
+        _cachedGenerators.Clear();
     }
 }

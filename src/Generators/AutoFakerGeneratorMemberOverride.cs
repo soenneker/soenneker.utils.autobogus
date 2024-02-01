@@ -3,9 +3,9 @@ using Soenneker.Utils.AutoBogus.Context;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal sealed class GeneratorMemberOverride<TType, TValue> : GeneratorOverride
+internal sealed class AutoFakerGeneratorMemberOverride<TType, TValue> : AutoFakerGeneratorOverride
 {
-    internal GeneratorMemberOverride(string memberName, Func<AutoFakerContextOverride, TValue> generator)
+    internal AutoFakerGeneratorMemberOverride(string memberName, Func<AutoFakerContextOverride, TValue> generator)
     {
         if (string.IsNullOrWhiteSpace(memberName))
         {

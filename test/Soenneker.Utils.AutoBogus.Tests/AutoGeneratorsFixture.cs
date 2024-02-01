@@ -628,13 +628,13 @@ public partial class AutoGeneratorsFixture
     public class GeneratorOverrides
         : AutoGeneratorsFixture
     {
-        private GeneratorOverride _generatorOverride;
-        private List<GeneratorOverride> _overrides;
+        private AutoFakerGeneratorOverride _autoFakerGeneratorOverride;
+        private List<AutoFakerGeneratorOverride> _overrides;
 
-        private class TestGeneratorOverride
-            : GeneratorOverride
+        private class TestAutoFakerGeneratorOverride
+            : AutoFakerGeneratorOverride
         {
-            public TestGeneratorOverride(bool shouldOverride = false)
+            public TestAutoFakerGeneratorOverride(bool shouldOverride = false)
             {
                 ShouldOverride = shouldOverride;
             }
@@ -652,34 +652,34 @@ public partial class AutoGeneratorsFixture
 
         public GeneratorOverrides()
         {
-            _generatorOverride = new TestGeneratorOverride(true);
-            _overrides = new List<GeneratorOverride>
+            _autoFakerGeneratorOverride = new TestAutoFakerGeneratorOverride(true);
+            _overrides = new List<AutoFakerGeneratorOverride>
             {
-                new TestGeneratorOverride(),
-                _generatorOverride,
-                new TestGeneratorOverride()
+                new TestAutoFakerGeneratorOverride(),
+                _autoFakerGeneratorOverride,
+                new TestAutoFakerGeneratorOverride()
             };
         }
 
         [Fact]
         public void Should_Return_All_Matching_Overrides()
         {
-            var generatorOverride = new TestGeneratorOverride(true);
+            var generatorOverride = new TestAutoFakerGeneratorOverride(true);
 
             _overrides.Insert(1, generatorOverride);
 
             AutoFakerContext context = CreateContext(typeof(string), _overrides);
-            var invoker = GeneratorFactory.GetGenerator(context) as GeneratorOverrideInvoker;
+            var invoker = GeneratorFactory.GetGenerator(context) as AutoFakerGeneratorOverrideInvoker;
 
-            invoker.Overrides.Should().BeEquivalentTo(new[] { generatorOverride, _generatorOverride });
+            invoker.Overrides.Should().BeEquivalentTo(new[] { generatorOverride, _autoFakerGeneratorOverride });
         }
 
         [Fact]
         public void Should_Return_Generator_If_No_Matching_Override()
         {
-            _overrides = new List<GeneratorOverride>
+            _overrides = new List<AutoFakerGeneratorOverride>
             {
-                new TestGeneratorOverride()
+                new TestAutoFakerGeneratorOverride()
             };
 
             AutoFakerContext context = CreateContext(typeof(int), _overrides);
@@ -715,7 +715,7 @@ public partial class AutoGeneratorsFixture
         return (IAutoFakerGenerator)Activator.CreateInstance(type);
     }
 
-    private static AutoFakerContext CreateContext(Type type, List<GeneratorOverride>? generatorOverrides = null, Func<AutoFakerContext, int>? dataTableRowCountFunctor = null)
+    private static AutoFakerContext CreateContext(Type type, List<AutoFakerGeneratorOverride>? generatorOverrides = null, Func<AutoFakerContext, int>? dataTableRowCountFunctor = null)
     {
         var config = new AutoFakerConfig();
 

@@ -3,9 +3,9 @@ using Soenneker.Utils.AutoBogus.Context;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal sealed class GeneratorTypeOverride<TType> : GeneratorOverride
+internal sealed class AutoFakerGeneratorTypeOverride<TType> : AutoFakerGeneratorOverride
 {
-    internal GeneratorTypeOverride(Func<AutoFakerContextOverride, TType> generator)
+    internal AutoFakerGeneratorTypeOverride(Func<AutoFakerContextOverride, TType> generator)
     {
         Type = typeof(TType);
         Generator = generator ?? throw new ArgumentNullException(nameof(generator));

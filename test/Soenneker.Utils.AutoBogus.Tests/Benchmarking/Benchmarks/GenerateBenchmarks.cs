@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
-using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
