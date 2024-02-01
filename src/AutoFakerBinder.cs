@@ -213,7 +213,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         }
 
         //check if tree depth is reached
-        int? treeDepth = context.AutoFakerConfig.TreeDepth.Invoke(context);
+        int? treeDepth = context.AutoFakerConfig.TreeDepth;
 
         if (treeDepth.HasValue && context.TypesStack.Count >= treeDepth)
             return true;
@@ -221,7 +221,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         // Finally check if the recursive depth has been reached
 
         int count = context.TypesStack.Count(t => t == type);
-        int recursiveDepth = context.AutoFakerConfig.RecursiveDepth.Invoke(context);
+        int recursiveDepth = context.AutoFakerConfig.RecursiveDepth;
 
         return count >= recursiveDepth;
     }

@@ -45,7 +45,7 @@ public class AutoGenerateContextFixture
             int count = _faker.Random.Int(3, 5);
             List<int>? expected = Enumerable.Range(0, count).Select(i => _value).ToList();
 
-            _fakerConfig.RepeatCount = context => count;
+            _fakerConfig.RepeatCount =  count;
 
             AutoGenerateContextExtension.GenerateMany(_context, null, _items, false, 1, () => _value);
 

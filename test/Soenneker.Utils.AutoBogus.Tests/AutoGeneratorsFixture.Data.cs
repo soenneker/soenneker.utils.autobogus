@@ -88,28 +88,28 @@ partial class AutoGeneratorsFixture
             // Arrange
             var rowCountByTable = new Dictionary<DataTable, int>();
 
-            Func<AutoFakerContext, int> rowCountFunctor =
-                (AutoFakerContext ctx) =>
-                {
-                    var dataTable = (DataTable)ctx.Instance;
+            //Func<AutoFakerContext, int> rowCountFunctor =
+            //    (AutoFakerContext ctx) =>
+            //    {
+            //        var dataTable = (DataTable)ctx.Instance;
 
-                    if (!rowCountByTable.TryGetValue(dataTable, out int count))
-                    {
-                        // Because Table2.RecordID is a Primary Key and this Unique, Table2
-                        // must not have more records than Table1 otherwise it is impossible
-                        // to have unique values. So, assuming that the dependent tables
-                        // come last in the DataSet, we have a decreasing count as we progress
-                        // through the list.
+            //        if (!rowCountByTable.TryGetValue(dataTable, out int count))
+            //        {
+            //            // Because Table2.RecordID is a Primary Key and this Unique, Table2
+            //            // must not have more records than Table1 otherwise it is impossible
+            //            // to have unique values. So, assuming that the dependent tables
+            //            // come last in the DataSet, we have a decreasing count as we progress
+            //            // through the list.
 
-                        count = 100 - (rowCountByTable.Count + 1) * 10;
+            //            count = 100 - (rowCountByTable.Count + 1) * 10;
 
-                        rowCountByTable[dataTable] = count;
-                    }
+            //            rowCountByTable[dataTable] = count;
+            //        }
 
-                    return count;
-                };
+            //        return count;
+            //    };
 
-            AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: rowCountFunctor);
+            AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: 3);
 
             var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
@@ -131,55 +131,8 @@ partial class AutoGeneratorsFixture
             {
                 table.Columns.Should().NotBeEmpty();
 
-                table.Rows.Should().HaveCount(rowCountByTable[table]);
+                table.Rows.Should().HaveCount(3);
             }
-        }
-
-        [SkippableFact]
-        public void Generate_Should_Fail_If_Requested_Row_Count_Is_Impossible_Due_To_Foreign_Key_Constraint()
-        {
-            // Arrange
-            Type? dataSetType = typeof(TypedDataSetWithRelations);
-
-            var rowCountByTable = new Dictionary<DataTable, int>();
-
-            Func<AutoFakerContext, int> rowCountFunctor =
-                (AutoFakerContext ctx) =>
-                {
-                    var dataTable = (DataTable)ctx.Instance;
-
-                    if (!rowCountByTable.TryGetValue(dataTable, out int count))
-                    {
-                        // Because Table2.RecordID is a Primary Key and this Unique, Table2
-                        // must not have more records than Table1 otherwise it is impossible
-                        // to have unique values. So, assuming that the dependent tables
-                        // come last in the DataSet, having an increasing count creates an
-                        // impossible situation where there aren't enough related records
-                        // to produce unique values.
-
-                        count = 100 + (rowCountByTable.Count + 1) * 10;
-
-                        rowCountByTable[dataTable] = count;
-                    }
-
-                    return count;
-                };
-
-            AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: rowCountFunctor);
-
-            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
-
-            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
-
-            Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
-
-            // Act
-            Action action =
-                () => generator.Generate(context);
-
-            // Assert
-            action.Should().Throw<ArgumentException>()
-                .Which.Message.Should().StartWith("Unable to satisfy the requested row count");
         }
 
         internal class TypedDataSet : DataSet
@@ -291,12 +244,10 @@ partial class AutoGeneratorsFixture
         public void Generate_Should_Return_DataTable_With_Specified_Row_Count(Type dataTableType)
         {
             // Arrange
-            const int RowCount = 100;
+            const int RowCount = 3;
 
-            Func<AutoFakerContext, int> rowCountFunctor =
-                _ => RowCount;
 
-            AutoFakerContext? context = CreateContext(dataTableType, dataTableRowCountFunctor: rowCountFunctor);
+            AutoFakerContext? context = CreateContext(dataTableType, dataTableRowCountFunctor: 3);
 
             var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 

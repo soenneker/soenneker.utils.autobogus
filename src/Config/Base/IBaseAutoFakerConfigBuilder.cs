@@ -1,8 +1,8 @@
 using System;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
-using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Override;
 
 namespace Soenneker.Utils.AutoBogus.Config.Base;
 
@@ -31,7 +31,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="count">The repeat count to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithRepeatCount(Func<AutoFakerContext, int> count);
+    //TBuilder WithRepeatCount(Func<AutoFakerContext, int> count);
 
     /// <summary>
     /// Registers the number of rows to generate in a <see cref="System.Data.DataTable"/>.
@@ -45,7 +45,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="count">The row count to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithDataTableRowCount(Func<AutoFakerContext, int> count);
+    //TBuilder WithDataTableRowCount(Func<AutoFakerContext, int> count);
 
     /// <summary>
     /// Registers the depth to recursively generate.
@@ -66,14 +66,14 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="depth">The recursive depth to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithRecursiveDepth(Func<AutoFakerContext, int> depth);
+    //TBuilder WithRecursiveDepth(Func<AutoFakerContext, int> depth);
 
     /// <summary>
     /// Registers the depth to generate the object tree
     /// </summary>
     /// <param name="depth">The depth to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithTreeDepth(Func<AutoFakerContext, int?> depth);
+    //TBuilder WithTreeDepth( int? depth);
 
     /// <summary>
     /// Registers a binder instance to use when generating values.

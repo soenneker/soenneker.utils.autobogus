@@ -55,19 +55,19 @@ public class AutoConfigBuilderFixture
         {
             int count = _faker.Random.Int();
 
-            _builder.WithRepeatCount<ITestBuilder>(context => count, null);
+            _builder.WithRepeatCount<ITestBuilder>(count, null);
 
-            _fakerConfig.RepeatCount.Invoke(null).Should().Be(count);
+            _fakerConfig.RepeatCount.Should().Be(count);
         }
 
         [Fact]
         public void Should_Set_Config_RepeatCount_To_Default_If_Null()
         {
-            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            int count = AutoFakerConfig.DefaultRepeatCount;
 
             _builder.WithRepeatCount<ITestBuilder>(null, null);
 
-            _fakerConfig.RepeatCount.Invoke(null).Should().Be(count);
+            _fakerConfig.RepeatCount.Should().Be(count);
         }
     }
 
@@ -79,19 +79,19 @@ public class AutoConfigBuilderFixture
         {
             int depth = _faker.Random.Int();
 
-            _builder.WithRecursiveDepth<ITestBuilder>(context => depth, null);
+            _builder.WithRecursiveDepth<ITestBuilder>( depth, null);
 
-            _fakerConfig.RecursiveDepth.Invoke(null).Should().Be(depth);
+            _fakerConfig.RecursiveDepth.Should().Be(depth);
         }
 
         [Fact]
         public void Should_Set_Config_RecursiveDepth_To_Default_If_Null()
         {
-            int depth = AutoFakerConfig.DefaultRecursiveDepth.Invoke(null);
+            int depth = AutoFakerConfig.DefaultRecursiveDepth;
 
             _builder.WithRecursiveDepth<ITestBuilder>(null, null);
 
-            _fakerConfig.RecursiveDepth.Invoke(null).Should().Be(depth);
+            _fakerConfig.RecursiveDepth.Should().Be(depth);
         }
     }
 
@@ -104,19 +104,19 @@ public class AutoConfigBuilderFixture
         {
             int depth = _faker.Random.Int();
 
-            _builder.WithTreeDepth<ITestBuilder>(context => depth, null);
+            _builder.WithTreeDepth<ITestBuilder>(depth, null);
 
-            _fakerConfig.TreeDepth.Invoke(null).Should().Be(depth);
+            _fakerConfig.TreeDepth.Should().Be(depth);
         }
 
         [Fact]
         public void Should_Set_Config_TreeDepth_To_Default_If_Null()
         {
-            int? depth = AutoFakerConfig.DefaultTreeDepth.Invoke(null);
+            int? depth = AutoFakerConfig.DefaultTreeDepth;
 
             _builder.WithTreeDepth<ITestBuilder>(null, null);
 
-            _fakerConfig.TreeDepth.Invoke(null).Should().Be(depth);
+            _fakerConfig.TreeDepth.Should().Be(depth);
         }
     }
     
@@ -129,7 +129,7 @@ public class AutoConfigBuilderFixture
             var faker = new Faker();
 
             _builder.WithFaker<ITestBuilder>(faker, null);
-            _builder.FakerConfig.Faker.Should().Be(faker);
+            _builder.AutoFakerConfig.Faker.Should().Be(faker);
         }
     }
 

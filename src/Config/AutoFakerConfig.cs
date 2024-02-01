@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Bogus;
-using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Override;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
@@ -11,25 +11,27 @@ internal sealed class AutoFakerConfig
     internal const string DefaultLocale = "en";
     internal const int GenerateAttemptsThreshold = 3;
 
-    internal static readonly Func<AutoFakerContext, int> DefaultRepeatCount = _ => 3;
-    internal static readonly Func<AutoFakerContext, int> DefaultDataTableRowCount = _ => 15;
-    internal static readonly Func<AutoFakerContext, int> DefaultRecursiveDepth = _ => 2;
-    internal static readonly Func<AutoFakerContext, int?> DefaultTreeDepth = _ => null;
+    internal const int DefaultRepeatCount = 3;
+    internal const int DefaultDataTableRowCount = 15;
+
+    internal const int DefaultRecursiveDepth = 2;
+
+    internal static readonly int? DefaultTreeDepth = null;
 
     internal string Locale { get; set; }
-    internal Func<AutoFakerContext, int> RepeatCount { get; set; }
-    internal Func<AutoFakerContext, int> DataTableRowCount { get; set; }
-    internal Func<AutoFakerContext, int> RecursiveDepth { get; set; }
+    internal int RepeatCount { get; set; }
+    internal int DataTableRowCount { get; set; }
+    internal int RecursiveDepth { get; set; }
 
     internal AutoFakerBinder FakerBinder { get; set; }
 
-    internal List<Type> SkipTypes { get; set; }
+    internal HashSet<Type> SkipTypes { get; set; }
 
-    internal List<string> SkipPaths { get; set; }
+    internal HashSet<string> SkipPaths { get; set; }
 
     internal List<AutoFakerGeneratorOverride>? Overrides { get; set; }
 
-    public Func<AutoFakerContext, int?> TreeDepth { get; set; }
+    public int? TreeDepth { get; set; }
 
     public Faker? Faker { get; set; }
 

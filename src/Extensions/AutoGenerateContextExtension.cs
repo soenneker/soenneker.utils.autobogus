@@ -83,48 +83,52 @@ public static class AutoGenerateContextExtension
 
     internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempt = 1, Func<TType>? generate = null)
     {
-        while (true)
+        // Apply any defaults
+        count ??= context.AutoFakerConfig.RepeatCount;
+
+        generate ??= context.Generate<TType>;
+
+        // Generate a list of items
+        int? required = count - items.Count;
+
+        for (var index = 0; index < required; index++)
         {
-            // Apply any defaults
-            count ??= context.AutoFakerConfig.RepeatCount.Invoke(context);
+            TType item = generate.Invoke();
 
-            generate ??= context.Generate<TType>;
-
-            // Generate a list of items
-            int? required = count - items.Count;
-
-            for (var index = 0; index < required; index++)
-            {
-                TType? item = generate.Invoke();
-
-                // Ensure the generated value is not null (which means the type couldn't be generated)
-                if (item != null)
-                {
-                    items.Add(item);
-                }
-            }
-
-            if (unique)
-            {
-                // Remove any duplicates and generate more to match the required count
-                List<TType> filtered = items.Distinct().ToList();
-
-                if (filtered.Count < count)
-                {
-                    // To maintain the items reference, clear and reapply the filtered list
-                    items.Clear();
-                    items.AddRange(filtered);
-
-                    // Only continue to generate more if the attempts threshold is not reached
-                    if (attempt < AutoFakerConfig.GenerateAttemptsThreshold)
-                    {
-                        attempt += 1;
-                        continue;
-                    }
-                }
-            }
-
-            break;
+            // Ensure the generated value is not null (which means the type couldn't be generated)
+            if (item != null)
+                items.Add(item);
         }
+
+        if (items.Count == count)
+            return;
+
+        if (unique)
+            return;
+
+        var hashSet = new HashSet<TType>();
+
+        foreach (TType item in items)
+            hashSet.Add(item);
+
+        for (var index = 0; index < AutoFakerConfig.GenerateAttemptsThreshold; index++)
+        {
+            TType item = generate.Invoke();
+
+            // Ensure the generated value is not null (which means the type couldn't be generated)
+            if (item != null)
+                hashSet.Add(item);
+
+            if (hashSet.Count == count)
+            {
+                // To maintain the items reference, clear and reapply the filtered list
+                items.Clear();
+                items.AddRange(hashSet);
+                return;
+            }
+        }
+
+        items.Clear();
+        items.AddRange(hashSet);
     }
 }

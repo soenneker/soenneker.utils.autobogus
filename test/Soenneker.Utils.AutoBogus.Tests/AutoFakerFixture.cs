@@ -35,7 +35,7 @@ public class AutoFakerFixture
             AutoFaker.Configure(builder =>
             {
                 var instance = builder as AutoFakerConfigBuilder;
-                fakerConfig = instance.FakerConfig;
+                fakerConfig = instance.AutoFakerConfig;
             });
 
             fakerConfig.Should().Be(DefaultConfigService.Config);
@@ -83,8 +83,8 @@ public class AutoFakerFixture
         [Theory]
         [MemberData(nameof(GetTypes))]
         public void Should_Generate_Many_Types(Type type)
-        {
-            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+        {   
+            int count = AutoFakerConfig.DefaultRepeatCount;
             Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
 
             AssertGenerateMany(type, _generateMany, _faker, count, configure);
@@ -100,7 +100,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Many_Complex_Types()
         {
-            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            int count = AutoFakerConfig.DefaultRepeatCount;
             Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
             List<Order>? instances = _faker.Generate<Order>(count, configure);
 
@@ -140,7 +140,7 @@ public class AutoFakerFixture
         [MemberData(nameof(GetTypes))]
         public void Should_Generate_Many_Types(Type type)
         {
-            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            int count = AutoFakerConfig.DefaultRepeatCount;
             Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
 
             AssertGenerateMany(type, _generateMany, null, count, configure);
@@ -156,7 +156,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Many_Complex_Types()
         {
-            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+            int count = AutoFakerConfig.DefaultRepeatCount;
             Action<IAutoGenerateConfigBuilder>? configure = CreateConfigure<IAutoGenerateConfigBuilder>(DefaultConfigService.Config);
             List<Order>? instances = AutoFaker.Generate<Order>(count, configure);
 
@@ -313,7 +313,7 @@ public class AutoFakerFixture
             }
 
             var instance = builder as AutoFakerConfigBuilder;
-            instance.FakerConfig.Should().NotBe(assertFakerConfig);
+            instance.AutoFakerConfig.Should().NotBe(assertFakerConfig);
         };
     }
 
@@ -327,7 +327,7 @@ public class AutoFakerFixture
 
     public static void AssertGenerateMany(Type type, MethodInfo methodInfo, IAutoFaker faker, params object[] args)
     {
-        int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+        int count = AutoFakerConfig.DefaultRepeatCount;
         MethodInfo? method = methodInfo.MakeGenericMethod(type);
         var instances = method.Invoke(faker, args) as ICollection;
 
@@ -341,7 +341,7 @@ public class AutoFakerFixture
 
     public static void AssertGenerateMany(IEnumerable<Order> instances)
     {
-        int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
+        int count = AutoFakerConfig.DefaultRepeatCount;
 
         instances.Should().HaveCount(count);
 

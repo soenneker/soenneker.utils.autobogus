@@ -271,6 +271,8 @@ public partial class AutoGeneratorsFixture
             AutoFakerContext context = CreateContext(type);
             IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 
+            GeneratorService.Clear();
+
             GeneratorFactory.GetGenerator(context).Should().Be(generator);
         }
 
@@ -715,7 +717,7 @@ public partial class AutoGeneratorsFixture
         return (IAutoFakerGenerator)Activator.CreateInstance(type);
     }
 
-    private static AutoFakerContext CreateContext(Type type, List<AutoFakerGeneratorOverride>? generatorOverrides = null, Func<AutoFakerContext, int>? dataTableRowCountFunctor = null)
+    private static AutoFakerContext CreateContext(Type type, List<AutoFakerGeneratorOverride>? generatorOverrides = null, int? dataTableRowCountFunctor = null)
     {
         var config = new AutoFakerConfig();
 
@@ -726,7 +728,7 @@ public partial class AutoGeneratorsFixture
 
         if (dataTableRowCountFunctor != null)
         {
-            config.DataTableRowCount = dataTableRowCountFunctor;
+            config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
         return new AutoFakerContext(config, type);
