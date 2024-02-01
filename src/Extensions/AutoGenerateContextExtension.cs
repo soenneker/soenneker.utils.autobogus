@@ -81,7 +81,7 @@ public static class AutoGenerateContextExtension
         context?.FakerBinder.PopulateInstance<TType>(instance, context);
     }
 
-    internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempt = 1, Func<TType>? generate = null)
+    internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempts = 1, Func<TType>? generate = null)
     {
         // Apply any defaults
         count ??= context.AutoFakerConfig.RepeatCount;
@@ -100,10 +100,7 @@ public static class AutoGenerateContextExtension
                 items.Add(item);
         }
 
-        if (items.Count == count)
-            return;
-
-        if (unique)
+        if (!unique)
             return;
 
         var hashSet = new HashSet<TType>();
@@ -111,7 +108,10 @@ public static class AutoGenerateContextExtension
         foreach (TType item in items)
             hashSet.Add(item);
 
-        for (var index = 0; index < AutoFakerConfig.GenerateAttemptsThreshold; index++)
+        if (hashSet.Count == items.Count)
+            return;
+
+        for (var index = 0; index < attempts; index++)
         {
             TType item = generate.Invoke();
 
@@ -119,13 +119,13 @@ public static class AutoGenerateContextExtension
             if (item != null)
                 hashSet.Add(item);
 
-            if (hashSet.Count == count)
-            {
-                // To maintain the items reference, clear and reapply the filtered list
-                items.Clear();
-                items.AddRange(hashSet);
-                return;
-            }
+            if (hashSet.Count != count) 
+                continue;
+
+            // To maintain the items reference, clear and reapply the filtered list
+            items.Clear();
+            items.AddRange(hashSet);
+            return;
         }
 
         items.Clear();

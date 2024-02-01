@@ -82,13 +82,13 @@ public class AutoGenerateContextFixture
         {
             var attempts = 0;
 
-            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, 1, () =>
+            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, AutoFakerConfig.GenerateAttemptsThreshold, () =>
             {
                 attempts++;
                 return _value;
             });
 
-            attempts.Should().Be(AutoFakerConfig.GenerateAttemptsThreshold);
+            attempts.Should().Be(AutoFakerConfig.GenerateAttemptsThreshold + 1);
 
             _items.Should().BeEquivalentTo(new[] { _value });
         }

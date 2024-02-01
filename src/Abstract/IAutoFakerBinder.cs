@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Context;
 
@@ -8,7 +7,7 @@ namespace Soenneker.Utils.AutoBogus.Abstract;
 /// <summary>
 /// An interface for binding generated instances.
 /// </summary>
-public interface IAutoFakerBinder : IBinder
+public interface IAutoFakerBinder 
 {
     /// <summary>
     /// Creates an instance of <typeparamref name="TType"/>.
@@ -31,7 +30,5 @@ public interface IAutoFakerBinder : IBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    void PopulateInstance<TType>(object instance, AutoFakerContext context, MemberInfo[]? members = null);
-
-    void PopulateInstance(object instance, AutoFakerContext context, Type type, MemberInfo[]? members = null);
+    void PopulateInstance<TType>(object instance, AutoFakerContext context);
 }

@@ -41,7 +41,7 @@ class ExampleStructOverride : AutoFakerGeneratorOverride
         return context.GenerateType == typeof(ExampleStruct);
     }
 
-    public override void Generate(AutoFakerContextOverride context)
+    public override void Generate(AutoFakerOverrideContext context)
     {
         context.Instance = new ExampleStruct(5);
     }

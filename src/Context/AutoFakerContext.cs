@@ -4,12 +4,13 @@ using Bogus;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Override;
 using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Context;
 
 /// <summary>
-/// A class that provides context for a generate request.
+/// A class that provides context for a generate request. A 'generate request' is a single call to `.Generate()` for example.
 /// </summary>
 public sealed class AutoFakerContext
 {

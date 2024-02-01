@@ -14,7 +14,7 @@ public static class AutoGenerateOverrideContextExtension
     /// <typeparam name="TType">The instance type to generate.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContextOverride"/> instance for the current generate request.</param>
     /// <returns>The generated instance.</returns>
-    public static TType Generate<TType>(this AutoFakerContextOverride context)
+    public static TType Generate<TType>(this AutoFakerOverrideContext context)
     {
         return context == null ? default : context.GenerateContext.Generate<TType>();
     }
@@ -26,7 +26,7 @@ public static class AutoGenerateOverrideContextExtension
     /// <param name="context">The <see cref="AutoFakerContextOverride"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of instances.</returns>
-    public static List<TType> GenerateMany<TType>(this AutoFakerContextOverride context, int? count = null)
+    public static List<TType> GenerateMany<TType>(this AutoFakerOverrideContext context, int? count = null)
     {
         return context?.GenerateContext.GenerateMany<TType>(count) ?? new List<TType>();
     }
@@ -38,7 +38,7 @@ public static class AutoGenerateOverrideContextExtension
     /// <param name="context">The <see cref="AutoFakerContextOverride"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of unique instances.</returns>
-    public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContextOverride context, int? count = null)
+    public static List<TType> GenerateUniqueMany<TType>(this AutoFakerOverrideContext context, int? count = null)
     {
         return context?.GenerateContext.GenerateUniqueMany<TType>(count) ?? new List<TType>();
     }
@@ -49,7 +49,7 @@ public static class AutoGenerateOverrideContextExtension
     /// <typeparam name="TType">The type of instance to populate.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContextOverride"/> instance for the current generate request.</param>
     /// <param name="instance">The instance to populate.</param>
-    public static void Populate<TType>(this AutoFakerContextOverride context, TType instance)
+    public static void Populate<TType>(this AutoFakerOverrideContext context, TType instance)
     {
         context?.GenerateContext.Populate(instance);
     }

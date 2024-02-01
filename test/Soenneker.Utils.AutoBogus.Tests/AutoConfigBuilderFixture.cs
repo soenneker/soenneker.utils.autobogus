@@ -256,7 +256,7 @@ public class AutoConfigBuilderFixture
                 return false;
             }
 
-            public override void Generate(AutoFakerContextOverride context)
+            public override void Generate(AutoFakerOverrideContext context)
             { }
         }
 

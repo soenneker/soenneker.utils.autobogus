@@ -648,7 +648,7 @@ public partial class AutoGeneratorsFixture
                 return ShouldOverride;
             }
 
-            public override void Generate(AutoFakerContextOverride context)
+            public override void Generate(AutoFakerOverrideContext context)
             { }
         }
 

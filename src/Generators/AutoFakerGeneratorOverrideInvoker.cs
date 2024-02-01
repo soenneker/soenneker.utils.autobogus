@@ -18,7 +18,7 @@ internal sealed class AutoFakerGeneratorOverrideInvoker
 
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        var overrideContext = new AutoFakerContextOverride(context);
+        var overrideContext = new AutoFakerOverrideContext(context);
 
         foreach (AutoFakerGeneratorOverride? generatorOverride in Overrides)
         {

@@ -18,7 +18,7 @@ namespace Soenneker.Utils.AutoBogus;
 /// <summary>
 /// A class for binding generated instances.
 /// </summary>
-public class AutoFakerBinder : Binder, IAutoFakerBinder
+public class AutoFakerBinder : IAutoFakerBinder
 {
     /// <summary>
     /// Creates an instance of <typeparamref name="TType"/>.
@@ -82,7 +82,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    public virtual void PopulateInstance<TType>(object? instance, AutoFakerContext? context, MemberInfo[]? members = null)
+    public virtual void PopulateInstance<TType>(object? instance, AutoFakerContext? context)
     {
         // We can only populate non-null instances 
         if (instance == null || context == null)
@@ -95,64 +95,7 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         CachedType cachedType = CacheService.Cache.GetCachedType(type);
 
         // Iterate the members and bind a generated value
-        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType, members);
-
-        foreach (AutoMember? member in autoMembers)
-        {
-            if (member.Type != null)
-            {
-                // Check if the member has a skip config or the type has already been generated as a parent
-                // If so skip this generation otherwise track it for use later in the object tree
-                if (ShouldSkip(member.Type, $"{type.FullName}.{member.Name}", context))
-                {
-                    continue;
-                }
-
-                context.Setup(type, member.Type, member.Name);
-
-                context.TypesStack.Push(member.Type);
-
-                // Generate a random value and bind it to the instance
-                IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
-                object value = generator.Generate(context);
-
-                try
-                {
-                    if (!member.IsReadOnly)
-                    {
-                        member.Setter.Invoke(instance, value);
-                    }
-                    else if (member.CachedType.IsDictionary())
-                    {
-                        PopulateDictionary(value, instance, member);
-                    }
-                    else if (member.CachedType.IsCollection())
-                    {
-                        PopulateCollection(value, instance, member);
-                    }
-                }
-                catch
-                {
-                }
-
-                // Remove the current type from the type stack so siblings can be created
-                context.TypesStack.Pop();
-            }
-        }
-    }
-
-    public void PopulateInstance(object instance, AutoFakerContext context, Type type, MemberInfo[]? members = null)
-    {
-        // We can only populate non-null instances 
-        if (instance == null || context == null)
-        {
-            return;
-        }
-
-        CachedType cachedType = CacheService.Cache.GetCachedType(type);
-
-        // Iterate the members and bind a generated value
-        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType, members);
+        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
 
         foreach (AutoMember? member in autoMembers)
         {
@@ -286,20 +229,20 @@ public class AutoFakerBinder : Binder, IAutoFakerBinder
         return GeneratorFactory.GetGenerator(context);
     }
 
-    private List<AutoMember> GetMembersToPopulate(CachedType cachedType, MemberInfo[]? members)
+    private List<AutoMember> GetMembersToPopulate(CachedType cachedType)
     {
         // If a list of members is provided, no others should be populated
-        if (members != null)
-        {
-            var autoMembersList = new List<AutoMember>(members.Length);
+        //if (members != null)
+        //{
+        //    var autoMembersList = new List<AutoMember>(members.Length);
 
-            for (int i = 0; i < members.Length; i++)
-            {
-                autoMembersList.Add(new AutoMember(members[i]));
-            }
+        //    for (int i = 0; i < members.Length; i++)
+        //    {
+        //        autoMembersList.Add(new AutoMember(members[i]));
+        //    }
 
-            return autoMembersList;
-        }
+        //    return autoMembersList;
+        //}
 
         // Get the baseline members resolved by Bogus
         var autoMembers = new List<AutoMember>();

@@ -12,21 +12,21 @@ public class AutoGeneratorOverridesFixture
     private sealed class TestOverride
         : AutoFakerGeneratorOverride
     {
-        public TestOverride(bool preinitialize, Action<AutoFakerContextOverride> generator)
+        public TestOverride(bool preinitialize, Action<AutoFakerOverrideContext> generator)
         {
             Preinitialize = preinitialize;
             Generator = generator;
         }
 
         public override bool Preinitialize { get; }
-        private Action<AutoFakerContextOverride> Generator { get; }
+        private Action<AutoFakerOverrideContext> Generator { get; }
 
         public override bool CanOverride(AutoFakerContext context)
         {
             return context.GenerateType == typeof(OverrideClass);
         }
 
-        public override void Generate(AutoFakerContextOverride context)
+        public override void Generate(AutoFakerOverrideContext context)
         {
             Generator.Invoke(context);
         }

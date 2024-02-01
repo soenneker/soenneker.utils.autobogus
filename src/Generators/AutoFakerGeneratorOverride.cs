@@ -25,6 +25,6 @@ public abstract class AutoFakerGeneratorOverride
     /// <summary>
     /// Generates an override instance of a given type.
     /// </summary>
-    /// <param name="context">The <see cref="AutoFakerContextOverride"/> instance for the current generate request.</param>
-    public abstract void Generate(AutoFakerContextOverride context);
+    /// <param name="context">The <see cref="AutoFakerOverrideContext"/> instance for the current generate request.</param>
+    public abstract void Generate(AutoFakerOverrideContext context);
 }
