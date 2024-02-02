@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
@@ -11,13 +12,20 @@ internal sealed class ListGenerator<TType> : IAutoFakerGenerator
     {
         List<TType> list;
 
-        try
-        {
-            list = context.CachedType.CreateInstance<List<TType>>();
-        }
-        catch
+        if (context.CachedType.IsInterface)
         {
             list = [];
+        }
+        else
+        {
+            try
+            {
+                list = context.CachedType.CreateInstance<List<TType>>();
+            }
+            catch (Exception ex)
+            {
+                list = [];
+            }
         }
 
         List<TType> items = context.GenerateMany<TType>();

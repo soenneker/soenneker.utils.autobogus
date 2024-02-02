@@ -13,8 +13,6 @@ namespace Soenneker.Utils.AutoBogus.Extensions;
 /// </summary>
 public static class AutoConfigBuilderExtension
 {
-    #region WithBinder
-
     /// <summary>
     /// Registers a binder type to use when generating values.
     /// </summary>
@@ -53,10 +51,6 @@ public static class AutoConfigBuilderExtension
         var binder = new TBinder();
         return builder?.WithBinder(binder);
     }
-
-    #endregion
-
-    #region WithSkip
 
     /// <summary>
     /// Registers a type to skip when generating values.
@@ -132,10 +126,6 @@ public static class AutoConfigBuilderExtension
         string? memberName = GetMemberName(member);
         return builder?.WithSkip<TType>(memberName);
     }
-
-    #endregion
-
-    #region WithOverride
 
     /// <summary>
     /// Registers an override instance to use when generating values.
@@ -226,8 +216,6 @@ public static class AutoConfigBuilderExtension
 
         return builder?.WithOverride(generatorOverride);
     }
-
-    #endregion
 
     private static string? GetMemberName<TType>(Expression<Func<TType, object>>? member)
     {

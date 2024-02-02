@@ -142,7 +142,10 @@ public class AutoConfigBuilderFixture
             Type? type1 = typeof(int);
             Type? type2 = typeof(int);
 
-            _fakerConfig.SkipTypes.Add(type1);
+            _fakerConfig.SkipTypes =
+            [
+                type1
+            ];
 
             _builder.WithSkip<ITestBuilder>(type2, null);
 
@@ -155,7 +158,10 @@ public class AutoConfigBuilderFixture
             Type? type1 = typeof(int);
             Type? type2 = typeof(string);
 
-            _fakerConfig.SkipTypes.Add(type1);
+            _fakerConfig.SkipTypes =
+            [
+                type1
+            ];
 
             _builder.WithSkip<ITestBuilder>(type2, null);
 
@@ -181,7 +187,10 @@ public class AutoConfigBuilderFixture
             Type? type = typeof(TestSkip);
             var member = $"{type.FullName}.Value";
 
-            _fakerConfig.SkipPaths.Add(member);
+            _fakerConfig.SkipPaths =
+            [
+                member
+            ];
 
             _builder.WithSkip<ITestBuilder>(type, "Value", null);
 
@@ -194,8 +203,10 @@ public class AutoConfigBuilderFixture
             Type? type = typeof(TestSkip);
             string? path = _faker.Random.String();
 
-            _fakerConfig.SkipPaths.Add(path);
-
+            _fakerConfig.SkipPaths =
+            [
+                path
+            ];
             _builder.WithSkip<ITestBuilder>(type, "Value", null);
 
             _fakerConfig.SkipPaths.Should().BeEquivalentTo(new[]
@@ -219,8 +230,10 @@ public class AutoConfigBuilderFixture
         {
             Type? type = typeof(TestSkip);
             var member = $"{type.FullName}.Value";
-
-            _fakerConfig.SkipPaths.Add(member);
+            _fakerConfig.SkipPaths =
+            [
+                member
+            ];
 
             _builder.WithSkip<ITestBuilder, TestSkip>("Value", null);
 
@@ -233,7 +246,10 @@ public class AutoConfigBuilderFixture
             Type? type = typeof(TestSkip);
             string? path = _faker.Random.String();
 
-            _fakerConfig.SkipPaths.Add(path);
+            _fakerConfig.SkipPaths =
+            [
+                path
+            ];
 
             _builder.WithSkip<ITestBuilder, TestSkip>("Value", null);
 
@@ -265,14 +281,18 @@ public class AutoConfigBuilderFixture
         {
             _builder.WithOverride<ITestBuilder>(null, null);
 
-            _fakerConfig.Overrides.Should().BeEmpty();
+            _fakerConfig.Overrides.Should().BeNull();
         }
 
         [Fact]
         public void Should_Not_Add_Override_If_Already_Added()
         {
             var generatorOverride = new TestAutoFakerGeneratorOverride();
-            _fakerConfig.Overrides.Add(generatorOverride);
+
+            _fakerConfig.Overrides =
+            [
+                generatorOverride
+            ];
 
             _builder.WithOverride<ITestBuilder>(generatorOverride, null);
 
@@ -285,7 +305,10 @@ public class AutoConfigBuilderFixture
             var generatorOverride1 = new TestAutoFakerGeneratorOverride();
             var generatorOverride2 = new TestAutoFakerGeneratorOverride();
 
-            _fakerConfig.Overrides.Add(generatorOverride1);
+            _fakerConfig.Overrides =
+            [
+                generatorOverride1
+            ];
 
             _builder.WithOverride<ITestBuilder>(generatorOverride2, null);
 

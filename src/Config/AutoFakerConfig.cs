@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Generators;
-using Soenneker.Utils.AutoBogus.Override;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
@@ -23,11 +22,9 @@ internal sealed class AutoFakerConfig
     internal int DataTableRowCount { get; set; }
     internal int RecursiveDepth { get; set; }
 
-    internal AutoFakerBinder FakerBinder { get; set; }
+    internal HashSet<Type>? SkipTypes { get; set; }
 
-    internal HashSet<Type> SkipTypes { get; set; }
-
-    internal HashSet<string> SkipPaths { get; set; }
+    internal HashSet<string>? SkipPaths { get; set; }
 
     internal List<AutoFakerGeneratorOverride>? Overrides { get; set; }
 
@@ -42,10 +39,6 @@ internal sealed class AutoFakerConfig
         DataTableRowCount = DefaultDataTableRowCount;
         RecursiveDepth = DefaultRecursiveDepth;
         TreeDepth = DefaultTreeDepth;
-        FakerBinder = new AutoFakerBinder();
-        SkipTypes = [];
-        SkipPaths = [];
-        Overrides = [];
 
         if (Faker != null)
             return;
@@ -60,7 +53,7 @@ internal sealed class AutoFakerConfig
         DataTableRowCount = fakerConfig.DataTableRowCount;
         RecursiveDepth = fakerConfig.RecursiveDepth;
         TreeDepth = fakerConfig.TreeDepth;
-        FakerBinder = fakerConfig.FakerBinder;
+
         SkipTypes = fakerConfig.SkipTypes;
         SkipPaths = fakerConfig.SkipPaths;
         Overrides = fakerConfig.Overrides;

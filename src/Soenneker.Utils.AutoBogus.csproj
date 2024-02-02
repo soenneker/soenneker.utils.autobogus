@@ -27,7 +27,7 @@
         <RepositoryUrl>https://github.com/soenneker/soenneker.utils.autobogus</RepositoryUrl>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>preview</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
@@ -42,7 +42,7 @@
     <ItemGroup>
         <PackageReference Include="Ardalis.SmartEnum" Version="8.0.0" />
         <PackageReference Include="Bogus" Version="35.4.0" />
-        <PackageReference Include="Soenneker.Reflection.Cache" Version="2.1.15" />
+        <PackageReference Include="Soenneker.Reflection.Cache" Version="2.1.22" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
     </ItemGroup>
 </Project>

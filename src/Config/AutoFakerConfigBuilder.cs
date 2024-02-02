@@ -4,7 +4,7 @@ using Bogus;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Base;
 using Soenneker.Utils.AutoBogus.Generators;
-using Soenneker.Utils.AutoBogus.Override;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
@@ -106,9 +106,9 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         return builder;
     }
 
-    private TBuilder WithBinder<TBuilder>(AutoFakerBinder? fakerBinder, TBuilder builder)
+    private static TBuilder WithBinder<TBuilder>(AutoFakerBinder? fakerBinder, TBuilder builder)
     {
-        AutoFakerConfig.FakerBinder = fakerBinder ?? new AutoFakerBinder();
+        AutoFakerBinderService.SetCustomBinder(fakerBinder);
         return builder;
     }
 
@@ -120,6 +120,8 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
     internal TBuilder WithSkip<TBuilder>(Type type, TBuilder builder)
     {
+        AutoFakerConfig.SkipTypes ??= [];
+
         AutoFakerConfig.SkipTypes.Add(type);
         return builder;
     }
@@ -130,6 +132,9 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
             return builder;
 
         var path = $"{type.FullName}.{memberName}";
+
+        AutoFakerConfig.SkipPaths ??= [];
+
         bool existing = AutoFakerConfig.SkipPaths.Any(s => s == path);
 
         if (!existing)
@@ -148,12 +153,12 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         if (autoFakerGeneratorOverride == null)
             return builder;
 
+        AutoFakerConfig.Overrides ??= [];
+
         bool existing = AutoFakerConfig.Overrides.Any(o => o == autoFakerGeneratorOverride);
 
         if (!existing)
-        {
             AutoFakerConfig.Overrides.Add(autoFakerGeneratorOverride);
-        }
 
         return builder;
     }

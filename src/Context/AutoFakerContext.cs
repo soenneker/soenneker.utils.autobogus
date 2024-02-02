@@ -4,7 +4,6 @@ using Bogus;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Generators;
-using Soenneker.Utils.AutoBogus.Override;
 using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Context;
@@ -17,12 +16,12 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The parent type of the type associated with the current generate request.
     /// </summary>
-    public Type ParentType { get; private set; }
+    public Type? ParentType { get; private set; }
 
     /// <summary>
     /// The type associated with the current generate request.
     /// </summary>
-    public Type GenerateType { get; private set; }
+    public Type? GenerateType { get; private set; }
 
     public CachedType CachedType { get; private set; }
 
@@ -46,8 +45,6 @@ public sealed class AutoFakerContext
     internal Stack<Type> TypesStack { get; }
 
     internal object Instance { get; set; }
-
-    internal AutoFakerBinder FakerBinder => AutoFakerConfig.FakerBinder;
 
     internal List<AutoFakerGeneratorOverride>? Overrides => AutoFakerConfig.Overrides;
 

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -29,7 +28,8 @@ public static class AutoGenerateContextExtension
 
         // Get the type generator and return a value
         IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
-        return (TType) generator.Generate(context);
+        var generatedInstance = generator.Generate(context);
+        return (TType)generatedInstance;
     }
 
     /// <summary>
@@ -68,17 +68,6 @@ public static class AutoGenerateContextExtension
         GenerateMany(context, count, items, true);
 
         return items;
-    }
-
-    /// <summary>
-    /// Populates the provided instance with generated values.
-    /// </summary>
-    /// <typeparam name="TType">The type of instance to populate.</typeparam>
-    /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
-    /// <param name="instance">The instance to populate.</param>
-    public static void Populate<TType>(this AutoFakerContext? context, TType instance)
-    {
-        context?.FakerBinder.PopulateInstance<TType>(instance, context);
     }
 
     internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempts = 1, Func<TType>? generate = null)

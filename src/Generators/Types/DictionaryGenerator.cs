@@ -22,10 +22,10 @@ internal sealed class DictionaryGenerator<TKey, TValue>
         {
             try
             {
-                items = (IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
-                //items = context.CachedType.CreateInstance<IDictionary<TKey, TValue>>(); //(IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
+               // items = (IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
+                items = (IDictionary<TKey, TValue>)context.CachedType.CreateInstance(); //(IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
             }
-            catch
+            catch (Exception e)
             {
                 items = new Dictionary<TKey, TValue>();
             }

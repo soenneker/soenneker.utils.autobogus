@@ -69,6 +69,7 @@ public sealed class AutoFaker : IAutoFaker
     /// <typeparam name="TType">The type of instance to generate.</typeparam>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated instance.</returns>
+    [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
     public static TType Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         IAutoFaker faker = Create(configure);
@@ -82,6 +83,7 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="count">The number of instances to generate.</param>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated collection of instances.</returns>
+    [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
     public static List<TType> Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         IAutoFaker faker = Create(configure);

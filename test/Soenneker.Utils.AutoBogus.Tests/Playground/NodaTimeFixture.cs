@@ -49,7 +49,7 @@ public class NodaTimeFixture
         [Fact]
         public void TestAutoFaker()
         {
-            var faker = new Faker<TimeHolder>().RuleFor(x => x.Time, faker => _validDate);
+            Faker<TimeHolder>? faker = new Faker<TimeHolder>().RuleFor(x => x.Time, faker => _validDate);
 
             TimeHolder? created = faker.Generate();
             created = faker.Generate();

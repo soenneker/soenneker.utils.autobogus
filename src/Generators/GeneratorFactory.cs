@@ -84,7 +84,7 @@ internal static class GeneratorFactory
 
         // Check if an expando object needs to generator
         // This actually means an existing dictionary needs to be populated
-        if (context.CachedType.IsExpandoObject())
+        if (context.CachedType.IsExpandoObject)
         {
             return new ExpandoObjectGenerator();
         }

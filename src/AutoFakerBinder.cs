@@ -122,7 +122,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                     {
                         member.Setter.Invoke(instance, value);
                     }
-                    else if (member.CachedType.IsDictionary())
+                    else if (member.CachedType.IsDictionary)
                     {
                         PopulateDictionary(value, instance, member);
                     }
@@ -144,13 +144,13 @@ public class AutoFakerBinder : IAutoFakerBinder
     private static bool ShouldSkip(Type type, string path, AutoFakerContext context)
     {
         // Skip if the type is found
-        if (context.AutoFakerConfig.SkipTypes.Contains(type))
+        if (context.AutoFakerConfig.SkipTypes != null && context.AutoFakerConfig.SkipTypes.Contains(type))
         {
             return true;
         }
 
         // Skip if the path is found
-        if (context.AutoFakerConfig.SkipPaths.Contains(path))
+        if (context.AutoFakerConfig.SkipPaths != null && context.AutoFakerConfig.SkipPaths.Contains(path))
         {
             return true;
         }
@@ -173,12 +173,12 @@ public class AutoFakerBinder : IAutoFakerBinder
     {
         CachedConstructor[]? constructors = type.GetCachedConstructors();
 
-        if (type.IsDictionary())
+        if (type.IsDictionary)
         {
             return ResolveTypedConstructor(typeof(IDictionary<,>), constructors);
         }
 
-        if (type.IsEnumerable())
+        if (type.IsEnumerable)
         {
             return ResolveTypedConstructor(typeof(IEnumerable<>), constructors);
         }
@@ -247,45 +247,45 @@ public class AutoFakerBinder : IAutoFakerBinder
         // Get the baseline members resolved by Bogus
         var autoMembers = new List<AutoMember>();
 
-        MemberInfo[] memberInfos = cachedType.GetMembers()!;
+        var memberInfos = cachedType.GetCachedMembers()!;
 
-        foreach (MemberInfo? member in memberInfos)
+        foreach (var member in memberInfos)
         {
             autoMembers.Add(new AutoMember(member));
         }
 
-        int length = memberInfos.Length;
+        //int length = memberInfos.Length;
 
-        for (int i = 0; i < length; i++)
-        {
-            MemberInfo member = memberInfos[i];
+        //for (int i = 0; i < length; i++)
+        //{
+        //    MemberInfo member = memberInfos[i];
 
-            // Then check if any other members can be populated
-            var autoMember = new AutoMember(member);
+        //    // Then check if any other members can be populated
+        //    var autoMember = new AutoMember(member);
 
-            bool found = false;
-            for (int j = 0; j < autoMembers.Count; j++)
-            {
-                if (autoMembers[j].Name == autoMember.Name)
-                {
-                    found = true;
-                    break;
-                }
-            }
+        //    bool found = false;
+        //    for (int j = 0; j < autoMembers.Count; j++)
+        //    {
+        //        if (autoMembers[j].Name == autoMember.Name)
+        //        {
+        //            found = true;
+        //            break;
+        //        }
+        //    }
 
-            if (!found)
-            {
-                // A readonly dictionary or collection member can use the Add() method
-                if (autoMember.IsReadOnly && autoMember.CachedType.IsDictionary())
-                {
-                    autoMembers.Add(autoMember);
-                }
-                else if (autoMember.IsReadOnly && autoMember.CachedType.IsCollection())
-                {
-                    autoMembers.Add(autoMember);
-                }
-            }
-        }
+        //    if (!found)
+        //    {
+        //        // A readonly dictionary or collection member can use the Add() method
+        //        if (autoMember.IsReadOnly && autoMember.CachedType.IsDictionary)
+        //        {
+        //            autoMembers.Add(autoMember);
+        //        }
+        //        else if (autoMember.IsReadOnly && autoMember.CachedType.IsCollection())
+        //        {
+        //            autoMembers.Add(autoMember);
+        //        }
+        //    }
+        //}
 
         return autoMembers;
     }

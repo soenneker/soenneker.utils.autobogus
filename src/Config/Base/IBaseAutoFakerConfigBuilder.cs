@@ -2,7 +2,6 @@ using System;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
-using Soenneker.Utils.AutoBogus.Override;
 
 namespace Soenneker.Utils.AutoBogus.Config.Base;
 

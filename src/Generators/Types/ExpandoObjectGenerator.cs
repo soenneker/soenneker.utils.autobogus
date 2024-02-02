@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
@@ -26,9 +27,9 @@ internal sealed class ExpandoObjectGenerator : IAutoFakerGenerator
 
             context.Setup(context.GenerateType, type, property.Key);
 
-            var cachedType = CacheService.Cache.GetCachedType(type);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(type);
 
-            if (cachedType.IsExpandoObject())
+            if (cachedType.IsExpandoObject)
             {
                 context.Instance = property.Value;
             }

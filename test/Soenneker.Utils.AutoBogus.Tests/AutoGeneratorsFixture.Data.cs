@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Services;
@@ -28,7 +29,7 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
-            var cachedType = CacheService.Cache.GetCachedType(dataSetType);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(dataSetType);
 
             // Act
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
@@ -58,7 +59,7 @@ partial class AutoGeneratorsFixture
             // Arrange
             AutoFakerContext? context = CreateContext(dataSetType);
 
-            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
@@ -111,7 +112,7 @@ partial class AutoGeneratorsFixture
 
             AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: 3);
 
-            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
@@ -192,7 +193,7 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
-            var cachedType = CacheService.Cache.GetCachedType(dataTableType);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(dataTableType);
 
             // Act
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
@@ -221,7 +222,7 @@ partial class AutoGeneratorsFixture
             // Arrange
             AutoFakerContext? context = CreateContext(dataTableType);
 
-            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
@@ -249,7 +250,7 @@ partial class AutoGeneratorsFixture
 
             AutoFakerContext? context = CreateContext(dataTableType, dataTableRowCountFunctor: 3);
 
-            var cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 

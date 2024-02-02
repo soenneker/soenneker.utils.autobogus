@@ -6,86 +6,86 @@ namespace Soenneker.Utils.AutoBogus.Extensions;
 
 internal static class TypeArrayExtension
 {
-    internal static (CachedType?, GenericCollectionType?) GetTypeOfGenericCollectionFromInterfaceTypes(this List<CachedType> types)
+    internal static (CachedType?, GenericCollectionType?) GetTypeOfGenericCollectionFromInterfaceTypes(this List<CachedType> cachedTyped)
     {
-        if (types.Count == 0)
+        if (cachedTyped.Count == 0)
             return (null, null);
 
         GenericCollectionType genericCollectionType = GenericCollectionType.Unknown;
 
         CachedType? returnType = null;
 
-        foreach (CachedType type in types)
+        foreach (CachedType cachedType in cachedTyped)
         {
-            switch (type.Type.Name)
+            switch (cachedType.Type.Name)
             {
                 case "SortedList`2":
-                    return (type, GenericCollectionType.SortedList);
+                    return (cachedType, GenericCollectionType.SortedList);
                 case "Dictionary`2":
-                    return (type, GenericCollectionType.Dictionary);
+                    return (cachedType, GenericCollectionType.Dictionary);
                 case "ReadOnlyDictionary`2":
-                    return (type, GenericCollectionType.ReadOnlyDictionary);
+                    return (cachedType, GenericCollectionType.ReadOnlyDictionary);
                 case "IDictionary`2":
                     if (genericCollectionType < GenericCollectionType.Dictionary)
                     {
                         genericCollectionType = GenericCollectionType.Dictionary;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "IImmutableDictionary`2":
                     if (genericCollectionType < GenericCollectionType.ImmutableDictionary)
                     {
                         genericCollectionType = GenericCollectionType.ImmutableDictionary;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "IReadOnlyDictionary`2":
                     if (genericCollectionType < GenericCollectionType.ReadOnlyDictionary)
                     {
                         genericCollectionType = GenericCollectionType.ReadOnlyDictionary;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "IReadOnlylist`1":
                     if (genericCollectionType < GenericCollectionType.ReadOnlyList)
                     {
                         genericCollectionType = GenericCollectionType.ReadOnlyList;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "Ilist`1":
                     if (genericCollectionType < GenericCollectionType.ListType)
                     {
                         genericCollectionType = GenericCollectionType.ListType;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "ISet`1":
                     if (genericCollectionType < GenericCollectionType.Set)
                     {
                         genericCollectionType = GenericCollectionType.Set;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "IReadOnlyCollection`1":
                     if (genericCollectionType < GenericCollectionType.ReadOnlyCollection)
                     {
                         genericCollectionType = GenericCollectionType.ReadOnlyCollection;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "ICollection`1":
                     if (genericCollectionType < GenericCollectionType.Collection)
                     {
                         genericCollectionType = GenericCollectionType.Collection;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
                 case "IEnumerable`1":
                     if (genericCollectionType < GenericCollectionType.Enumerable)
                     {
                         genericCollectionType = GenericCollectionType.Enumerable;
-                        returnType = type;
+                        returnType = cachedType;
                     }
                     break;
             }

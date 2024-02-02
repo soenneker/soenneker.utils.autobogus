@@ -3,6 +3,7 @@ using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
@@ -26,6 +27,18 @@ public class AutoFakerTests
 
         var dictionary = faker.Generate<Dictionary<int, string>>();
         dictionary.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_struct_should_generate()
+    {
+        IAutoFaker faker = AutoFaker.Create();
+
+        var structObj = faker.Generate<TestStruct>();
+        structObj.Should().NotBeNull();
+
+        // product.Reviews.Count.Should().BeGreaterThan(0);
+        // product.
     }
 
     [Fact]

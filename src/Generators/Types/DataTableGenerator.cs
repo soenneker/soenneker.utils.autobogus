@@ -67,7 +67,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
         public DataColumn RelatedColumn;
     }
 
-    public void PopulateRows(DataTable table, AutoFakerContext context)
+    public static void PopulateRows(DataTable table, AutoFakerContext context)
     {
         bool rowCountIsSpecified = false;
 
@@ -169,7 +169,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
         }
     }
 
-    private object GenerateColumnValue(DataColumn dataColumn, AutoFakerContext context)
+    private static object GenerateColumnValue(DataColumn dataColumn, AutoFakerContext context)
     {
         switch (Type.GetTypeCode(dataColumn.DataType))
         {

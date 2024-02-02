@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -257,7 +258,7 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void Generate_Should_Return_Value(Type type)
         {
-            var cachedType = CacheService.Cache.GetCachedType(type);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(type);
             IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 
             InvokeGenerator(type, generator).Should().BeOfType(type);
@@ -267,7 +268,7 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void GetGenerator_Should_Return_Generator(Type type)
         {
-            var cachedType = CacheService.Cache.GetCachedType(type);
+            CachedType? cachedType = CacheService.Cache.GetCachedType(type);
             AutoFakerContext context = CreateContext(type);
             IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 

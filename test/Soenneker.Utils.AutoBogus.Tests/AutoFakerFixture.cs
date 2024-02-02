@@ -94,7 +94,9 @@ public class AutoFakerFixture
         public void Should_Generate_Complex_Type()
         {
             Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>(_fakerConfig);
-            _faker.Generate<Order>(configure).Should().BeGeneratedWithoutMocks();
+            var generatedOrder = _faker.Generate<Order>(configure);
+
+            generatedOrder.Should().BeGeneratedWithoutMocks();
         }
 
         [Fact]
@@ -105,20 +107,6 @@ public class AutoFakerFixture
             List<Order>? instances = _faker.Generate<Order>(count, configure);
 
             AssertGenerateMany(instances);
-        }
-    }
-
-    public class Generate_Instance_Faker : AutoFakerFixture
-    {
-        private readonly IAutoFaker _faker;
-        private AutoFakerConfig _fakerConfig;
-
-        public Generate_Instance_Faker()
-        {
-            var faker = AutoFaker.Create() as AutoFaker;
-
-            _faker = faker;
-            _fakerConfig = faker.FakerConfig;
         }
     }
 
@@ -303,14 +291,11 @@ public class AutoFakerFixture
         yield return new object[] { typeof(int?) };
     }
 
-    private static Action<TBuilder> CreateConfigure<TBuilder>(AutoFakerConfig assertFakerConfig, Action<TBuilder> configure = null)
+    private static Action<TBuilder> CreateConfigure<TBuilder>(AutoFakerConfig assertFakerConfig, Action<TBuilder>? configure = null)
     {
         return builder =>
         {
-            if (configure != null)
-            {
-                configure.Invoke(builder);
-            }
+            configure?.Invoke(builder);
 
             var instance = builder as AutoFakerConfigBuilder;
             instance.AutoFakerConfig.Should().NotBe(assertFakerConfig);

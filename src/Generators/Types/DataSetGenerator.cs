@@ -85,7 +85,7 @@ internal abstract class DataSetGenerator : IAutoFakerGenerator
 
                     context.Instance = table;
 
-                    tableGenerator.PopulateRows(table, context);
+                    DataTableGenerator.PopulateRows(table, context);
 
                     madeProgress = true;
 
