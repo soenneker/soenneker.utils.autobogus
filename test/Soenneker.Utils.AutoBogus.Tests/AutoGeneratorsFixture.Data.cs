@@ -29,7 +29,7 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
-            CachedType? cachedType = CacheService.Cache.GetCachedType(dataSetType);
+            CachedType cachedType = CacheService.Cache.GetCachedType(dataSetType);
 
             // Act
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
@@ -57,16 +57,16 @@ partial class AutoGeneratorsFixture
         public void Generate_Should_Return_DataSet(Type dataSetType)
         {
             // Arrange
-            AutoFakerContext? context = CreateContext(dataSetType);
+            AutoFakerContext context = CreateContext(dataSetType);
 
-            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
             // Act
-            object? result = generator.Generate(context);
+            object result = generator.Generate(context);
 
             // Assert
             result.Should().BeOfType(dataSetType);
@@ -110,16 +110,16 @@ partial class AutoGeneratorsFixture
             //        return count;
             //    };
 
-            AutoFakerContext? context = CreateContext(dataSetType, dataTableRowCountFunctor: 3);
+            AutoFakerContext context = CreateContext(dataSetType, dataTableRowCountFunctor: 3);
 
-            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
             // Act
-            object? result = generator.Generate(context);
+            object result = generator.Generate(context);
 
             // Assert
             result.Should().BeOfType(dataSetType);
@@ -193,7 +193,7 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
-            CachedType? cachedType = CacheService.Cache.GetCachedType(dataTableType);
+            CachedType cachedType = CacheService.Cache.GetCachedType(dataTableType);
 
             // Act
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
@@ -220,16 +220,16 @@ partial class AutoGeneratorsFixture
         public void Generate_Should_Return_DataTable(Type dataTableType)
         {
             // Arrange
-            AutoFakerContext? context = CreateContext(dataTableType);
+            AutoFakerContext context = CreateContext(dataTableType);
 
-            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
             // Act
-            object? result = generator.Generate(context);
+            object result = generator.Generate(context);
 
             // Assert
             result.Should().BeOfType(dataTableType);
@@ -248,16 +248,16 @@ partial class AutoGeneratorsFixture
             const int RowCount = 3;
 
 
-            AutoFakerContext? context = CreateContext(dataTableType, dataTableRowCountFunctor: 3);
+            AutoFakerContext context = CreateContext(dataTableType, dataTableRowCountFunctor: 3);
 
-            CachedType? cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
 
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
             // Act
-            object? result = generator.Generate(context);
+            object result = generator.Generate(context);
 
             // Assert
             result.Should().BeOfType(dataTableType);

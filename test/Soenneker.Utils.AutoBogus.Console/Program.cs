@@ -7,7 +7,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        IAutoFaker? faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         for (int i = 0; i < 10000; i++)
         {

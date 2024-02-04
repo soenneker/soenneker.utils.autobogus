@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
-using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Services;
 
@@ -25,9 +24,9 @@ internal sealed class ExpandoObjectGenerator : IAutoFakerGenerator
             // Configure the context
             Type type = property.Value.GetType();
 
-            context.Setup(context.GenerateType, type, property.Key);
+            context.Setup(context.GenerateType, CacheService.Cache.GetCachedType(type), property.Key);
 
-            CachedType? cachedType = CacheService.Cache.GetCachedType(type);
+            CachedType cachedType = CacheService.Cache.GetCachedType(type);
 
             if (cachedType.IsExpandoObject)
             {
@@ -39,7 +38,7 @@ internal sealed class ExpandoObjectGenerator : IAutoFakerGenerator
             }
 
             // Generate the property values
-            IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
+            IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
             target[property.Key] = generator.Generate(context);
         }
 

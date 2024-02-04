@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
-using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
@@ -20,6 +19,6 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoFakerGene
         // Generate a standard dictionary and create the read only dictionary
         var items = generator.Generate(context) as IDictionary<TKey, TValue>;
 
-        return Activator.CreateInstance(generateType, new[] { items });
+        return Activator.CreateInstance(generateType,  items);
     }
 }

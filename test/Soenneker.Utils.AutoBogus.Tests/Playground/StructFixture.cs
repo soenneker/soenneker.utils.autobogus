@@ -19,7 +19,7 @@ public class StructFixture
     [Fact]
     public void Generate_ExampleStruct()
     {
-        IAutoFaker faker = AutoFaker.Create(builder =>
+        IAutoFaker faker = new AutoFaker(builder =>
         {
             builder.WithOverride(new ExampleStructOverride());
         });

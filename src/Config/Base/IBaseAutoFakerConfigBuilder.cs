@@ -1,5 +1,4 @@
 using System;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
 
@@ -86,7 +85,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="faker">The <see cref="Bogus.Faker"/> instance to use as the hub.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithFaker(Faker faker);
+    //TBuilder WithFaker(Faker faker);
 
     /// <summary>
     /// Registers a type to skip when generating values.

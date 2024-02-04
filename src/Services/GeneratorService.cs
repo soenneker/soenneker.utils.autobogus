@@ -11,39 +11,38 @@ namespace Soenneker.Utils.AutoBogus.Services;
 
 internal static class GeneratorService
 {
-    private static readonly Lazy<Dictionary<Type, IAutoFakerGenerator>> _cachedFundamentalGenerators = new(() =>
+    private static readonly Lazy<Dictionary<Type, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGenerators = new(() =>
     {
-        var generatorMap = new Dictionary<Type, IAutoFakerGenerator>
-        {
-            {typeof(string), new StringGenerator()},
-            {typeof(int), new IntGenerator()},
-            {typeof(bool), new BoolGenerator()},
-            {typeof(double), new DoubleGenerator()},
-            {typeof(DateTime), new DateTimeGenerator()},
-            {typeof(byte), new ByteGenerator()},
-            {typeof(char), new CharGenerator()},
-            {typeof(decimal), new DecimalGenerator()},
-            {typeof(float), new FloatGenerator()},
-            {typeof(long), new LongGenerator()},
-            {typeof(Guid), new GuidGenerator()},
-            {typeof(sbyte), new SByteGenerator()},
-            {typeof(short), new ShortGenerator()},
-            {typeof(uint), new UIntGenerator()},
-            {typeof(ulong), new ULongGenerator()},
-            {typeof(Uri), new UriGenerator()},
-            {typeof(ushort), new UShortGenerator()},
-            {typeof(DateTimeOffset), new DateTimeOffsetGenerator()},
-            {typeof(DateOnly), new DateOnlyGenerator()},
-            {typeof(TimeOnly), new TimeOnlyGenerator()},
-            {typeof(IPAddress), new IpAddressGenerator()},
-        };
+        var generatorMap = new Dictionary<Type, Lazy<IAutoFakerGenerator>>
+    {
+        { typeof(string), new Lazy<IAutoFakerGenerator>(() => new StringGenerator(), true) },
+        { typeof(int), new Lazy<IAutoFakerGenerator>(() => new IntGenerator(), true) },
+        { typeof(bool), new Lazy<IAutoFakerGenerator>(() => new BoolGenerator(), true) },
+        { typeof(double), new Lazy<IAutoFakerGenerator>(() => new DoubleGenerator(), true) },
+        { typeof(DateTime), new Lazy<IAutoFakerGenerator>(() => new DateTimeGenerator(), true) },
+        { typeof(byte), new Lazy<IAutoFakerGenerator>(() => new ByteGenerator(), true) },
+        { typeof(char), new Lazy<IAutoFakerGenerator>(() => new CharGenerator(), true) },
+        { typeof(decimal), new Lazy<IAutoFakerGenerator>(() => new DecimalGenerator(), true) },
+        { typeof(float), new Lazy<IAutoFakerGenerator>(() => new FloatGenerator(), true) },
+        { typeof(long), new Lazy<IAutoFakerGenerator>(() => new LongGenerator(), true) },
+        { typeof(Guid), new Lazy<IAutoFakerGenerator>(() => new GuidGenerator(), true) },
+        { typeof(sbyte), new Lazy<IAutoFakerGenerator>(() => new SByteGenerator(), true) },
+        { typeof(short), new Lazy<IAutoFakerGenerator>(() => new ShortGenerator(), true) },
+        { typeof(uint), new Lazy<IAutoFakerGenerator>(() => new UIntGenerator(), true) },
+        { typeof(ulong), new Lazy<IAutoFakerGenerator>(() => new ULongGenerator(), true) },
+        { typeof(Uri), new Lazy<IAutoFakerGenerator>(() => new UriGenerator(), true) },
+        { typeof(ushort), new Lazy<IAutoFakerGenerator>(() => new UShortGenerator(), true) },
+        { typeof(DateTimeOffset), new Lazy<IAutoFakerGenerator>(() => new DateTimeOffsetGenerator(), true) },
+        { typeof(DateOnly), new Lazy<IAutoFakerGenerator>(() => new DateOnlyGenerator(), true) },
+        { typeof(TimeOnly), new Lazy<IAutoFakerGenerator>(() => new TimeOnlyGenerator(), true) },
+        { typeof(IPAddress), new Lazy<IAutoFakerGenerator>(() => new IpAddressGenerator(), true) },
+    };
 
         return generatorMap;
     });
-
-    private static readonly Lazy<Dictionary<int, IAutoFakerGenerator>> _cachedFundamentalGeneratorsByInt = new(() =>
+    private static readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt = new(() =>
     {
-        Dictionary<int, IAutoFakerGenerator> hashCodesMap = _cachedFundamentalGenerators.Value.ToDictionary(
+        Dictionary<int, Lazy<IAutoFakerGenerator>> hashCodesMap = _cachedFundamentalGenerators.Value.ToDictionary(
             kvp => kvp.Key.GetHashCode(),
             kvp => kvp.Value
         );
@@ -57,7 +56,7 @@ internal static class GeneratorService
     {
         int hashCode = cachedType.CacheKey.Value;
 
-        IAutoFakerGenerator? result = _cachedFundamentalGeneratorsByInt.Value.GetValueOrDefault(hashCode);
+        IAutoFakerGenerator? result = _cachedFundamentalGeneratorsByInt.Value.GetValueOrDefault(hashCode)?.Value;
         return result;
     }
 

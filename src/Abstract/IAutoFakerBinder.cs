@@ -1,5 +1,3 @@
-using System;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Context;
 
 namespace Soenneker.Utils.AutoBogus.Abstract;
@@ -16,8 +14,6 @@ public interface IAutoFakerBinder
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
     /// <returns>The created instance.</returns>
     TType? CreateInstance<TType>(AutoFakerContext context);
-
-    object? CreateInstance(AutoFakerContext context, Type type);
 
     /// <summary>
     /// Populates the provided instance with generated values.

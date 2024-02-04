@@ -42,7 +42,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
             generator = new UntypedDataTableGenerator();
         else if (IsTypedDataTableType(tableType, out Type? rowType))
         {
-            Type? generatorType = typeof(TypedDataTableGenerator<,>).MakeGenericType(tableType.Type, rowType);
+            Type generatorType = typeof(TypedDataTableGenerator<,>).MakeGenericType(tableType.Type, rowType);
 
             generator = (DataTableGenerator) Activator.CreateInstance(generatorType);
         }
@@ -52,7 +52,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
 
     public object Generate(AutoFakerContext context)
     {
-        DataTable? table = CreateTable(context);
+        DataTable table = CreateTable(context);
 
         context.Instance = table;
 
@@ -73,10 +73,10 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
 
         int rowCount = -1;
 
-        if (context.AutoFakerConfig.DataTableRowCount != null)
+        if (context.Config.DataTableRowCount != null)
         {
             rowCountIsSpecified = true;
-            rowCount = context.AutoFakerConfig.DataTableRowCount;
+            rowCount = context.Config.DataTableRowCount;
         }
 
         if (rowCount < 0)
@@ -94,8 +94,8 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
 
             for (int i = 0; i < foreignKey.Columns.Length; i++)
             {
-                DataColumn? column = foreignKey.Columns[i];
-                DataColumn? relatedColumn = foreignKey.RelatedColumns[i];
+                DataColumn column = foreignKey.Columns[i];
+                DataColumn relatedColumn = foreignKey.RelatedColumns[i];
 
                 if (constrainedColumns.ContainsKey(column))
                     throw new Exception($"Column is constrained in multiple foreign key relationships simultaneously: {column.ColumnName} in DataTable {table.TableName}");
@@ -137,7 +137,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
             }
         }
 
-        List<ForeignKeyConstraint>? allConstraints = referencedRowByConstraint.Keys.ToList();
+        List<ForeignKeyConstraint> allConstraints = referencedRowByConstraint.Keys.ToList();
 
         while (rowCount > 0)
         {

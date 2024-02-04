@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Enums;
-using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Services;
@@ -11,7 +10,7 @@ using Soenneker.Utils.AutoBogus.Utils;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal static class GeneratorFactory
+public static class AutoFakerGeneratorFactory
 {
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
     {
@@ -20,17 +19,17 @@ internal static class GeneratorFactory
         if (cachedGenerator != null)
             return cachedGenerator;
 
-        IAutoFakerGenerator generator = ResolveGenerator(context);
+        IAutoFakerGenerator generator = CreateGenerator(context);
 
         List<AutoFakerGeneratorOverride>? overrides = null;
 
-        if (context.Overrides != null)
+        if (context.Config.Overrides != null)
         {
             overrides = [];
 
-            for (var i = 0; i < context.Overrides.Count; i++)
+            for (var i = 0; i < context.Config.Overrides.Count; i++)
             {
-                AutoFakerGeneratorOverride o = context.Overrides[i];
+                AutoFakerGeneratorOverride o = context.Config.Overrides[i];
 
                 if (o.CanOverride(context))
                     overrides.Add(o);
@@ -49,7 +48,7 @@ internal static class GeneratorFactory
         return newOverrideGenerator;
     }
 
-    internal static IAutoFakerGenerator ResolveGenerator(AutoFakerContext context)
+    internal static IAutoFakerGenerator CreateGenerator(AutoFakerContext context)
     {
         IAutoFakerGenerator? fundamentalGenerator = GeneratorService.GetFundamentalGenerator(context.CachedType);
 

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
-using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -27,7 +27,7 @@ public static class AutoGenerateContextExtension
         context.Setup(typeof(TType));
 
         // Get the type generator and return a value
-        IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
+        IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
         var generatedInstance = generator.Generate(context);
         return (TType)generatedInstance;
     }
@@ -73,7 +73,7 @@ public static class AutoGenerateContextExtension
     internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempts = 1, Func<TType>? generate = null)
     {
         // Apply any defaults
-        count ??= context.AutoFakerConfig.RepeatCount;
+        count ??= AutoFakerDefaultConfigOptions.DefaultRepeatCount;
 
         generate ??= context.Generate<TType>;
 

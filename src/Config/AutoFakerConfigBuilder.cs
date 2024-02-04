@@ -4,20 +4,22 @@ using Bogus;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Base;
 using Soenneker.Utils.AutoBogus.Generators;
-using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
 internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, IAutoGenerateConfigBuilder, IAutoFakerConfigBuilder
 {
-    internal AutoFakerConfigBuilder(AutoFakerConfig autoFakerConfig)
+    internal readonly AutoFakerConfig _autoFakerConfig;
+
+    private readonly AutoFaker _autoFaker;
+
+    internal AutoFakerConfigBuilder(AutoFakerConfig autoFakerConfig, AutoFaker autoFaker)
     {
-        AutoFakerConfig = autoFakerConfig;
+        _autoFakerConfig = autoFakerConfig;
+        _autoFaker = autoFaker;
     }
 
-    internal AutoFakerConfig AutoFakerConfig { get; }
-
-    internal object[] Args { get; private set; }
+    internal object[]? Args { get; private set; }
 
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoFakerDefaultConfigBuilder>(locale, this);
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoFakerDefaultConfigBuilder>(count, this);
@@ -27,7 +29,7 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithTreeDepth(int? depth) => WithTreeDepth<IAutoFakerDefaultConfigBuilder>(depth, this);
 
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithBinder(AutoFakerBinder fakerBinder) => WithBinder<IAutoFakerDefaultConfigBuilder>(fakerBinder, this);
-    IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithFaker(Faker faker) => WithFaker<IAutoFakerDefaultConfigBuilder>(faker, this);
+    //IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithFaker(Faker faker) => WithFaker<IAutoFakerDefaultConfigBuilder>(faker, this);
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithSkip(Type type) => WithSkip<IAutoFakerDefaultConfigBuilder>(type, this);
 
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithSkip(Type type, string memberName) =>
@@ -48,7 +50,7 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithTreeDepth(int? depth) => WithTreeDepth<IAutoGenerateConfigBuilder>(depth, this);
 
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithBinder(AutoFakerBinder fakerBinder) => WithBinder<IAutoGenerateConfigBuilder>(fakerBinder, this);
-    IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithFaker(Faker faker) => WithFaker<IAutoGenerateConfigBuilder>(faker, this);
+    //IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithFaker(Faker faker) => WithFaker<IAutoGenerateConfigBuilder>(faker, this);
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithSkip(Type type) => WithSkip<IAutoGenerateConfigBuilder>(type, this);
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithSkip(Type type, string memberName) => WithSkip<IAutoGenerateConfigBuilder>(type, memberName, this);
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithSkip<TType>(string memberName) => WithSkip<IAutoGenerateConfigBuilder, TType>(memberName, this);
@@ -66,7 +68,6 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithTreeDepth(int? depth) => WithTreeDepth<IAutoFakerConfigBuilder>(depth, this);
 
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithBinder(AutoFakerBinder fakerBinder) => WithBinder<IAutoFakerConfigBuilder>(fakerBinder, this);
-    IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithFaker(Faker faker) => WithFaker<IAutoFakerConfigBuilder>(faker, this);
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithSkip(Type type) => WithSkip<IAutoFakerConfigBuilder>(type, this);
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithSkip(Type type, string memberName) => WithSkip<IAutoFakerConfigBuilder>(type, memberName, this);
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithSkip<TType>(string memberName) => WithSkip<IAutoFakerConfigBuilder, TType>(memberName, this);
@@ -76,53 +77,60 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
     IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(params object[] args) => WithArgs<IAutoFakerConfigBuilder>(args, this);
 
-    internal TBuilder WithLocale<TBuilder>(string? locale, TBuilder builder)
+    internal TBuilder WithLocale<TBuilder>(string locale, TBuilder builder)
     {
-        AutoFakerConfig.Locale = locale ?? AutoFakerConfig.DefaultLocale;
+        _autoFakerConfig.Locale = locale;
+
         return builder;
     }
 
-    internal TBuilder WithRepeatCount<TBuilder>(int? count, TBuilder builder)
+    internal TBuilder WithRepeatCount<TBuilder>(int count, TBuilder builder)
     {
-        AutoFakerConfig.RepeatCount = count ?? AutoFakerConfig.DefaultRepeatCount;
+        _autoFakerConfig.RepeatCount = count;
+
         return builder;
     }
 
     internal TBuilder WithDataTableRowCount<TBuilder>(int count, TBuilder builder)
     {
-        AutoFakerConfig.DataTableRowCount = count;
+        _autoFakerConfig.DataTableRowCount = count;
+
         return builder;
     }
 
-    internal TBuilder WithRecursiveDepth<TBuilder>(int? depth, TBuilder builder)
+    internal TBuilder WithRecursiveDepth<TBuilder>(int depth, TBuilder builder)
     {
-        AutoFakerConfig.RecursiveDepth = depth ?? AutoFakerConfig.DefaultRecursiveDepth;
+        _autoFakerConfig.RecursiveDepth = depth;
+
         return builder;
     }
 
     internal TBuilder WithTreeDepth<TBuilder>(int? depth, TBuilder builder)
     {
-        AutoFakerConfig.TreeDepth = depth;
+        _autoFakerConfig.TreeDepth = depth;
+
         return builder;
     }
 
-    private static TBuilder WithBinder<TBuilder>(AutoFakerBinder? fakerBinder, TBuilder builder)
+    private TBuilder WithBinder<TBuilder>(AutoFakerBinder? fakerBinder, TBuilder builder)
     {
-        AutoFakerBinderService.SetCustomBinder(fakerBinder);
+        _autoFaker.Binder = fakerBinder;
+
         return builder;
     }
 
     internal TBuilder WithFaker<TBuilder>(Faker faker, TBuilder builder)
     {
-        AutoFakerConfig.Faker = faker;
+        _autoFaker.Faker = faker;
         return builder;
     }
 
     internal TBuilder WithSkip<TBuilder>(Type type, TBuilder builder)
     {
-        AutoFakerConfig.SkipTypes ??= [];
+        _autoFakerConfig.SkipTypes ??= [];
 
-        AutoFakerConfig.SkipTypes.Add(type);
+        _autoFakerConfig.SkipTypes.Add(type);
+
         return builder;
     }
 
@@ -133,12 +141,12 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
         var path = $"{type.FullName}.{memberName}";
 
-        AutoFakerConfig.SkipPaths ??= [];
+        _autoFakerConfig.SkipPaths ??= [];
 
-        bool existing = AutoFakerConfig.SkipPaths.Any(s => s == path);
+        bool existing = _autoFakerConfig.SkipPaths.Any(s => s == path);
 
         if (!existing)
-            AutoFakerConfig.SkipPaths.Add(path);
+            _autoFakerConfig.SkipPaths.Add(path);
 
         return builder;
     }
@@ -153,12 +161,12 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         if (autoFakerGeneratorOverride == null)
             return builder;
 
-        AutoFakerConfig.Overrides ??= [];
+        _autoFakerConfig.Overrides ??= [];
 
-        bool existing = AutoFakerConfig.Overrides.Any(o => o == autoFakerGeneratorOverride);
+        bool existing = _autoFakerConfig.Overrides.Any(o => o == autoFakerGeneratorOverride);
 
         if (!existing)
-            AutoFakerConfig.Overrides.Add(autoFakerGeneratorOverride);
+            _autoFakerConfig.Overrides.Add(autoFakerGeneratorOverride);
 
         return builder;
     }

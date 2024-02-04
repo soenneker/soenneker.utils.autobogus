@@ -58,7 +58,7 @@ internal abstract class DataSetGenerator : IAutoFakerGenerator
         {
             var dataSet = _dataSetType.CreateInstance<DataSet>();
 
-            List<DataTable>? allTables = dataSet.Tables.OfType<DataTable>().ToList();
+            List<DataTable> allTables = dataSet.Tables.OfType<DataTable>().ToList();
             var populatedTables = new HashSet<DataTable>();
 
             while (allTables.Count > 0)
@@ -67,9 +67,9 @@ internal abstract class DataSetGenerator : IAutoFakerGenerator
 
                 for (int i = 0; i < allTables.Count; i++)
                 {
-                    DataTable? table = allTables[i];
+                    DataTable table = allTables[i];
 
-                    IEnumerable<DataTable>? referencedTables = table.Constraints
+                    IEnumerable<DataTable> referencedTables = table.Constraints
                         .OfType<ForeignKeyConstraint>()
                         .Select(constraint => constraint.RelatedTable);
 

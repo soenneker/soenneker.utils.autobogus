@@ -11,7 +11,7 @@ public class GenerateBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _autoFaker = AutoFaker.Create();
+        _autoFaker = new AutoFaker();
     }
 
     [Benchmark(Baseline = true)]

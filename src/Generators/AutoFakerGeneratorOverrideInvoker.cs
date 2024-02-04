@@ -14,13 +14,14 @@ internal sealed class AutoFakerGeneratorOverrideInvoker
     }
 
     internal IAutoFakerGenerator Generator { get; }
+
     internal List<AutoFakerGeneratorOverride> Overrides { get; }
 
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         var overrideContext = new AutoFakerOverrideContext(context);
 
-        foreach (AutoFakerGeneratorOverride? generatorOverride in Overrides)
+        foreach (AutoFakerGeneratorOverride generatorOverride in Overrides)
         {
             // Check if an initialized instance is needed
             if (generatorOverride.Preinitialize && overrideContext.Instance == null)

@@ -21,6 +21,8 @@ public class AutoGenerateContextFixture
         _faker = new Faker();
         _ruleSets = new List<string>();
         _fakerConfig = new AutoFakerConfig();
+
+        //ConfigService.SetCustomConfig(_fakerConfig);
     }
 
     public class GenerateMany_Internal
@@ -33,7 +35,7 @@ public class AutoGenerateContextFixture
         {
             _value = _faker.Random.Int();
             _items = new List<int> { _value };
-            _context = new AutoFakerContext(_fakerConfig)
+            _context = new AutoFakerContext(_fakerConfig, new Faker(), new AutoFakerBinder(_fakerConfig))
             {
                 RuleSets = _ruleSets
             };
@@ -43,7 +45,7 @@ public class AutoGenerateContextFixture
         public void Should_Generate_Configured_RepeatCount()
         {
             int count = _faker.Random.Int(3, 5);
-            List<int>? expected = Enumerable.Range(0, count).Select(i => _value).ToList();
+            List<int> expected = Enumerable.Range(0, count).Select(i => _value).ToList();
 
             _fakerConfig.RepeatCount =  count;
 
@@ -82,13 +84,13 @@ public class AutoGenerateContextFixture
         {
             var attempts = 0;
 
-            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, AutoFakerConfig.GenerateAttemptsThreshold, () =>
+            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, AutoFakerDefaultConfigOptions.GenerateAttemptsThreshold, () =>
             {
                 attempts++;
                 return _value;
             });
 
-            attempts.Should().Be(AutoFakerConfig.GenerateAttemptsThreshold + 1);
+            attempts.Should().Be(AutoFakerDefaultConfigOptions.GenerateAttemptsThreshold + 1);
 
             _items.Should().BeEquivalentTo(new[] { _value });
         }

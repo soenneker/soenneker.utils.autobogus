@@ -6,12 +6,12 @@ using System.Reflection;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Services;
-using Binder = Bogus.Binder;
 
 namespace Soenneker.Utils.AutoBogus;
 
@@ -20,19 +20,26 @@ namespace Soenneker.Utils.AutoBogus;
 /// </summary>
 public class AutoFakerBinder : IAutoFakerBinder
 {
+    private readonly AutoFakerConfig _autoFakerConfig;
+
+    public AutoFakerBinder(AutoFakerConfig autoFakerConfig)
+    {
+        _autoFakerConfig = autoFakerConfig;
+    }
+
     /// <summary>
     /// Creates an instance of <typeparamref name="TType"/>.
     /// </summary>
     /// <typeparam name="TType">The type of instance to create.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
     /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
-    public virtual TType? CreateInstance<TType>(AutoFakerContext? context)
+    public TType? CreateInstance<TType>(AutoFakerContext? context)
     {
         if (context == null)
             return default;
 
         Type type = typeof(TType);
-       
+
         CachedConstructor? constructor = GetConstructor(context.CachedType);
 
         if (constructor == null)
@@ -47,28 +54,6 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
 
         return (TType?) constructor.Invoke(parameters);
-
-    }
-
-    public object? CreateInstance(AutoFakerContext? context, Type type)
-    {
-        if (context == null)
-            return default;
-
-        CachedConstructor? constructor = GetConstructor(context.CachedType);
-
-        if (constructor == null)
-            return default;
-
-        ParameterInfo[] parametersInfo = constructor.GetParameters();
-        var parameters = new object[parametersInfo.Length];
-
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            parameters[i] = GetParameterGenerator(type, parametersInfo[i], context).Generate(context);
-        }
-
-        return constructor.Invoke(parameters);
     }
 
     /// <summary>
@@ -82,7 +67,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    public virtual void PopulateInstance<TType>(object? instance, AutoFakerContext? context)
+    public void PopulateInstance<TType>(object? instance, AutoFakerContext? context)
     {
         // We can only populate non-null instances 
         if (instance == null || context == null)
@@ -99,74 +84,80 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         foreach (AutoMember? member in autoMembers)
         {
-            if (member.Type != null)
+            // Check if the member has a skip config or the type has already been generated as a parent
+            // If so skip this generation otherwise track it for use later in the object tree
+            if (ShouldSkip(member.CachedType, $"{type.FullName}.{member.Name}", context))
             {
-                // Check if the member has a skip config or the type has already been generated as a parent
-                // If so skip this generation otherwise track it for use later in the object tree
-                if (ShouldSkip(member.Type, $"{type.FullName}.{member.Name}", context))
-                {
-                    continue;
-                }
-
-                context.Setup(type, member.Type, member.Name);
-
-                context.TypesStack.Push(member.Type);
-
-                // Generate a random value and bind it to the instance
-                IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
-                object value = generator.Generate(context);
-
-                try
-                {
-                    if (!member.IsReadOnly)
-                    {
-                        member.Setter.Invoke(instance, value);
-                    }
-                    else if (member.CachedType.IsDictionary)
-                    {
-                        PopulateDictionary(value, instance, member);
-                    }
-                    else if (member.CachedType.IsCollection())
-                    {
-                        PopulateCollection(value, instance, member);
-                    }
-                }
-                catch
-                {
-                }
-
-                // Remove the current type from the type stack so siblings can be created
-                context.TypesStack.Pop();
+                continue;
             }
+
+            context.Setup(type, member.CachedType, member.Name);
+
+            context.TypesStack.Push(member.CachedType.CacheKey.Value);
+
+            // Generate a random value and bind it to the instance
+            IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
+            object value = generator.Generate(context);
+
+            try
+            {
+                if (!member.IsReadOnly)
+                {
+                    member.Setter.Invoke(instance, value);
+                }
+                else if (member.CachedType.IsDictionary)
+                {
+                    PopulateDictionary(value, instance, member);
+                }
+                else if (member.CachedType.IsCollection())
+                {
+                    PopulateCollection(value, instance, member);
+                }
+            }
+            catch
+            {
+            }
+
+            // Remove the current type from the type stack so siblings can be created
+            context.TypesStack.Pop();
         }
     }
 
-    private static bool ShouldSkip(Type type, string path, AutoFakerContext context)
+    private bool ShouldSkip(CachedType cachedType, string path, AutoFakerContext context)
     {
         // Skip if the type is found
-        if (context.AutoFakerConfig.SkipTypes != null && context.AutoFakerConfig.SkipTypes.Contains(type))
+        if (_autoFakerConfig.SkipTypes != null && _autoFakerConfig.SkipTypes.Contains(cachedType.Type))
         {
             return true;
         }
 
         // Skip if the path is found
-        if (context.AutoFakerConfig.SkipPaths != null && context.AutoFakerConfig.SkipPaths.Contains(path))
+        if (_autoFakerConfig.SkipPaths != null && _autoFakerConfig.SkipPaths.Contains(path))
         {
             return true;
         }
 
         //check if tree depth is reached
-        int? treeDepth = context.AutoFakerConfig.TreeDepth;
+        int? treeDepth = _autoFakerConfig.TreeDepth;
 
-        if (treeDepth.HasValue && context.TypesStack.Count >= treeDepth)
-            return true;
+        if (treeDepth != null)
+        {
+            if (context.TypesStack.Count >= treeDepth)
+                return true;
+        }
+
+        if (context.TypesStack.Count == 0)
+            return false;
 
         // Finally check if the recursive depth has been reached
 
-        int count = context.TypesStack.Count(t => t == type);
-        int recursiveDepth = context.AutoFakerConfig.RecursiveDepth;
+        int count = context.TypesStack.Count(c => c == cachedType.CacheKey);
+        int recursiveDepth = _autoFakerConfig.RecursiveDepth;
 
-        return count >= recursiveDepth;
+        if (count >= recursiveDepth)
+            return true;
+
+        return false;
     }
 
     private static CachedConstructor? GetConstructor(CachedType type)
@@ -224,12 +215,12 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private static IAutoFakerGenerator GetParameterGenerator(Type type, ParameterInfo parameter, AutoFakerContext context)
     {
-        context.Setup(type, parameter.ParameterType, parameter.Name);
+        context.Setup(type, CacheService.Cache.GetCachedType(parameter.ParameterType), parameter.Name);
 
-        return GeneratorFactory.GetGenerator(context);
+        return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
-    private List<AutoMember> GetMembersToPopulate(CachedType cachedType)
+    private static List<AutoMember> GetMembersToPopulate(CachedType cachedType)
     {
         // If a list of members is provided, no others should be populated
         //if (members != null)
@@ -247,11 +238,18 @@ public class AutoFakerBinder : IAutoFakerBinder
         // Get the baseline members resolved by Bogus
         var autoMembers = new List<AutoMember>();
 
-        var memberInfos = cachedType.GetCachedMembers()!;
+        var properties = cachedType.GetProperties()!;
 
-        foreach (var member in memberInfos)
+        var fields = cachedType.GetFields();
+
+        foreach (var property in properties)
         {
-            autoMembers.Add(new AutoMember(member));
+            autoMembers.Add(new AutoMember(property));
+        }
+
+        foreach (var field in fields)
+        {
+            autoMembers.Add(new AutoMember(field));
         }
 
         //int length = memberInfos.Length;
@@ -292,11 +290,14 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private static void PopulateDictionary(object value, object parent, AutoMember member)
     {
+        if (value is not IDictionary dictionary)
+            return;
+
         object? instance = member.Getter(parent);
         Type[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
-        MethodInfo? addMethod = GetAddMethod(member.Type, argTypes);
+        MethodInfo? addMethod = GetAddMethod(member.CachedType.Type, argTypes);
 
-        if (instance != null && addMethod != null && value is IDictionary dictionary)
+        if (instance != null && addMethod != null)
         {
             foreach (object? key in dictionary.Keys)
             {
@@ -307,11 +308,14 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private static void PopulateCollection(object value, object parent, AutoMember member)
     {
+        if (value is not ICollection collection)
+            return;
+
         object? instance = member.Getter(parent);
         Type[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
-        MethodInfo? addMethod = GetAddMethod(member.Type, argTypes);
+        MethodInfo? addMethod = GetAddMethod(member.CachedType.Type, argTypes);
 
-        if (instance != null && addMethod != null && value is ICollection collection)
+        if (instance != null && addMethod != null)
         {
             foreach (object? item in collection)
             {
@@ -320,14 +324,14 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
-    private static MethodInfo? GetAddMethod(Type type, Type[] argTypes)
+    private static MethodInfo? GetAddMethod(Type cachedType, Type[] argTypes)
     {
-        MethodInfo? method = type.GetMethod("Add", argTypes);
+        MethodInfo? method = cachedType.GetMethod("Add", argTypes);
 
         if (method != null)
             return method;
 
-        Type[] interfaces = CacheService.Cache.GetCachedType(type).GetInterfaces()!;
+        var interfaces = cachedType.GetInterfaces()!;
 
         for (int i = 0; i < interfaces.Length; i++)
         {

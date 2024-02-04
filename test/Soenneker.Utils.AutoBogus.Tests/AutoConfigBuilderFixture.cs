@@ -18,9 +18,10 @@ public class AutoConfigBuilderFixture
 
     public AutoConfigBuilderFixture()
     {
+        var autoFaker = new AutoFaker();
         _faker = new Faker();
         _fakerConfig = new AutoFakerConfig();
-        _builder = new AutoFakerConfigBuilder(_fakerConfig);
+        _builder = new AutoFakerConfigBuilder(_fakerConfig, autoFaker);
     }
 
     public class WithLocale
@@ -34,16 +35,6 @@ public class AutoConfigBuilderFixture
             _builder.WithLocale<ITestBuilder>(locale, null);
 
             _fakerConfig.Locale.Should().Be(locale);
-        }
-
-        [Fact]
-        public void Should_Set_Config_Locale_To_Default_If_Null()
-        {
-            _fakerConfig.Locale = _faker.Random.String();
-
-            _builder.WithLocale<ITestBuilder>(null, null);
-
-            _fakerConfig.Locale.Should().Be(AutoFakerConfig.DefaultLocale);
         }
     }
 
@@ -59,16 +50,6 @@ public class AutoConfigBuilderFixture
 
             _fakerConfig.RepeatCount.Should().Be(count);
         }
-
-        [Fact]
-        public void Should_Set_Config_RepeatCount_To_Default_If_Null()
-        {
-            int count = AutoFakerConfig.DefaultRepeatCount;
-
-            _builder.WithRepeatCount<ITestBuilder>(null, null);
-
-            _fakerConfig.RepeatCount.Should().Be(count);
-        }
     }
 
     public class WithRecursiveDepth
@@ -80,16 +61,6 @@ public class AutoConfigBuilderFixture
             int depth = _faker.Random.Int();
 
             _builder.WithRecursiveDepth<ITestBuilder>( depth, null);
-
-            _fakerConfig.RecursiveDepth.Should().Be(depth);
-        }
-
-        [Fact]
-        public void Should_Set_Config_RecursiveDepth_To_Default_If_Null()
-        {
-            int depth = AutoFakerConfig.DefaultRecursiveDepth;
-
-            _builder.WithRecursiveDepth<ITestBuilder>(null, null);
 
             _fakerConfig.RecursiveDepth.Should().Be(depth);
         }
@@ -112,24 +83,11 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Set_Config_TreeDepth_To_Default_If_Null()
         {
-            int? depth = AutoFakerConfig.DefaultTreeDepth;
+            int? depth = AutoFakerDefaultConfigOptions.DefaultTreeDepth;
 
             _builder.WithTreeDepth<ITestBuilder>(null, null);
 
             _fakerConfig.TreeDepth.Should().Be(depth);
-        }
-    }
-    
-    public class WithFakerHub
-        : AutoConfigBuilderFixture
-    {
-        [Fact]
-        public void Should_Set_Config_FakerHub()
-        {
-            var faker = new Faker();
-
-            _builder.WithFaker<ITestBuilder>(faker, null);
-            _builder.AutoFakerConfig.Faker.Should().Be(faker);
         }
     }
 
@@ -139,8 +97,8 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Type_If_Already_Added()
         {
-            Type? type1 = typeof(int);
-            Type? type2 = typeof(int);
+            Type type1 = typeof(int);
+            Type type2 = typeof(int);
 
             _fakerConfig.SkipTypes =
             [
@@ -155,8 +113,8 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_Type_To_Skip()
         {
-            Type? type1 = typeof(int);
-            Type? type2 = typeof(string);
+            Type type1 = typeof(int);
+            Type type2 = typeof(string);
 
             _fakerConfig.SkipTypes =
             [
@@ -184,7 +142,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Member_If_Already_Added()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             var member = $"{type.FullName}.Value";
 
             _fakerConfig.SkipPaths =
@@ -200,7 +158,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_MemberName_To_Skip()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             string? path = _faker.Random.String();
 
             _fakerConfig.SkipPaths =
@@ -228,7 +186,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Member_If_Already_Added()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             var member = $"{type.FullName}.Value";
             _fakerConfig.SkipPaths =
             [
@@ -243,7 +201,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_MemberName_To_Skip()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             string? path = _faker.Random.String();
 
             _fakerConfig.SkipPaths =

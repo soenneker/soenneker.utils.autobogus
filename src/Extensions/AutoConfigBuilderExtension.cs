@@ -60,7 +60,7 @@ public static class AutoConfigBuilderExtension
     /// <returns>The current configuration builder instance.</returns>
     public static IAutoFakerDefaultConfigBuilder WithSkip<TType>(this IAutoFakerDefaultConfigBuilder builder)
     {
-        Type? type = typeof(TType);
+        Type type = typeof(TType);
         return builder?.WithSkip(type);
     }
 
@@ -72,7 +72,7 @@ public static class AutoConfigBuilderExtension
     /// <returns>The current configuration builder instance.</returns>
     public static IAutoGenerateConfigBuilder WithSkip<TType>(this IAutoGenerateConfigBuilder builder)
     {
-        Type? type = typeof(TType);
+        Type type = typeof(TType);
         return builder?.WithSkip(type);
     }
 
@@ -84,7 +84,7 @@ public static class AutoConfigBuilderExtension
     /// <returns>The current configuration builder instance.</returns>
     public static IAutoFakerConfigBuilder WithSkip<TType>(this IAutoFakerConfigBuilder builder)
     {
-        Type? type = typeof(TType);
+        Type type = typeof(TType);
         return builder?.WithSkip(type);
     }
 

@@ -22,17 +22,17 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(ReadOnlyDictionary<int, string>))]
         public void Generate_Should_Return_Dictionary(Type type)
         {
-            Type[]? genericTypes = type.GetGenericArguments();
-            Type? keyType = genericTypes.ElementAt(0);
-            Type? valueType = genericTypes.ElementAt(1);
-            IAutoFakerGenerator? generator = CreateGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+            Type[] genericTypes = type.GetGenericArguments();
+            Type keyType = genericTypes.ElementAt(0);
+            Type valueType = genericTypes.ElementAt(1);
+            IAutoFakerGenerator generator = CreateGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
             var dictionary = InvokeGenerator(type, generator) as IReadOnlyDictionary<int, string>;
 
             dictionary.Should().NotBeNull().And.NotContainNulls();
 
             foreach (int key in dictionary.Keys)
             {
-                string? value = dictionary[key];
+                string value = dictionary[key];
 
                 key.Should().BeOfType(keyType);
                 value.Should().BeOfType(valueType);
@@ -48,13 +48,13 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(ReadOnlyDictionary<int, TestClass>))]
         public void GetGenerator_Should_Return_ReadOnlyDictionaryGenerator(Type type)
         {
-            AutoFakerContext? context = CreateContext(type);
-            Type[]? genericTypes = type.GetGenericArguments();
-            Type? keyType = genericTypes.ElementAt(0);
-            Type? valueType = genericTypes.ElementAt(1);
-            Type? generatorType = GetGeneratorType(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+            AutoFakerContext context = CreateContext(type);
+            Type[] genericTypes = type.GetGenericArguments();
+            Type keyType = genericTypes.ElementAt(0);
+            Type valueType = genericTypes.ElementAt(1);
+            Type generatorType = GetGeneratorType(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 }

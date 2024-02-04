@@ -1,66 +1,32 @@
 using System;
 using System.Collections.Generic;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
-internal sealed class AutoFakerConfig
+public sealed class AutoFakerConfig
 {
-    internal const string DefaultLocale = "en";
-    internal const int GenerateAttemptsThreshold = 3;
+    internal string Locale;
 
-    internal const int DefaultRepeatCount = 3;
-    internal const int DefaultDataTableRowCount = 15;
+    internal int RepeatCount;
 
-    internal const int DefaultRecursiveDepth = 2;
+    internal int DataTableRowCount;
+    internal int RecursiveDepth;
 
-    internal static readonly int? DefaultTreeDepth = null;
+    internal HashSet<Type>? SkipTypes;
 
-    internal string Locale { get; set; }
-    internal int RepeatCount { get; set; }
-    internal int DataTableRowCount { get; set; }
-    internal int RecursiveDepth { get; set; }
+    internal HashSet<string>? SkipPaths;
 
-    internal HashSet<Type>? SkipTypes { get; set; }
+    internal List<AutoFakerGeneratorOverride>? Overrides;
 
-    internal HashSet<string>? SkipPaths { get; set; }
-
-    internal List<AutoFakerGeneratorOverride>? Overrides { get; set; }
-
-    public int? TreeDepth { get; set; }
-
-    public Faker? Faker { get; set; }
+    public int? TreeDepth;
 
     internal AutoFakerConfig()
     {
-        Locale = DefaultLocale;
-        RepeatCount = DefaultRepeatCount;
-        DataTableRowCount = DefaultDataTableRowCount;
-        RecursiveDepth = DefaultRecursiveDepth;
-        TreeDepth = DefaultTreeDepth;
-
-        if (Faker != null)
-            return;
-
-        Faker = new Faker(Locale);
-    }
-
-    internal AutoFakerConfig(AutoFakerConfig fakerConfig)
-    {
-        Locale = fakerConfig.Locale;
-        RepeatCount = fakerConfig.RepeatCount;
-        DataTableRowCount = fakerConfig.DataTableRowCount;
-        RecursiveDepth = fakerConfig.RecursiveDepth;
-        TreeDepth = fakerConfig.TreeDepth;
-
-        SkipTypes = fakerConfig.SkipTypes;
-        SkipPaths = fakerConfig.SkipPaths;
-        Overrides = fakerConfig.Overrides;
-
-        if (Faker != null)
-            return;
-
-        Faker = fakerConfig.Faker ?? new Faker(Locale);
+        Locale = AutoFakerDefaultConfigOptions.DefaultLocale;
+        RepeatCount = AutoFakerDefaultConfigOptions.DefaultRepeatCount;
+        DataTableRowCount = AutoFakerDefaultConfigOptions.DefaultDataTableRowCount;
+        RecursiveDepth = AutoFakerDefaultConfigOptions.DefaultRecursiveDepth;
+        TreeDepth = AutoFakerDefaultConfigOptions.DefaultTreeDepth;
     }
 }

@@ -19,7 +19,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     internal GenerateAssertions(object subject) : base(subject)
     {
-        Type? type = GetType();
+        Type type = GetType();
 
         DefaultValueFactory = type.GetMethod("GetDefaultValue", BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -59,8 +59,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     public AndConstraint<object> BeGenerated()
     {
-        Type? type = Subject.GetType();
-        Func<string, Type, object, string>? assertion = GetAssertion(type);
+        Type type = Subject.GetType();
+        Func<string, Type, object, string> assertion = GetAssertion(type);
 
         Scope = Execute.Assertion;
 
@@ -95,8 +95,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     public AndConstraint<object> NotBeGenerated()
     {
-        Type? type = Subject.GetType();
-        IEnumerable<MemberInfo>? memberInfos = GetMemberInfos(type);
+        Type type = Subject.GetType();
+        IEnumerable<MemberInfo> memberInfos = GetMemberInfos(type);
 
         Scope = Execute.Assertion;
 
@@ -110,8 +110,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     private AndConstraint<object> AssertSubject()
     {
-        Type? type = Subject.GetType();
-        Func<string, Type, object, string>? assertion = GetAssertion(type);
+        Type type = Subject.GetType();
+        Func<string, Type, object, string> assertion = GetAssertion(type);
 
         Scope = Execute.Assertion;
 
@@ -123,7 +123,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
     private string AssertType(string path, Type type, object instance)
     {
         // Iterate the members for the instance and assert their values
-        IEnumerable<MemberInfo>? members = GetMemberInfos(type);
+        IEnumerable<MemberInfo> members = GetMemberInfos(type);
 
         foreach (MemberInfo? member in members)
         {
@@ -138,7 +138,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         ExtractMemberInfo(memberInfo, out Type memberType, out Func<object, object> memberGetter);
 
         // Resolve the default value for the current member type and check it matches
-        MethodInfo? factory = DefaultValueFactory.MakeGenericMethod(memberType);
+        MethodInfo factory = DefaultValueFactory.MakeGenericMethod(memberType);
         object? defaultValue = factory.Invoke(this, new object[0]);
         object? value = memberGetter.Invoke(Subject);
         bool equal = value == null && defaultValue == null;
@@ -224,8 +224,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     private string AssertNullable(string path, Type type, object value)
     {
-        Type? genericType = type.GenericTypeArguments.Single();
-        Func<string, Type, object, string>? assertion = GetAssertion(genericType);
+        Type genericType = type.GenericTypeArguments.Single();
+        Func<string, Type, object, string> assertion = GetAssertion(genericType);
 
         return assertion.Invoke(path, genericType, value);
     }
@@ -238,7 +238,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         }
 
         // Assert via assignment rather than explicit checks (the actual instance could be a sub class)
-        Type? valueType = value.GetType();
+        Type valueType = value.GetType();
         return type.IsAssignableFrom(valueType) ? null : GetAssertionMessage(path, type, value);
     }
 
@@ -250,9 +250,9 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     private string AssertDictionary(string path, Type type, object value)
     {
-        Type[]? genericTypes = type.GetGenericArguments();
-        Type? keyType = genericTypes.ElementAt(0);
-        Type? valueType = genericTypes.ElementAt(1);
+        Type[] genericTypes = type.GetGenericArguments();
+        Type keyType = genericTypes.ElementAt(0);
+        Type valueType = genericTypes.ElementAt(1);
         var dictionary = value as IDictionary;
 
         if (dictionary == null)
@@ -273,8 +273,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
     private string AssertEnumerable(string path, Type type, object value)
     {
-        Type[]? genericTypes = type.GetGenericArguments();
-        Type? itemType = genericTypes.Single();
+        Type[] genericTypes = type.GetGenericArguments();
+        Type itemType = genericTypes.Single();
 
         return AssertItems(path, itemType, value as IEnumerable);
     }
@@ -289,7 +289,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
         // Check the count state of the items
         var count = 0;
-        IEnumerator? enumerator = items.GetEnumerator();
+        IEnumerator enumerator = items.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
@@ -300,11 +300,11 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         {
             // If we have any items, check each of them 
             var index = 0;
-            Func<string, Type, object, string>? assertion = GetAssertion(type);
+            Func<string, Type, object, string> assertion = GetAssertion(type);
 
             foreach (object? item in items)
             {
-                string? element = string.Format("{0}[{1}]{2}", path, index++, suffix);
+                string element = string.Format("{0}[{1}]{2}", path, index++, suffix);
                 string? message = assertion.Invoke(element, type, item);
 
                 if (message != null)
@@ -335,8 +335,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         path = string.Concat(path, ".", memberInfo.Name);
 
         // Resolve the assertion and value for the member type      
-        object? value = memberGetter.Invoke(instance);
-        Func<string, Type, object, string>? assertion = GetAssertion(memberType);
+        object value = memberGetter.Invoke(instance);
+        Func<string, Type, object, string> assertion = GetAssertion(memberType);
         string? message = assertion.Invoke(path, memberType, value);
 
         // Register an assertion for each member
@@ -380,8 +380,8 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         // We may need to do some generics magic to compare the types
         if (type.IsGenericType() && baseType.IsGenericType())
         {
-            Type[]? types = type.GetGenericArguments();
-            Type[]? baseTypes = baseType.GetGenericArguments();
+            Type[] types = type.GetGenericArguments();
+            Type[] baseTypes = baseType.GetGenericArguments();
 
             if (types.Length == baseTypes.Length)
             {

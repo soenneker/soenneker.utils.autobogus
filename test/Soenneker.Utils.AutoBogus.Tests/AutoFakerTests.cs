@@ -13,7 +13,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_order_should_generate()
     {
-        IAutoFaker faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         var order = faker.Generate<Order>();
         order.Should().NotBeNull();
@@ -23,7 +23,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_dictionary_should_generate()
     {
-        IAutoFaker faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         var dictionary = faker.Generate<Dictionary<int, string>>();
         dictionary.Should().NotBeNull();
@@ -32,7 +32,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_struct_should_generate()
     {
-        IAutoFaker faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         var structObj = faker.Generate<TestStruct>();
         structObj.Should().NotBeNull();
@@ -44,7 +44,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_Product_should_generate()
     {
-        IAutoFaker faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         var product = faker.Generate<Product>();
         product.Should().NotBeNull();
@@ -56,7 +56,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_many_Orders_should_generate()
     {
-        IAutoFaker faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -71,7 +71,7 @@ public class AutoFakerTests
     [Fact]
     public void Generate_many_int_should_generate()
     {
-        IAutoFaker faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         List<int> intList = new List<int>();
 

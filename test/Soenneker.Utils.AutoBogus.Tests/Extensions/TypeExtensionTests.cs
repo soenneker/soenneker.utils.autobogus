@@ -18,7 +18,7 @@ public class TypeExtensionTests
     {
         Type derivedType = typeof(DerivedDictionary);
 
-        CachedType? cachedType = CacheService.Cache.GetCachedType(derivedType);
+        CachedType cachedType = CacheService.Cache.GetCachedType(derivedType);
 
         bool result = cachedType.IsDictionary;
         result.Should().BeTrue();
@@ -62,7 +62,7 @@ public class TypeExtensionTests
     public void IsReadOnlyDictionary_should_be_true()
     {
         Type derivedType = typeof(DerivedReadOnlyDictionary);
-        CachedType? cachedType = CacheService.Cache.GetCachedType(derivedType);
+        CachedType cachedType = CacheService.Cache.GetCachedType(derivedType);
 
         bool result = cachedType.IsReadOnlyDictionary;
         result.Should().BeTrue();
