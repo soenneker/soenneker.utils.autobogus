@@ -28,7 +28,7 @@ public static class AutoGenerateContextExtension
 
         // Get the type generator and return a value
         IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
-        var generatedInstance = generator.Generate(context);
+        object generatedInstance = generator.Generate(context);
         return (TType)generatedInstance;
     }
 
@@ -80,7 +80,7 @@ public static class AutoGenerateContextExtension
         // Generate a list of items
         int? required = count - items.Count;
 
-        for (var index = 0; index < required; index++)
+        for (var i = 0; i < required; i++)
         {
             TType item = generate.Invoke();
 
@@ -94,13 +94,16 @@ public static class AutoGenerateContextExtension
 
         var hashSet = new HashSet<TType>();
 
-        foreach (TType item in items)
+        for (var i = 0; i < items.Count; i++)
+        {
+            TType item = items[i];
             hashSet.Add(item);
+        }
 
         if (hashSet.Count == items.Count)
             return;
 
-        for (var index = 0; index < attempts; index++)
+        for (var i = 0; i < attempts; i++)
         {
             TType item = generate.Invoke();
 

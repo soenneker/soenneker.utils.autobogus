@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Constructors;
+using Soenneker.Reflection.Cache.Extensions;
+using Soenneker.Reflection.Cache.Methods;
+using Soenneker.Reflection.Cache.Parameters;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
@@ -21,6 +24,11 @@ namespace Soenneker.Utils.AutoBogus;
 public class AutoFakerBinder : IAutoFakerBinder
 {
     private readonly AutoFakerConfig _autoFakerConfig;
+
+    private readonly CachedType _genericDictionary = CacheService.Cache.GetCachedType(typeof(IDictionary<,>));
+    private readonly CachedType _enumerable = CacheService.Cache.GetCachedType(typeof(IEnumerable<>));
+
+    private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
 
     public AutoFakerBinder(AutoFakerConfig autoFakerConfig)
     {
@@ -45,7 +53,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (constructor == null)
             return default;
 
-        ParameterInfo[] parametersInfo = constructor.GetParameters();
+        CachedParameter[] parametersInfo = constructor.GetCachedParameters();
+
         var parameters = new object[parametersInfo.Length];
 
         for (int i = 0; i < parameters.Length; i++)
@@ -62,19 +71,12 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// <typeparam name="TType">The type of instance to populate.</typeparam>
     /// <param name="instance">The instance to populate.</param>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
-    /// <param name="members">An optional collection of members to populate. If null, all writable instance members are populated.</param>
     /// <remarks>
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    public void PopulateInstance<TType>(object? instance, AutoFakerContext? context)
+    public void PopulateInstance<TType>(object instance, AutoFakerContext context)
     {
-        // We can only populate non-null instances 
-        if (instance == null || context == null)
-        {
-            return;
-        }
-
         Type type = typeof(TType);
 
         CachedType cachedType = CacheService.Cache.GetCachedType(type);
@@ -82,8 +84,9 @@ public class AutoFakerBinder : IAutoFakerBinder
         // Iterate the members and bind a generated value
         List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
 
-        foreach (AutoMember? member in autoMembers)
+        for (var i = 0; i < autoMembers.Count; i++)
         {
+            AutoMember member = autoMembers[i];
             // Check if the member has a skip config or the type has already been generated as a parent
             // If so skip this generation otherwise track it for use later in the object tree
             if (ShouldSkip(member.CachedType, $"{type.FullName}.{member.Name}", context))
@@ -97,25 +100,30 @@ public class AutoFakerBinder : IAutoFakerBinder
 
             // Generate a random value and bind it to the instance
             IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
-            object value = generator.Generate(context);
 
-            try
+            object? value = generator.Generate(context);
+
+            if (value != null)
             {
-                if (!member.IsReadOnly)
+                try
                 {
-                    member.Setter.Invoke(instance, value);
+                    if (!member.IsReadOnly)
+                    {
+                        member.Setter.Invoke(instance, value);
+                    }
+                    else if (member.CachedType.IsDictionary)
+                    {
+                        PopulateDictionary(value, instance, member);
+                    }
+                    else if (member.CachedType.IsCollection)
+                    {
+                        PopulateCollection(value, instance, member);
+                    }
                 }
-                else if (member.CachedType.IsDictionary)
+                catch (Exception e)
                 {
-                    PopulateDictionary(value, instance, member);
+                    Console.WriteLine(e.ToString());
                 }
-                else if (member.CachedType.IsCollection())
-                {
-                    PopulateCollection(value, instance, member);
-                }
-            }
-            catch
-            {
             }
 
             // Remove the current type from the type stack so siblings can be created
@@ -160,23 +168,25 @@ public class AutoFakerBinder : IAutoFakerBinder
         return false;
     }
 
-    private static CachedConstructor? GetConstructor(CachedType type)
+    private CachedConstructor? GetConstructor(CachedType type)
     {
         CachedConstructor[]? constructors = type.GetCachedConstructors();
 
         if (type.IsDictionary)
         {
-            return ResolveTypedConstructor(typeof(IDictionary<,>), constructors);
+            return ResolveTypedConstructor(_genericDictionary, constructors);
         }
 
         if (type.IsEnumerable)
         {
-            return ResolveTypedConstructor(typeof(IEnumerable<>), constructors);
+            return ResolveTypedConstructor(_enumerable, constructors);
         }
 
-        foreach (CachedConstructor constructor in constructors)
+        for (var i = 0; i < constructors.Length; i++)
         {
-            if (constructor.GetParameters().Length == 0)
+            CachedConstructor constructor = constructors[i];
+
+            if (constructor.GetCachedParameters().Length == 0)
             {
                 return constructor;
             }
@@ -185,24 +195,24 @@ public class AutoFakerBinder : IAutoFakerBinder
         return constructors.Length > 0 ? constructors[0] : null;
     }
 
-    private static CachedConstructor? ResolveTypedConstructor(Type type, CachedConstructor[] constructors)
+    private static CachedConstructor? ResolveTypedConstructor(CachedType type, CachedConstructor[] constructors)
     {
         for (int i = 0; i < constructors.Length; i++)
         {
             CachedConstructor c = constructors[i];
 
-            ParameterInfo[] parameters = c.GetParameters();
+            CachedParameter[] parameters = c.GetCachedParameters();
 
             if (parameters.Length != 1)
                 continue;
 
-            ParameterInfo parameter = parameters[0];
-            Type parameterType = parameter.ParameterType;
+            CachedParameter parameter = parameters[0];
+            CachedType parameterType = parameter.CachedParameterType;
 
             if (!parameterType.IsGenericType)
                 continue;
 
-            Type genericTypeDefinition = parameterType.GetGenericTypeDefinition();
+            CachedType? genericTypeDefinition = parameterType.GetCachedGenericTypeDefinition();
 
             if (genericTypeDefinition == type)
             {
@@ -213,77 +223,37 @@ public class AutoFakerBinder : IAutoFakerBinder
         return null;
     }
 
-    private static IAutoFakerGenerator GetParameterGenerator(Type type, ParameterInfo parameter, AutoFakerContext context)
+    private static IAutoFakerGenerator GetParameterGenerator(Type type, CachedParameter parameter, AutoFakerContext context)
     {
-        context.Setup(type, CacheService.Cache.GetCachedType(parameter.ParameterType), parameter.Name);
+        context.Setup(type, parameter.CachedParameterType, parameter.Name);
 
         return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
-    private static List<AutoMember> GetMembersToPopulate(CachedType cachedType)
+    private List<AutoMember> GetMembersToPopulate(CachedType cachedType)
     {
-        // If a list of members is provided, no others should be populated
-        //if (members != null)
-        //{
-        //    var autoMembersList = new List<AutoMember>(members.Length);
+        if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? members))
+            return members;
 
-        //    for (int i = 0; i < members.Length; i++)
-        //    {
-        //        autoMembersList.Add(new AutoMember(members[i]));
-        //    }
-
-        //    return autoMembersList;
-        //}
-
-        // Get the baseline members resolved by Bogus
         var autoMembers = new List<AutoMember>();
 
-        var properties = cachedType.GetProperties()!;
+        PropertyInfo[] properties = cachedType.GetProperties()!;
 
-        var fields = cachedType.GetFields();
+        FieldInfo[]? fields = cachedType.GetFields();
 
-        foreach (var property in properties)
+        for (var i = 0; i < properties.Length; i++)
         {
+            PropertyInfo property = properties[i];
             autoMembers.Add(new AutoMember(property));
         }
 
-        foreach (var field in fields)
+        for (var i = 0; i < fields.Length; i++)
         {
+            FieldInfo field = fields[i];
             autoMembers.Add(new AutoMember(field));
         }
 
-        //int length = memberInfos.Length;
-
-        //for (int i = 0; i < length; i++)
-        //{
-        //    MemberInfo member = memberInfos[i];
-
-        //    // Then check if any other members can be populated
-        //    var autoMember = new AutoMember(member);
-
-        //    bool found = false;
-        //    for (int j = 0; j < autoMembers.Count; j++)
-        //    {
-        //        if (autoMembers[j].Name == autoMember.Name)
-        //        {
-        //            found = true;
-        //            break;
-        //        }
-        //    }
-
-        //    if (!found)
-        //    {
-        //        // A readonly dictionary or collection member can use the Add() method
-        //        if (autoMember.IsReadOnly && autoMember.CachedType.IsDictionary)
-        //        {
-        //            autoMembers.Add(autoMember);
-        //        }
-        //        else if (autoMember.IsReadOnly && autoMember.CachedType.IsCollection())
-        //        {
-        //            autoMembers.Add(autoMember);
-        //        }
-        //    }
-        //}
+        _autoMembersCache.TryAdd(cachedType, autoMembers);
 
         return autoMembers;
     }
@@ -294,8 +264,8 @@ public class AutoFakerBinder : IAutoFakerBinder
             return;
 
         object? instance = member.Getter(parent);
-        Type[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
-        MethodInfo? addMethod = GetAddMethod(member.CachedType.Type, argTypes);
+        CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
+        CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
         if (instance != null && addMethod != null)
         {
@@ -312,8 +282,8 @@ public class AutoFakerBinder : IAutoFakerBinder
             return;
 
         object? instance = member.Getter(parent);
-        Type[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
-        MethodInfo? addMethod = GetAddMethod(member.CachedType.Type, argTypes);
+        CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
+        CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
         if (instance != null && addMethod != null)
         {
@@ -324,18 +294,18 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
-    private static MethodInfo? GetAddMethod(Type cachedType, Type[] argTypes)
+    private static CachedMethod? GetAddMethod(CachedType cachedType, CachedType[] argTypes)
     {
-        MethodInfo? method = cachedType.GetMethod("Add", argTypes);
+        var method = cachedType.GetCachedMethod("Add", argTypes.ToTypes());
 
         if (method != null)
             return method;
 
-        var interfaces = cachedType.GetInterfaces()!;
+        var interfaces = cachedType.GetCachedInterfaces();
 
         for (int i = 0; i < interfaces.Length; i++)
         {
-            MethodInfo? interfaceMethod = GetAddMethod(interfaces[i], argTypes);
+            CachedMethod? interfaceMethod = GetAddMethod(interfaces[i], argTypes);
 
             if (interfaceMethod != null)
             {

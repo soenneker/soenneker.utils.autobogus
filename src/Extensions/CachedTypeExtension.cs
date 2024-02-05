@@ -1,16 +1,19 @@
 ﻿using Soenneker.Reflection.Cache.Types;
+using Soenneker.Utils.AutoBogus.Services;
 using System;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
 internal static class CachedTypeExtension
 {
-    public static Type[] GetAddMethodArgumentTypes(this CachedType type)
+    private static readonly CachedType _object = CacheService.Cache.GetCachedType(typeof(object));
+
+    public static CachedType[] GetAddMethodArgumentTypes(this CachedType type)
     {
         if (!type.IsGenericType)
-            return [typeof(object)];
+            return [_object];
 
-        return type.GetGenericArguments()!;
+        return type.GetCachedGenericArguments()!;
     }
 
     internal static bool IsCollection(this CachedType type)
@@ -22,6 +25,7 @@ internal static class CachedTypeExtension
     {
         if (cachedType.Type.Name == interfaceTypeName)
             return true;
+
         Type[] interfaces = cachedType.GetInterfaces()!;
 
         foreach (Type i in interfaces)

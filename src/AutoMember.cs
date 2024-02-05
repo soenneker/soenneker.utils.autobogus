@@ -52,7 +52,6 @@ internal sealed class AutoMember
 
         // Extract the required member info
 
-
         CachedType = CacheService.Cache.GetCachedType(fieldInfo.FieldType);
         IsReadOnly = !fieldInfo.IsPrivate && fieldInfo.IsInitOnly;
         Getter = fieldInfo.GetValue;
