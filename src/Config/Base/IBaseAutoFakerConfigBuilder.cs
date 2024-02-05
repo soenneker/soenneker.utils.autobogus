@@ -16,6 +16,20 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// <param name="locale">The locale to use.</param>
     /// <returns>The current configuration builder instance.</returns>
     TBuilder WithLocale(string locale);
+    
+    /// <summary>
+    /// Registers the DateTimeKind to use when generating date and time values.
+    /// </summary>
+    /// <param name="dateTimeKind">The dateTimeKind to use.</param>
+    /// <returns>The current configuration builder instance.</returns>
+    TBuilder WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind);
+
+    /// <summary>
+    /// Registers the DateTimeKind to use when generating date and time values.
+    /// </summary>
+    /// <param name="dateTimeKind">The dateTimeKind to use.</param>
+    /// <returns>The current configuration builder instance.</returns>
+    TBuilder WithDateTimeKind(DateTimeKind dateTimeKind);
 
     /// <summary>
     /// Registers the number of items to generate for a collection.
