@@ -1,5 +1,6 @@
 using System;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Config.Base;
@@ -22,14 +23,14 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="dateTimeKind">The dateTimeKind to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind);
+    //TBuilder WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind);
 
-    /// <summary>
-    /// Registers the DateTimeKind to use when generating date and time values.
-    /// </summary>
-    /// <param name="dateTimeKind">The dateTimeKind to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithDateTimeKind(DateTimeKind dateTimeKind);
+    ///// <summary>
+    ///// Registers the DateTimeKind to use when generating date and time values.
+    ///// </summary>
+    ///// <param name="dateTimeKind">The dateTimeKind to use.</param>
+    ///// <returns>The current configuration builder instance.</returns>
+    //TBuilder WithDateTimeKind(DateTimeKind dateTimeKind);
 
     /// <summary>
     /// Registers the number of items to generate for a collection.
