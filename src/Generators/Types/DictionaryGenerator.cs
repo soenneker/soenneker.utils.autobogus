@@ -13,13 +13,22 @@ internal sealed class DictionaryGenerator<TKey, TValue>
     {
         // Create an instance of a dictionary (public and non-public)
         IDictionary<TKey, TValue> items;
-        try
-        {
-            items = (IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
-        }
-        catch
+
+        if (context.CachedType.IsInterface || context.GenerateType.Name == "Dictionary`2")
         {
             items = new Dictionary<TKey, TValue>();
+        }
+        else
+        {
+            try
+            {
+               // items = (IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
+                items = (IDictionary<TKey, TValue>)context.CachedType.CreateInstance(); //(IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
+            }
+            catch (Exception e)
+            {
+                items = new Dictionary<TKey, TValue>();
+            }
         }
 
         // Get a list of keys

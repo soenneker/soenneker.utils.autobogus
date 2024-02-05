@@ -19,7 +19,7 @@ public class StructFixture
     [Fact]
     public void Generate_ExampleStruct()
     {
-        IAutoFaker faker = AutoFaker.Create(builder =>
+        IAutoFaker faker = new AutoFaker(builder =>
         {
             builder.WithOverride(new ExampleStructOverride());
         });
@@ -32,7 +32,7 @@ public class StructFixture
     }
 }
 
-class ExampleStructOverride : GeneratorOverride
+class ExampleStructOverride : AutoFakerGeneratorOverride
 {
     public override bool Preinitialize => false;
 
@@ -41,7 +41,7 @@ class ExampleStructOverride : GeneratorOverride
         return context.GenerateType == typeof(ExampleStruct);
     }
 
-    public override void Generate(AutoFakerContextOverride context)
+    public override void Generate(AutoFakerOverrideContext context)
     {
         context.Instance = new ExampleStruct(5);
     }

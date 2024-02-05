@@ -6,20 +6,26 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class SetGenerator<TType>
-    : IAutoFakerGenerator
+internal sealed class SetGenerator<TType> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         ISet<TType> set;
 
-        try
-        {
-            set = (ISet<TType>)Activator.CreateInstance(context.GenerateType);
-        }
-        catch
+        if (context.CachedType.IsInterface)
         {
             set = new HashSet<TType>();
+        }
+        else
+        {
+            try
+            {
+                set = (ISet<TType>)Activator.CreateInstance(context.GenerateType);
+            }
+            catch (Exception e)
+            {
+                set = new HashSet<TType>();
+            }
         }
 
         List<TType> items = context.GenerateMany<TType>();

@@ -10,7 +10,7 @@ public class GenericTypeUtilTests
     [Fact]
     public void Generate_should_generate()
     {
-        IAutoFaker? faker = AutoFaker.Create();
+        IAutoFaker faker = new AutoFaker();
 
         var order1 = faker.Generate<Order>();
         order1.Should().NotBeNull();

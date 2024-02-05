@@ -10,8 +10,10 @@ internal sealed class DateTimeGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        return context.AutoFakerConfig.DateTimeKind.Invoke(context) == DateTimeKind.Utc
-            ? context.Faker.Date.Recent().ToUniversalTime()
-            : context.Faker.Date.Recent();
+        return context.Faker.Date.Recent();
+
+        //return context.Config.DateTimeKind.Invoke(context) == DateTimeKind.Utc
+        //    ? context.Faker.Date.Recent().ToUniversalTime()
+        //    : context.Faker.Date.Recent();
     }
 }

@@ -7,18 +7,8 @@ namespace Soenneker.Utils.AutoBogus.Context;
 /// <summary>
 /// A class that provides context when overriding a generate request.
 /// </summary>
-public sealed class AutoFakerContextOverride
+public sealed class AutoFakerOverrideContext
 {
-    internal AutoFakerContextOverride(AutoFakerContext generateContext)
-    {
-        GenerateContext = generateContext;
-
-        GenerateType = GenerateContext.GenerateType;
-        GenerateName = GenerateContext.GenerateName;
-        Faker = GenerateContext.Faker;
-        RuleSets = GenerateContext.RuleSets;
-    }
-
     /// <summary>
     /// The instance generated during the override.
     /// </summary>
@@ -45,4 +35,14 @@ public sealed class AutoFakerContextOverride
     public List<string> RuleSets { get; }
 
     internal AutoFakerContext GenerateContext { get; }
+
+    internal AutoFakerOverrideContext(AutoFakerContext generateContext)
+    {
+        GenerateContext = generateContext;
+
+        GenerateType = GenerateContext.GenerateType;
+        GenerateName = GenerateContext.GenerateName;
+        Faker = GenerateContext.Faker;
+        RuleSets = GenerateContext.RuleSets;
+    }
 }

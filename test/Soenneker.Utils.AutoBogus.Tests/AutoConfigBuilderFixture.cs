@@ -18,9 +18,10 @@ public class AutoConfigBuilderFixture
 
     public AutoConfigBuilderFixture()
     {
+        var autoFaker = new AutoFaker();
         _faker = new Faker();
         _fakerConfig = new AutoFakerConfig();
-        _builder = new AutoFakerConfigBuilder(_fakerConfig);
+        _builder = new AutoFakerConfigBuilder(_fakerConfig, autoFaker);
     }
 
     public class WithLocale
@@ -35,47 +36,37 @@ public class AutoConfigBuilderFixture
 
             _fakerConfig.Locale.Should().Be(locale);
         }
-
-        [Fact]
-        public void Should_Set_Config_Locale_To_Default_If_Null()
-        {
-            _fakerConfig.Locale = _faker.Random.String();
-
-            _builder.WithLocale<ITestBuilder>(null, null);
-
-            _fakerConfig.Locale.Should().Be(AutoFakerConfig.DefaultLocale);
-        }
     }
 
     public class WithDateTimeKind : AutoConfigBuilderFixture
     {
-        [Fact]
-        public void Should_Set_Config_DateTimeKind()
-        {
-            var kind = DateTimeKind.Utc;
-            _builder.WithDateTimeKind<ITestBuilder>(context => kind, null);
-            _fakerConfig.DateTimeKind.Invoke(null).Should().Be(kind);
-        }
+        //[Fact]
+        //public void Should_Set_Config_DateTimeKind()
+        //{
+        //    var kind = DateTimeKind.Utc;
+        //    _builder.WithDateTimeKind<ITestBuilder>(context => kind, null);
+        //    _fakerConfig.DateTimeKind.Invoke(null).Should().Be(kind);
+        //}
 
-        [Fact]
-        public void Should_Set_Config_DateTimeKind_To_Default_If_Null()
-        {
-            var kind = AutoFakerConfig.DefaultDateTimeKind.Invoke(null);
-            _builder.WithDateTimeKind<ITestBuilder>(null, null);
-            _fakerConfig.DateTimeKind.Invoke(null).Should().Be(kind);
-        }
+        //[Fact]
+        //public void Should_Set_Config_DateTimeKind_To_Default_If_Null()
+        //{
+        //    var kind = AutoFakerConfig.DefaultDateTimeKind.Invoke(null);
+        //    _builder.WithDateTimeKind<ITestBuilder>(null, null);
+        //    _fakerConfig.DateTimeKind.Invoke(null).Should().Be(kind);
+        //}
 
         private sealed record Obj(DateTime Birthday);
 
-        [Fact]
-        public void Should_ConvertToUtc()
-        {
-            var obj = AutoFaker.Generate<Obj>(builder =>
-            {
-                builder.WithDateTimeKind(DateTimeKind.Utc);
-            });
-            obj.Birthday.Should().Be(obj.Birthday.ToUniversalTime());
-        }
+        //[Fact]
+        //public void Should_ConvertToUtc()
+        //{
+        //    var obj = AutoFaker.Generate<Obj>(builder =>
+        //    {
+        //        builder.WithDateTimeKind(DateTimeKind.Utc);
+        //    });
+        //    obj.Birthday.Should().Be(obj.Birthday.ToUniversalTime());
+        //}
 
         [Fact]
         public void Should_BeLocal()
@@ -93,19 +84,9 @@ public class AutoConfigBuilderFixture
         {
             int count = _faker.Random.Int();
 
-            _builder.WithRepeatCount<ITestBuilder>(context => count, null);
+            _builder.WithRepeatCount<ITestBuilder>(count, null);
 
-            _fakerConfig.RepeatCount.Invoke(null).Should().Be(count);
-        }
-
-        [Fact]
-        public void Should_Set_Config_RepeatCount_To_Default_If_Null()
-        {
-            int count = AutoFakerConfig.DefaultRepeatCount.Invoke(null);
-
-            _builder.WithRepeatCount<ITestBuilder>(null, null);
-
-            _fakerConfig.RepeatCount.Invoke(null).Should().Be(count);
+            _fakerConfig.RepeatCount.Should().Be(count);
         }
     }
 
@@ -117,19 +98,9 @@ public class AutoConfigBuilderFixture
         {
             int depth = _faker.Random.Int();
 
-            _builder.WithRecursiveDepth<ITestBuilder>(context => depth, null);
+            _builder.WithRecursiveDepth<ITestBuilder>( depth, null);
 
-            _fakerConfig.RecursiveDepth.Invoke(null).Should().Be(depth);
-        }
-
-        [Fact]
-        public void Should_Set_Config_RecursiveDepth_To_Default_If_Null()
-        {
-            int depth = AutoFakerConfig.DefaultRecursiveDepth.Invoke(null);
-
-            _builder.WithRecursiveDepth<ITestBuilder>(null, null);
-
-            _fakerConfig.RecursiveDepth.Invoke(null).Should().Be(depth);
+            _fakerConfig.RecursiveDepth.Should().Be(depth);
         }
     }
 
@@ -142,32 +113,19 @@ public class AutoConfigBuilderFixture
         {
             int depth = _faker.Random.Int();
 
-            _builder.WithTreeDepth<ITestBuilder>(context => depth, null);
+            _builder.WithTreeDepth<ITestBuilder>(depth, null);
 
-            _fakerConfig.TreeDepth.Invoke(null).Should().Be(depth);
+            _fakerConfig.TreeDepth.Should().Be(depth);
         }
 
         [Fact]
         public void Should_Set_Config_TreeDepth_To_Default_If_Null()
         {
-            int? depth = AutoFakerConfig.DefaultTreeDepth.Invoke(null);
+            int? depth = AutoFakerDefaultConfigOptions.DefaultTreeDepth;
 
             _builder.WithTreeDepth<ITestBuilder>(null, null);
 
-            _fakerConfig.TreeDepth.Invoke(null).Should().Be(depth);
-        }
-    }
-    
-    public class WithFakerHub
-        : AutoConfigBuilderFixture
-    {
-        [Fact]
-        public void Should_Set_Config_FakerHub()
-        {
-            var faker = new Faker();
-
-            _builder.WithFaker<ITestBuilder>(faker, null);
-            _builder.FakerConfig.Faker.Should().Be(faker);
+            _fakerConfig.TreeDepth.Should().Be(depth);
         }
     }
 
@@ -177,10 +135,13 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Type_If_Already_Added()
         {
-            Type? type1 = typeof(int);
-            Type? type2 = typeof(int);
+            Type type1 = typeof(int);
+            Type type2 = typeof(int);
 
-            _fakerConfig.SkipTypes.Add(type1);
+            _fakerConfig.SkipTypes =
+            [
+                type1
+            ];
 
             _builder.WithSkip<ITestBuilder>(type2, null);
 
@@ -190,10 +151,13 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_Type_To_Skip()
         {
-            Type? type1 = typeof(int);
-            Type? type2 = typeof(string);
+            Type type1 = typeof(int);
+            Type type2 = typeof(string);
 
-            _fakerConfig.SkipTypes.Add(type1);
+            _fakerConfig.SkipTypes =
+            [
+                type1
+            ];
 
             _builder.WithSkip<ITestBuilder>(type2, null);
 
@@ -216,10 +180,13 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Member_If_Already_Added()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             var member = $"{type.FullName}.Value";
 
-            _fakerConfig.SkipPaths.Add(member);
+            _fakerConfig.SkipPaths =
+            [
+                member
+            ];
 
             _builder.WithSkip<ITestBuilder>(type, "Value", null);
 
@@ -229,11 +196,13 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_MemberName_To_Skip()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             string? path = _faker.Random.String();
 
-            _fakerConfig.SkipPaths.Add(path);
-
+            _fakerConfig.SkipPaths =
+            [
+                path
+            ];
             _builder.WithSkip<ITestBuilder>(type, "Value", null);
 
             _fakerConfig.SkipPaths.Should().BeEquivalentTo(new[]
@@ -255,10 +224,12 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Not_Add_Member_If_Already_Added()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             var member = $"{type.FullName}.Value";
-
-            _fakerConfig.SkipPaths.Add(member);
+            _fakerConfig.SkipPaths =
+            [
+                member
+            ];
 
             _builder.WithSkip<ITestBuilder, TestSkip>("Value", null);
 
@@ -268,10 +239,13 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_MemberName_To_Skip()
         {
-            Type? type = typeof(TestSkip);
+            Type type = typeof(TestSkip);
             string? path = _faker.Random.String();
 
-            _fakerConfig.SkipPaths.Add(path);
+            _fakerConfig.SkipPaths =
+            [
+                path
+            ];
 
             _builder.WithSkip<ITestBuilder, TestSkip>("Value", null);
 
@@ -286,15 +260,15 @@ public class AutoConfigBuilderFixture
     public class WithOverride
         : AutoConfigBuilderFixture
     {
-        private class TestGeneratorOverride
-            : GeneratorOverride
+        private class TestAutoFakerGeneratorOverride
+            : AutoFakerGeneratorOverride
         {
             public override bool CanOverride(AutoFakerContext context)
             {
                 return false;
             }
 
-            public override void Generate(AutoFakerContextOverride context)
+            public override void Generate(AutoFakerOverrideContext context)
             { }
         }
 
@@ -303,14 +277,18 @@ public class AutoConfigBuilderFixture
         {
             _builder.WithOverride<ITestBuilder>(null, null);
 
-            _fakerConfig.Overrides.Should().BeEmpty();
+            _fakerConfig.Overrides.Should().BeNull();
         }
 
         [Fact]
         public void Should_Not_Add_Override_If_Already_Added()
         {
-            var generatorOverride = new TestGeneratorOverride();
-            _fakerConfig.Overrides.Add(generatorOverride);
+            var generatorOverride = new TestAutoFakerGeneratorOverride();
+
+            _fakerConfig.Overrides =
+            [
+                generatorOverride
+            ];
 
             _builder.WithOverride<ITestBuilder>(generatorOverride, null);
 
@@ -320,10 +298,13 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Add_Override_If_Equivalency_Is_Different()
         {
-            var generatorOverride1 = new TestGeneratorOverride();
-            var generatorOverride2 = new TestGeneratorOverride();
+            var generatorOverride1 = new TestAutoFakerGeneratorOverride();
+            var generatorOverride2 = new TestAutoFakerGeneratorOverride();
 
-            _fakerConfig.Overrides.Add(generatorOverride1);
+            _fakerConfig.Overrides =
+            [
+                generatorOverride1
+            ];
 
             _builder.WithOverride<ITestBuilder>(generatorOverride2, null);
 

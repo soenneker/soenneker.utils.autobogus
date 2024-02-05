@@ -4,5 +4,5 @@ namespace Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 internal interface IAutoFakerGenerator
 {
-    object Generate(AutoFakerContext context);
+    object? Generate(AutoFakerContext context);
 }

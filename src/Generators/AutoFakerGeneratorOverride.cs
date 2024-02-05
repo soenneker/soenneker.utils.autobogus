@@ -5,7 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Generators;
 /// <summary>
 /// A class for overriding generate requests.
 /// </summary>
-public abstract class GeneratorOverride
+public abstract class AutoFakerGeneratorOverride
 {
     /// <summary>
     /// Gets whether a pre-initialized instance is required. Defaults to true.
@@ -25,6 +25,6 @@ public abstract class GeneratorOverride
     /// <summary>
     /// Generates an override instance of a given type.
     /// </summary>
-    /// <param name="context">The <see cref="AutoFakerContextOverride"/> instance for the current generate request.</param>
-    public abstract void Generate(AutoFakerContextOverride context);
+    /// <param name="context">The <see cref="AutoFakerOverrideContext"/> instance for the current generate request.</param>
+    public abstract void Generate(AutoFakerOverrideContext context);
 }

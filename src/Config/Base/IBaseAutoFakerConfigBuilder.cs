@@ -1,5 +1,4 @@
 using System;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -24,14 +23,14 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="dateTimeKind">The dateTimeKind to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind);
+    //TBuilder WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind);
 
-    /// <summary>
-    /// Registers the DateTimeKind to use when generating date and time values.
-    /// </summary>
-    /// <param name="dateTimeKind">The dateTimeKind to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithDateTimeKind(DateTimeKind dateTimeKind);
+    ///// <summary>
+    ///// Registers the DateTimeKind to use when generating date and time values.
+    ///// </summary>
+    ///// <param name="dateTimeKind">The dateTimeKind to use.</param>
+    ///// <returns>The current configuration builder instance.</returns>
+    //TBuilder WithDateTimeKind(DateTimeKind dateTimeKind);
 
     /// <summary>
     /// Registers the number of items to generate for a collection.
@@ -45,7 +44,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="count">The repeat count to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithRepeatCount(Func<AutoFakerContext, int> count);
+    //TBuilder WithRepeatCount(Func<AutoFakerContext, int> count);
 
     /// <summary>
     /// Registers the number of rows to generate in a <see cref="System.Data.DataTable"/>.
@@ -59,7 +58,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="count">The row count to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithDataTableRowCount(Func<AutoFakerContext, int> count);
+    //TBuilder WithDataTableRowCount(Func<AutoFakerContext, int> count);
 
     /// <summary>
     /// Registers the depth to recursively generate.
@@ -80,14 +79,14 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="depth">The recursive depth to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithRecursiveDepth(Func<AutoFakerContext, int> depth);
+    //TBuilder WithRecursiveDepth(Func<AutoFakerContext, int> depth);
 
     /// <summary>
     /// Registers the depth to generate the object tree
     /// </summary>
     /// <param name="depth">The depth to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithTreeDepth(Func<AutoFakerContext, int?> depth);
+    //TBuilder WithTreeDepth( int? depth);
 
     /// <summary>
     /// Registers a binder instance to use when generating values.
@@ -101,7 +100,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// </summary>
     /// <param name="faker">The <see cref="Bogus.Faker"/> instance to use as the hub.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithFaker(Faker faker);
+    //TBuilder WithFaker(Faker faker);
 
     /// <summary>
     /// Registers a type to skip when generating values.
@@ -129,7 +128,7 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// <summary>
     /// Registers an override instance to use when generating values.
     /// </summary>
-    /// <param name="generatorOverride">The <see cref="GeneratorOverride"/> instance to use.</param>
+    /// <param name="autoFakerGeneratorOverride">The <see cref="AutoFakerGeneratorOverride"/> instance to use.</param>
     /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithOverride(GeneratorOverride generatorOverride);
+    TBuilder WithOverride(AutoFakerGeneratorOverride autoFakerGeneratorOverride);
 }

@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using Bogus;
 using FluentAssertions;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -13,6 +15,7 @@ using Xunit;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -68,9 +71,9 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] { typeof(NonGeneric) };
-                    yield return new[] { typeof(OneArgument<int>) };
-                    yield return new[] { typeof(TwoArgumentsThatAreDifferentFromBaseReadOnlyDictionaryClass<string, int>) };
+                    yield return new[] {typeof(NonGeneric)};
+                    yield return new[] {typeof(OneArgument<int>)};
+                    yield return new[] {typeof(TwoArgumentsThatAreDifferentFromBaseReadOnlyDictionaryClass<string, int>)};
                 }
             }
 
@@ -81,10 +84,10 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config, readOnlyDictionaryType);
+                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), readOnlyDictionaryType);
 
                 // Act
-                IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
+                IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
 
                 object instance = generator.Generate(context);
 
@@ -113,9 +116,9 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] { typeof(NonGeneric) };
-                    yield return new[] { typeof(OneArgument<int>) };
-                    yield return new[] { typeof(TwoArgumentsThatAreDifferentFromBaseDictionaryClass<string, int>) };
+                    yield return new[] {typeof(NonGeneric)};
+                    yield return new[] {typeof(OneArgument<int>)};
+                    yield return new[] {typeof(TwoArgumentsThatAreDifferentFromBaseDictionaryClass<string, int>)};
                 }
             }
 
@@ -126,10 +129,10 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config, dictionaryType);
+                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), dictionaryType);
 
                 // Act
-                IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
+                IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
 
                 object instance = generator.Generate(context);
 
@@ -155,8 +158,8 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] { typeof(NonGeneric) };
-                    yield return new[] { typeof(GenericWithDifferentType<string>) };
+                    yield return new[] {typeof(NonGeneric)};
+                    yield return new[] {typeof(GenericWithDifferentType<string>)};
                 }
             }
 
@@ -164,15 +167,15 @@ public partial class AutoGeneratorsFixture
             [MemberData(nameof(ListOfSetTypes))]
             public void Should_Handle_Subclasses(Type setType)
             {
-                // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config);
+                // Arrange
+                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config));
 
                 context.Setup(setType);
 
                 // Act
-                IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
+                IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
 
                 object instance = generator.Generate(context);
 
@@ -198,8 +201,8 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] { typeof(NonGeneric) };
-                    yield return new[] { typeof(GenericWithDifferentType<string>) };
+                    yield return new[] {typeof(NonGeneric)};
+                    yield return new[] {typeof(GenericWithDifferentType<string>)};
                 }
             }
 
@@ -210,12 +213,12 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config);
+                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config));
 
                 context.Setup(listType);
 
                 // Act
-                IAutoFakerGenerator generator = GeneratorFactory.ResolveGenerator(context);
+                IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
 
                 object instance = generator.Generate(context);
 
@@ -233,7 +236,8 @@ public partial class AutoGeneratorsFixture
         private sealed class TestClass
         {
             public TestClass(in int value)
-            { }
+            {
+            }
         }
 
         [Fact]
@@ -244,7 +248,7 @@ public partial class AutoGeneratorsFixture
             ParameterInfo parameter = constructor.GetParameters().Single();
             AutoFakerContext context = CreateContext(parameter.ParameterType);
 
-            Action action = () => GeneratorFactory.GetGenerator(context);
+            Action action = () => AutoFakerGeneratorFactory.GetGenerator(context);
             action.Should().NotThrow();
         }
     }
@@ -256,7 +260,8 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void Generate_Should_Return_Value(Type type)
         {
-            IAutoFakerGenerator generator = GeneratorFactory.Generators[type];
+            CachedType cachedType = CacheService.Cache.GetCachedType(type);
+            IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 
             InvokeGenerator(type, generator).Should().BeOfType(type);
         }
@@ -265,18 +270,18 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void GetGenerator_Should_Return_Generator(Type type)
         {
+            CachedType cachedType = CacheService.Cache.GetCachedType(type);
             AutoFakerContext context = CreateContext(type);
-            IAutoFakerGenerator generator = GeneratorFactory.Generators[type];
+            IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
 
-            GeneratorFactory.GetGenerator(context).Should().Be(generator);
+            GeneratorService.Clear();
+
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().Be(generator);
         }
 
         public static IEnumerable<object[]> GetRegisteredTypes()
         {
-            return GeneratorFactory.Generators.Select(g => new object[]
-            {
-                g.Key
-            });
+            return GeneratorService.GetSupportedFundamentalTypes().Select(c => new object[] {c});
         }
 
         [Theory]
@@ -287,7 +292,7 @@ public partial class AutoGeneratorsFixture
             AutoFakerContext context = CreateContext(dataType);
 
             // Act
-            IAutoFakerGenerator generator = GeneratorFactory.GetGenerator(context);
+            IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
 
             // Assert
             generator.Should().BeAssignableTo(generatorType);
@@ -295,11 +300,11 @@ public partial class AutoGeneratorsFixture
 
         public static IEnumerable<object[]> GetDataSetAndDataTableTypes()
         {
-            yield return new object[] { typeof(System.Data.DataSet), typeof(DataSetGenerator) };
-            yield return new object[] { typeof(DataSetGeneratorFacet.TypedDataSet), typeof(DataSetGenerator) };
-            yield return new object[] { typeof(System.Data.DataTable), typeof(DataTableGenerator) };
-            yield return new object[] { typeof(DataTableGeneratorFacet.TypedDataTable1), typeof(DataTableGenerator) };
-            yield return new object[] { typeof(DataTableGeneratorFacet.TypedDataTable2), typeof(DataTableGenerator) };
+            yield return new object[] {typeof(System.Data.DataSet), typeof(DataSetGenerator)};
+            yield return new object[] {typeof(DataSetGeneratorFacet.TypedDataSet), typeof(DataSetGenerator)};
+            yield return new object[] {typeof(System.Data.DataTable), typeof(DataTableGenerator)};
+            yield return new object[] {typeof(DataTableGeneratorFacet.TypedDataTable1), typeof(DataTableGenerator)};
+            yield return new object[] {typeof(DataTableGeneratorFacet.TypedDataTable2), typeof(DataTableGenerator)};
         }
     }
 
@@ -335,7 +340,7 @@ public partial class AutoGeneratorsFixture
             Type type = typeof(ExpandoObject);
             AutoFakerContext context = CreateContext(type);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType<Generators.Types.ExpandoObjectGenerator>();
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<Generators.Types.ExpandoObjectGenerator>();
         }
     }
 
@@ -351,6 +356,7 @@ public partial class AutoGeneratorsFixture
         public void Generate_Should_Return_Array(Type type)
         {
             Type? itemType = type.GetElementType();
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             IAutoFakerGenerator generator = CreateGenerator(typeof(ArrayGenerator<>), itemType);
             var array = InvokeGenerator(type, generator) as Array;
 
@@ -369,7 +375,7 @@ public partial class AutoGeneratorsFixture
             Type? itemType = type.GetElementType();
             Type generatorType = GetGeneratorType(typeof(ArrayGenerator<>), itemType);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 
@@ -391,7 +397,7 @@ public partial class AutoGeneratorsFixture
             Type type = typeof(TestEnum);
             AutoFakerContext context = CreateContext(type);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType<EnumGenerator<TestEnum>>();
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<EnumGenerator<TestEnum>>();
         }
     }
 
@@ -411,6 +417,7 @@ public partial class AutoGeneratorsFixture
             Type[] genericTypes = type.GetGenericArguments();
             Type keyType = genericTypes.ElementAt(0);
             Type valueType = genericTypes.ElementAt(1);
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             IAutoFakerGenerator generator = CreateGenerator(typeof(DictionaryGenerator<,>), keyType, valueType);
             var dictionary = InvokeGenerator(type, generator) as IDictionary;
 
@@ -441,7 +448,7 @@ public partial class AutoGeneratorsFixture
             Type valueType = genericTypes.ElementAt(1);
             Type generatorType = GetGeneratorType(typeof(DictionaryGenerator<,>), keyType, valueType);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 
@@ -464,6 +471,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             IAutoFakerGenerator generator = CreateGenerator(typeof(ListGenerator<>), itemType);
             var list = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -489,7 +497,7 @@ public partial class AutoGeneratorsFixture
             Type itemType = genericTypes.ElementAt(0);
             Type generatorType = GetGeneratorType(typeof(ListGenerator<>), itemType);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 
@@ -507,6 +515,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             IAutoFakerGenerator generator = CreateGenerator(typeof(SetGenerator<>), itemType);
             var set = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -525,9 +534,11 @@ public partial class AutoGeneratorsFixture
             AutoFakerContext context = CreateContext(type);
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             Type generatorType = GetGeneratorType(typeof(SetGenerator<>), itemType);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 
@@ -544,6 +555,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             IAutoFakerGenerator generator = CreateGenerator(typeof(EnumerableGenerator<>), itemType);
             var enumerable = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -563,7 +575,7 @@ public partial class AutoGeneratorsFixture
             Type itemType = genericTypes.ElementAt(0);
             Type generatorType = GetGeneratorType(typeof(EnumerableGenerator<>), itemType);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 
@@ -585,7 +597,7 @@ public partial class AutoGeneratorsFixture
             Type type = typeof(TestEnum?);
             AutoFakerContext context = CreateContext(type);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType<NullableGenerator<TestEnum>>();
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<NullableGenerator<TestEnum>>();
         }
     }
 
@@ -599,6 +611,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(TestAbstractClass))]
         public void Generate_Should_Return_Value(Type type)
         {
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
             IAutoFakerGenerator generator = CreateGenerator(typeof(TypeGenerator<>), type);
 
             if (type.IsInterface() || type.IsAbstract())
@@ -621,20 +634,20 @@ public partial class AutoGeneratorsFixture
             AutoFakerContext context = CreateContext(type);
             Type generatorType = GetGeneratorType(typeof(TypeGenerator<>), type);
 
-            GeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
     }
 
     public class GeneratorOverrides
         : AutoGeneratorsFixture
     {
-        private GeneratorOverride _generatorOverride;
-        private List<GeneratorOverride> _overrides;
+        private AutoFakerGeneratorOverride _autoFakerGeneratorOverride;
+        private List<AutoFakerGeneratorOverride> _overrides;
 
-        private class TestGeneratorOverride
-            : GeneratorOverride
+        private class TestAutoFakerGeneratorOverride
+            : AutoFakerGeneratorOverride
         {
-            public TestGeneratorOverride(bool shouldOverride = false)
+            public TestAutoFakerGeneratorOverride(bool shouldOverride = false)
             {
                 ShouldOverride = shouldOverride;
             }
@@ -646,51 +659,54 @@ public partial class AutoGeneratorsFixture
                 return ShouldOverride;
             }
 
-            public override void Generate(AutoFakerContextOverride context)
-            { }
+            public override void Generate(AutoFakerOverrideContext context)
+            {
+            }
         }
 
         public GeneratorOverrides()
         {
-            _generatorOverride = new TestGeneratorOverride(true);
-            _overrides = new List<GeneratorOverride>
+            _autoFakerGeneratorOverride = new TestAutoFakerGeneratorOverride(true);
+            _overrides = new List<AutoFakerGeneratorOverride>
             {
-                new TestGeneratorOverride(),
-                _generatorOverride,
-                new TestGeneratorOverride()
+                new TestAutoFakerGeneratorOverride(),
+                _autoFakerGeneratorOverride,
+                new TestAutoFakerGeneratorOverride()
             };
         }
 
         [Fact]
         public void Should_Return_All_Matching_Overrides()
         {
-            var generatorOverride = new TestGeneratorOverride(true);
+            var generatorOverride = new TestAutoFakerGeneratorOverride(true);
 
             _overrides.Insert(1, generatorOverride);
 
-            AutoFakerContext context = CreateContext(typeof(string), _overrides);
-            var invoker = GeneratorFactory.GetGenerator(context) as GeneratorOverrideInvoker;
+            GeneratorService.Clear();
 
-            invoker.Overrides.Should().BeEquivalentTo(new[] { generatorOverride, _generatorOverride });
+            AutoFakerContext context = CreateContext(typeof(string), _overrides);
+            var invoker = AutoFakerGeneratorFactory.GetGenerator(context) as AutoFakerGeneratorOverrideInvoker;
+
+            invoker.Overrides.Should().BeEquivalentTo(new[] {generatorOverride, _autoFakerGeneratorOverride});
         }
 
         [Fact]
         public void Should_Return_Generator_If_No_Matching_Override()
         {
-            _overrides = new List<GeneratorOverride>
+            _overrides = new List<AutoFakerGeneratorOverride>
             {
-                new TestGeneratorOverride()
+                new TestAutoFakerGeneratorOverride()
             };
 
             AutoFakerContext context = CreateContext(typeof(int), _overrides);
-            GeneratorFactory.GetGenerator(context).Should().BeOfType<IntGenerator>();
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<IntGenerator>();
         }
 
         [Fact]
         public void Should_Invoke_Generator()
         {
             AutoFakerContext context = CreateContext(typeof(string), _overrides);
-            IAutoFakerGenerator generatorOverride = GeneratorFactory.GetGenerator(context);
+            IAutoFakerGenerator generatorOverride = AutoFakerGeneratorFactory.GetGenerator(context);
 
             generatorOverride.Generate(context).Should().BeOfType<string>().And.NotBeNull();
         }
@@ -712,10 +728,10 @@ public partial class AutoGeneratorsFixture
     private static IAutoFakerGenerator CreateGenerator(Type type, params Type[] types)
     {
         type = GetGeneratorType(type, types);
-        return (IAutoFakerGenerator)Activator.CreateInstance(type);
+        return (IAutoFakerGenerator) Activator.CreateInstance(type);
     }
 
-    private static AutoFakerContext CreateContext(Type type, List<GeneratorOverride>? generatorOverrides = null, Func<AutoFakerContext, int>? dataTableRowCountFunctor = null)
+    private static AutoFakerContext CreateContext(Type type, List<AutoFakerGeneratorOverride>? generatorOverrides = null, int? dataTableRowCountFunctor = null)
     {
         var config = new AutoFakerConfig();
 
@@ -726,9 +742,9 @@ public partial class AutoGeneratorsFixture
 
         if (dataTableRowCountFunctor != null)
         {
-            config.DataTableRowCount = dataTableRowCountFunctor;
+            config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
-        return new AutoFakerContext(config, type);
+        return new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), type);
     }
 }

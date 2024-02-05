@@ -27,7 +27,7 @@
         <RepositoryUrl>https://github.com/soenneker/soenneker.utils.autobogus</RepositoryUrl>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>preview</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>

@@ -4,23 +4,24 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal sealed class GeneratorOverrideInvoker
+internal sealed class AutoFakerGeneratorOverrideInvoker
     : IAutoFakerGenerator
 {
-    internal GeneratorOverrideInvoker(IAutoFakerGenerator generator, List<GeneratorOverride> overrides)
+    internal AutoFakerGeneratorOverrideInvoker(IAutoFakerGenerator generator, List<AutoFakerGeneratorOverride> overrides)
     {
         Generator = generator;
         Overrides = overrides;
     }
 
     internal IAutoFakerGenerator Generator { get; }
-    internal List<GeneratorOverride> Overrides { get; }
+
+    internal List<AutoFakerGeneratorOverride> Overrides { get; }
 
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        var overrideContext = new AutoFakerContextOverride(context);
+        var overrideContext = new AutoFakerOverrideContext(context);
 
-        foreach (GeneratorOverride? generatorOverride in Overrides)
+        foreach (AutoFakerGeneratorOverride generatorOverride in Overrides)
         {
             // Check if an initialized instance is needed
             if (generatorOverride.Preinitialize && overrideContext.Instance == null)

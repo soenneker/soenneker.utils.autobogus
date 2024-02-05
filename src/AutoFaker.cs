@@ -1,31 +1,56 @@
 using System;
 using System.Collections.Generic;
+using Bogus;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
-using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus;
 
 ///<inheritdoc cref="IAutoFaker"/>
 public sealed class AutoFaker : IAutoFaker
 {
-    private AutoFaker(AutoFakerConfig fakerConfig)
+    public AutoFakerConfig Config { get; private set; }
+
+    internal AutoFakerBinder Binder { get; set; }
+
+    public Faker Faker { get; set; }
+
+    public AutoFaker(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
-        FakerConfig = fakerConfig;
+        Faker = new Faker();
+
+        Config = new AutoFakerConfig();
+
+        if (configure != null)
+        {
+            var builder = new AutoFakerConfigBuilder(Config, this);
+
+            configure.Invoke(builder);
+        }
+
+        Binder = new AutoFakerBinder(Config);
     }
 
-    internal AutoFakerConfig FakerConfig { get; }
+    public void SetConfig(AutoFakerConfig config)
+    {
+        Config = config;
+    }
 
-    TType IAutoFaker.Generate<TType>(Action<IAutoGenerateConfigBuilder> configure)
+    public void SetFaker(Faker faker)
+    {
+        Faker = faker;
+    }
+
+    TType IAutoFaker.Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure)
     {
         AutoFakerContext context = CreateContext(configure);
         return context.Generate<TType>();
     }
 
-    List<TType> IAutoFaker.Generate<TType>(int count, Action<IAutoGenerateConfigBuilder> configure)
+    List<TType> IAutoFaker.Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure)
     {
         AutoFakerContext context = CreateContext(configure);
         return context.GenerateMany<TType>(count);
@@ -35,32 +60,13 @@ public sealed class AutoFaker : IAutoFaker
     /// Configures all faker instances and generate requests.
     /// </summary>
     /// <param name="configure">A handler to build the default faker configuration.</param>
-    public static void Configure(Action<IAutoFakerDefaultConfigBuilder>? configure)
+    public void Configure(Action<IAutoFakerDefaultConfigBuilder>? configure)
     {
         if (configure == null)
             return;
 
-        var builder = new AutoFakerConfigBuilder(DefaultConfigService.Config);
+        var builder = new AutoFakerConfigBuilder(Config, this);
         configure.Invoke(builder);
-    }
-
-    /// <summary>
-    /// Creates a configured <see cref="IAutoFaker"/> instance.
-    /// </summary>
-    /// <param name="configure">A handler to build the faker configuration.</param>
-    /// <returns>The configured <see cref="IAutoFaker"/> instance.</returns>
-    public static AutoFaker Create(Action<IAutoGenerateConfigBuilder>? configure = null)
-    {
-        var config = new AutoFakerConfig(DefaultConfigService.Config);
-
-        if (configure == null) 
-            return new AutoFaker(config);
-
-        var builder = new AutoFakerConfigBuilder(config);
-
-        configure.Invoke(builder);
-
-        return new AutoFaker(config);
     }
 
     /// <summary>
@@ -69,9 +75,10 @@ public sealed class AutoFaker : IAutoFaker
     /// <typeparam name="TType">The type of instance to generate.</typeparam>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated instance.</returns>
+    [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
     public static TType Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
-        IAutoFaker faker = Create(configure);
+        IAutoFaker faker = new AutoFaker(configure);
         return faker.Generate<TType>();
     }
 
@@ -82,22 +89,21 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="count">The number of instances to generate.</param>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated collection of instances.</returns>
+    [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
     public static List<TType> Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
     {
-        IAutoFaker faker = Create(configure);
+        IAutoFaker faker = new AutoFaker(configure);
         return faker.Generate<TType>(count);
     }
 
     private AutoFakerContext CreateContext(Action<IAutoGenerateConfigBuilder>? configure)
     {
-        var config = new AutoFakerConfig(FakerConfig);
+        if (configure == null)
+            return new AutoFakerContext(Config, Faker, Binder);
 
-        if (configure == null) 
-            return new AutoFakerContext(config);
-
-        var builder = new AutoFakerConfigBuilder(config);
+        var builder = new AutoFakerConfigBuilder(Config, this);
         configure.Invoke(builder);
 
-        return new AutoFakerContext(config);
+        return new AutoFakerContext(Config, Faker, Binder);
     }
 }

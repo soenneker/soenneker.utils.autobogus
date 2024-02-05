@@ -12,13 +12,20 @@ internal sealed class ListGenerator<TType> : IAutoFakerGenerator
     {
         List<TType> list;
 
-        try
-        {
-            list = (List<TType>)Activator.CreateInstance(context.GenerateType);
-        }
-        catch
+        if (context.CachedType.IsInterface)
         {
             list = [];
+        }
+        else
+        {
+            try
+            {
+                list = context.CachedType.CreateInstance<List<TType>>();
+            }
+            catch (Exception ex)
+            {
+                list = [];
+            }
         }
 
         List<TType> items = context.GenerateMany<TType>();
