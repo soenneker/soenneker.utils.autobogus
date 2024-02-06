@@ -16,7 +16,7 @@ public class BogusBenchmarks
     [Benchmark]
     public string Bogus_string()
     {
-       return _faker.Vehicle.Vin();
+       return _faker.Random.Word();
     }
 
     [Benchmark]

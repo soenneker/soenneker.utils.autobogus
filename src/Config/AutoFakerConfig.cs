@@ -21,6 +21,8 @@ public sealed class AutoFakerConfig
 
     public int? TreeDepth;
 
+    public DateTimeKind DateTimeKind;
+
     internal AutoFakerConfig()
     {
         Locale = AutoFakerDefaultConfigOptions.DefaultLocale;
@@ -28,5 +30,6 @@ public sealed class AutoFakerConfig
         DataTableRowCount = AutoFakerDefaultConfigOptions.DefaultDataTableRowCount;
         RecursiveDepth = AutoFakerDefaultConfigOptions.DefaultRecursiveDepth;
         TreeDepth = AutoFakerDefaultConfigOptions.DefaultTreeDepth;
+        DateTimeKind = AutoFakerDefaultConfigOptions.DefaultDateTimeKind;
     }
 }

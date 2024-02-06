@@ -165,6 +165,5 @@ public static class AutoFakerGeneratorFactory
 
         var cached = (IAutoFakerGenerator)CacheService.Cache.GetCachedType(type).CreateInstance();
         return cached;
-        // return (IAutoFakerGenerator) Activator.CreateInstance(type);
     }
 }

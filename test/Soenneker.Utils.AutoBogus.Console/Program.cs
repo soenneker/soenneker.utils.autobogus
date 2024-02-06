@@ -11,7 +11,7 @@ public class Program
 
         for (int i = 0; i < 10000; i++)
         {
-            var order = faker.Generate<Order>();
+            var order = faker.Generate<int>();
         }
     }
 }

@@ -15,9 +15,9 @@ internal sealed class AutoMember
 
     internal readonly bool IsReadOnly;
 
-    internal readonly Func<object, object> Getter;
+    internal readonly Func<object, object?> Getter;
 
-    internal readonly Action<object, object> Setter;
+    internal readonly Action<object, object?> Setter;
 
     //internal AutoMember(CachedMember cachedMember)
     //{

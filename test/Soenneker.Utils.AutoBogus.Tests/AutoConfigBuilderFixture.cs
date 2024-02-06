@@ -4,6 +4,7 @@ using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
@@ -40,39 +41,11 @@ public class AutoConfigBuilderFixture
 
     public class WithDateTimeKind : AutoConfigBuilderFixture
     {
-        //[Fact]
-        //public void Should_Set_Config_DateTimeKind()
-        //{
-        //    var kind = DateTimeKind.Utc;
-        //    _builder.WithDateTimeKind<ITestBuilder>(context => kind, null);
-        //    _fakerConfig.DateTimeKind.Invoke(null).Should().Be(kind);
-        //}
-
-        //[Fact]
-        //public void Should_Set_Config_DateTimeKind_To_Default_If_Null()
-        //{
-        //    var kind = AutoFakerConfig.DefaultDateTimeKind.Invoke(null);
-        //    _builder.WithDateTimeKind<ITestBuilder>(null, null);
-        //    _fakerConfig.DateTimeKind.Invoke(null).Should().Be(kind);
-        //}
-
-        private sealed record Obj(DateTime Birthday);
-
-        //[Fact]
-        //public void Should_ConvertToUtc()
-        //{
-        //    var obj = AutoFaker.Generate<Obj>(builder =>
-        //    {
-        //        builder.WithDateTimeKind(DateTimeKind.Utc);
-        //    });
-        //    obj.Birthday.Should().Be(obj.Birthday.ToUniversalTime());
-        //}
-
         [Fact]
-        public void Should_BeLocal()
+        public void Should_BeUniversal()
         {
-            var obj = AutoFaker.Generate<Obj>();
-            obj.Birthday.Should().Be(obj.Birthday.ToLocalTime());
+            var person = AutoFaker.Generate<Human>();
+            person.Birthday.Should().Be(person.Birthday.ToUniversalTime());
         }
     }
 

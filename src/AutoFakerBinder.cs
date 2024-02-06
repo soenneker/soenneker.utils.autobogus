@@ -29,6 +29,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     private readonly CachedType _enumerable = CacheService.Cache.GetCachedType(typeof(IEnumerable<>));
 
     private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
+    private readonly Dictionary<CachedType, CachedConstructor> _constructorsCache = [];
 
     public AutoFakerBinder(AutoFakerConfig autoFakerConfig)
     {
@@ -53,13 +54,18 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (constructor == null)
             return default;
 
-        CachedParameter[] parametersInfo = constructor.GetCachedParameters();
+        CachedParameter[] cachedParameters = constructor.GetCachedParameters();
 
-        var parameters = new object[parametersInfo.Length];
+        if (cachedParameters.Length == 0)
+        {
+            return (TType?)constructor.Invoke();
+        }
+
+        var parameters = new object[cachedParameters.Length];
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            parameters[i] = GetParameterGenerator(type, parametersInfo[i], context).Generate(context);
+            parameters[i] = GetParameterGenerator(type, cachedParameters[i], context).Generate(context);
         }
 
         return (TType?) constructor.Invoke(parameters);
@@ -170,17 +176,16 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private CachedConstructor? GetConstructor(CachedType type)
     {
+        if (_constructorsCache.TryGetValue(type, out CachedConstructor? cachedConstructor))
+            return cachedConstructor;
+
         CachedConstructor[]? constructors = type.GetCachedConstructors();
 
         if (type.IsDictionary)
-        {
             return ResolveTypedConstructor(_genericDictionary, constructors);
-        }
 
         if (type.IsEnumerable)
-        {
             return ResolveTypedConstructor(_enumerable, constructors);
-        }
 
         for (var i = 0; i < constructors.Length; i++)
         {
@@ -192,7 +197,11 @@ public class AutoFakerBinder : IAutoFakerBinder
             }
         }
 
-        return constructors.Length > 0 ? constructors[0] : null;
+        var rtnValue = constructors.Length > 0 ? constructors[0] : null;
+
+        _constructorsCache.TryAdd(type, rtnValue);
+
+        return rtnValue;
     }
 
     private static CachedConstructor? ResolveTypedConstructor(CachedType type, CachedConstructor[] constructors)
@@ -267,12 +276,12 @@ public class AutoFakerBinder : IAutoFakerBinder
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
-        if (instance != null && addMethod != null)
+        if (instance == null || addMethod == null) 
+            return;
+
+        foreach (object? key in dictionary.Keys)
         {
-            foreach (object? key in dictionary.Keys)
-            {
-                addMethod.Invoke(instance, [key, dictionary[key]]);
-            }
+            addMethod.Invoke(instance, [key, dictionary[key]]);
         }
     }
 
@@ -285,23 +294,23 @@ public class AutoFakerBinder : IAutoFakerBinder
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
-        if (instance != null && addMethod != null)
+        if (instance == null || addMethod == null) 
+            return;
+
+        foreach (object? item in collection)
         {
-            foreach (object? item in collection)
-            {
-                addMethod.Invoke(instance, [item]);
-            }
+            addMethod.Invoke(instance, [item]);
         }
     }
 
     private static CachedMethod? GetAddMethod(CachedType cachedType, CachedType[] argTypes)
     {
-        var method = cachedType.GetCachedMethod("Add", argTypes.ToTypes());
+        CachedMethod? method = cachedType.GetCachedMethod("Add", argTypes.ToTypes());
 
         if (method != null)
             return method;
 
-        var interfaces = cachedType.GetCachedInterfaces();
+        CachedType[]? interfaces = cachedType.GetCachedInterfaces();
 
         for (int i = 0; i < interfaces.Length; i++)
         {

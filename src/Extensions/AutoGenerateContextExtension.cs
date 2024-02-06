@@ -18,18 +18,19 @@ public static class AutoGenerateContextExtension
     /// <typeparam name="TType">The instance type to generate.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <returns>The generated instance.</returns>
-    public static TType? Generate<TType>(this AutoFakerContext? context)
+    public static TType? Generate<TType>(this AutoFakerContext context)
     {
-        if (context == null)
-            return default;
-
         // Set the generate type for the current request
         context.Setup(typeof(TType));
 
         // Get the type generator and return a value
         IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
-        object generatedInstance = generator.Generate(context);
-        return (TType)generatedInstance;
+        object? generatedInstance = generator.Generate(context);
+
+        if (generatedInstance == null)
+            return default;
+
+        return (TType?)generatedInstance;
     }
 
     /// <summary>
@@ -39,12 +40,9 @@ public static class AutoGenerateContextExtension
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of instances.</returns>
-    public static List<TType> GenerateMany<TType>(this AutoFakerContext? context, int? count = null)
+    public static List<TType> GenerateMany<TType>(this AutoFakerContext context, int? count = null)
     {
         var items = new List<TType>();
-
-        if (context == null)
-            return items;
 
         GenerateMany(context, count, items, false);
 
@@ -58,12 +56,9 @@ public static class AutoGenerateContextExtension
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of unique instances.</returns>
-    public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContext? context, int? count = null)
+    public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContext context, int? count = null)
     {
         var items = new List<TType>();
-
-        if (context == null)
-            return items;
 
         GenerateMany(context, count, items, true);
 

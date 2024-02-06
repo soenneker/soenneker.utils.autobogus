@@ -22,12 +22,12 @@ public sealed class AutoFakerContext
     /// </summary>
     public Type? GenerateType;
 
-    public CachedType CachedType;
+    public CachedType? CachedType;
 
     /// <summary>
     /// The name associated with the current generate request.
     /// </summary>
-    public string GenerateName;
+    public string? GenerateName;
 
     /// <summary>
     /// The underlying <see cref="Bogus.Faker"/> instance used to generate random values.
@@ -41,11 +41,11 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
-    public List<string> RuleSets;
+    public List<string>? RuleSets;
 
     internal readonly Stack<int> TypesStack;
 
-    internal object Instance;
+    internal object? Instance;
 
     internal AutoFakerContext(AutoFakerConfig config, Faker faker, AutoFakerBinder binder, Type? type = null)
     {
@@ -55,10 +55,10 @@ public sealed class AutoFakerContext
         Binder = binder;
         Faker = faker;
 
-        RuleSets = [];
+        if (type == null)
+            return;
 
-        if (type != null)
-            Setup(type);
+        Setup(type);
     }
 
     internal void Setup(Type parentType, CachedType generateType, string name)

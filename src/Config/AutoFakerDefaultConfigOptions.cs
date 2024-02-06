@@ -1,4 +1,6 @@
-﻿namespace Soenneker.Utils.AutoBogus.Config;
+﻿using System;
+
+namespace Soenneker.Utils.AutoBogus.Config;
 
 public static class AutoFakerDefaultConfigOptions
 {
@@ -11,4 +13,6 @@ public static class AutoFakerDefaultConfigOptions
     internal const int DefaultRecursiveDepth = 2;
 
     internal static readonly int? DefaultTreeDepth = null;
+
+    internal static readonly DateTimeKind DefaultDateTimeKind = DateTimeKind.Utc;
 }
