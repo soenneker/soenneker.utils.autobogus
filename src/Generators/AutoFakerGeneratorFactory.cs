@@ -67,18 +67,18 @@ public static class AutoFakerGeneratorFactory
         if (context.CachedType.IsArray)
         {
             type = type.GetElementType();
-            return CreateGenericGenerator(typeof(ArrayGenerator<>), type);
+            return CreateGenericGenerator(CachedTypeService.ArrayGenerator.Value, type);
         }
 
         if (context.CachedType.IsEnum)
         {
-            return CreateGenericGenerator(typeof(EnumGenerator<>), type);
+            return CreateGenericGenerator(CachedTypeService.EnumGenerator.Value, type);
         }
 
         if (context.CachedType.IsNullable)
         {
             type = context.CachedType.GetGenericArguments()![0];
-            return CreateGenericGenerator(typeof(NullableGenerator<>), type);
+            return CreateGenericGenerator(CachedTypeService.NullableGenerator.Value, type);
         }
 
         // Check if an expando object needs to generator
@@ -102,13 +102,16 @@ public static class AutoFakerGeneratorFactory
                         Type keyType = generics[0];
                         Type valueType = generics[1];
 
-                        return CreateGenericGenerator(typeof(ReadOnlyDictionaryGenerator<,>), keyType, valueType);
+                        return CreateGenericGenerator(CachedTypeService.ReadOnlyDictionaryGenerator.Value, keyType, valueType);
                     }
                 case nameof(GenericCollectionType.ImmutableDictionary):
                 case nameof(GenericCollectionType.Dictionary):
                 case nameof(GenericCollectionType.SortedList):
                     {
-                        return CreateDictionaryGenerator(generics);
+                        Type keyType = generics[0];
+                        Type valueType = generics[1];
+
+                        return CreateGenericGenerator(CachedTypeService.DictionaryGenerator.Value, keyType, valueType);
                     }
                 case nameof(GenericCollectionType.ReadOnlyList):
                 case nameof(GenericCollectionType.ListType):
@@ -116,12 +119,12 @@ public static class AutoFakerGeneratorFactory
                 case nameof(GenericCollectionType.Collection):
                     {
                         Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(ListGenerator<>), elementType);
+                        return CreateGenericGenerator(CachedTypeService.ListGenerator.Value, elementType);
                     }
                 case nameof(GenericCollectionType.Set):
                     {
                         Type elementType = generics[0];
-                        return CreateGenericGenerator(typeof(SetGenerator<>), elementType);
+                        return CreateGenericGenerator(CachedTypeService.SetGenerator.Value, elementType);
                     }
                 case nameof(GenericCollectionType.Enumerable):
                     {
@@ -130,7 +133,7 @@ public static class AutoFakerGeneratorFactory
                             // Not a full list type, we can't fake it if it's anything other than
                             // the actual IEnumerable<T> interface itelf.
                             Type elementType = generics[0];
-                            return CreateGenericGenerator(typeof(EnumerableGenerator<>), elementType);
+                            return CreateGenericGenerator(CachedTypeService.EnumerableGenerator.Value, elementType);
                         }
 
                         break;
@@ -148,22 +151,14 @@ public static class AutoFakerGeneratorFactory
             return dataSetGenerator;
         }
 
-        return CreateGenericGenerator(typeof(TypeGenerator<>), type);
+        return CreateGenericGenerator(CachedTypeService.TypeGenerator.Value, type);
     }
 
-    private static IAutoFakerGenerator CreateDictionaryGenerator(Type[] generics)
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType cachedType, params Type[] genericTypes)
     {
-        Type keyType = generics[0];
-        Type valueType = generics[1];
+        CachedType genericCachedType = cachedType.MakeCachedGenericType(genericTypes)!;
 
-        return CreateGenericGenerator(typeof(DictionaryGenerator<,>), keyType, valueType);
-    }
-
-    private static IAutoFakerGenerator CreateGenericGenerator(Type generatorType, params Type[] genericTypes)
-    {
-        Type type = generatorType.MakeGenericType(genericTypes);
-
-        var cached = (IAutoFakerGenerator)CacheService.Cache.GetCachedType(type).CreateInstance();
-        return cached;
+        var generator = (IAutoFakerGenerator)genericCachedType.CreateInstance();
+        return generator;
     }
 }

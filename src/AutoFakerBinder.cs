@@ -83,9 +83,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// </remarks>
     public void PopulateInstance<TType>(object instance, AutoFakerContext context)
     {
-        Type type = typeof(TType);
-
-        CachedType cachedType = CacheService.Cache.GetCachedType(type);
+        CachedType cachedType = CacheService.Cache.GetCachedType(typeof(TType));
 
         // Iterate the members and bind a generated value
         List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
@@ -95,12 +93,12 @@ public class AutoFakerBinder : IAutoFakerBinder
             AutoMember member = autoMembers[i];
             // Check if the member has a skip config or the type has already been generated as a parent
             // If so skip this generation otherwise track it for use later in the object tree
-            if (ShouldSkip(member.CachedType, $"{type.FullName}.{member.Name}", context))
+            if (ShouldSkip(member, context))
             {
                 continue;
             }
 
-            context.Setup(type, member.CachedType, member.Name);
+            context.Setup(cachedType.Type, member.CachedType, member.Name);
 
             context.TypesStack.Push(member.CachedType.CacheKey.Value);
 
@@ -137,19 +135,10 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
-    private bool ShouldSkip(CachedType cachedType, string path, AutoFakerContext context)
+    private bool ShouldSkip(AutoMember autoMember, AutoFakerContext context)
     {
-        // Skip if the type is found
-        if (_autoFakerConfig.SkipTypes != null && _autoFakerConfig.SkipTypes.Contains(cachedType.Type))
-        {
+        if (autoMember.ShouldSkip)
             return true;
-        }
-
-        // Skip if the path is found
-        if (_autoFakerConfig.SkipPaths != null && _autoFakerConfig.SkipPaths.Contains(path))
-        {
-            return true;
-        }
 
         //check if tree depth is reached
         int? treeDepth = _autoFakerConfig.TreeDepth;
@@ -165,7 +154,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         // Finally check if the recursive depth has been reached
 
-        int count = context.TypesStack.Count(c => c == cachedType.CacheKey);
+        int count = context.TypesStack.Count(c => c == autoMember.CachedType.CacheKey);
         int recursiveDepth = _autoFakerConfig.RecursiveDepth;
 
         if (count >= recursiveDepth)
@@ -253,13 +242,13 @@ public class AutoFakerBinder : IAutoFakerBinder
         for (var i = 0; i < properties.Length; i++)
         {
             PropertyInfo property = properties[i];
-            autoMembers.Add(new AutoMember(property));
+            autoMembers.Add(new AutoMember(property, _autoFakerConfig));
         }
 
         for (var i = 0; i < fields.Length; i++)
         {
             FieldInfo field = fields[i];
-            autoMembers.Add(new AutoMember(field));
+            autoMembers.Add(new AutoMember(field, _autoFakerConfig));
         }
 
         _autoMembersCache.TryAdd(cachedType, autoMembers);

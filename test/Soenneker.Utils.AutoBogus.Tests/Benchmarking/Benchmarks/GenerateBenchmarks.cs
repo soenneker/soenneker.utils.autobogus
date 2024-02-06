@@ -15,17 +15,17 @@ public class GenerateBenchmarks
         _autoFaker = new AutoFaker();
     }
 
-    [Benchmark(Baseline = true)]
-    public int Generate_int()
-    {
-        return _autoFaker.Generate<int>();
-    }
+    //[Benchmark(Baseline = true)]
+    //public int Generate_int()
+    //{
+    //    return _autoFaker.Generate<int>();
+    //}
 
-    [Benchmark]
-    public string Generate_string()
-    {
-        return _autoFaker.Generate<string>();
-    }
+    //[Benchmark]
+    //public string Generate_string()
+    //{
+    //    return _autoFaker.Generate<string>();
+    //}
 
     [Benchmark]
     public Order Generate_complex()

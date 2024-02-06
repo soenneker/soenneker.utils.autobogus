@@ -68,7 +68,7 @@ public static class AutoGenerateContextExtension
     internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempts = 1, Func<TType>? generate = null)
     {
         // Apply any defaults
-        count ??= AutoFakerDefaultConfigOptions.DefaultRepeatCount;
+        count ??= context.Config.RepeatCount;
 
         generate ??= context.Generate<TType>;
 
@@ -84,7 +84,7 @@ public static class AutoGenerateContextExtension
                 items.Add(item);
         }
 
-        if (!unique)
+        if (items.Count == count && !unique)
             return;
 
         var hashSet = new HashSet<TType>();
