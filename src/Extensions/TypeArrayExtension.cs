@@ -8,9 +8,6 @@ internal static class TypeArrayExtension
 {
     internal static (CachedType?, GenericCollectionType?) GetTypeOfGenericCollectionFromInterfaceTypes(this List<CachedType> cachedTypes)
     {
-        if (cachedTypes.Count == 0)
-            return (null, null);
-
         GenericCollectionType genericCollectionType = GenericCollectionType.Unknown;
 
         CachedType? returnType = null;

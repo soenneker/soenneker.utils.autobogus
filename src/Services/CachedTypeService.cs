@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 
@@ -15,5 +16,8 @@ namespace Soenneker.Utils.AutoBogus.Services
         internal static readonly Lazy<CachedType> EnumGenerator = new(() => CacheService.Cache.GetCachedType(typeof(EnumGenerator<>)));
         internal static readonly Lazy<CachedType> ArrayGenerator = new(() => CacheService.Cache.GetCachedType(typeof(ArrayGenerator<>)));
         internal static readonly Lazy<CachedType> DictionaryGenerator = new(() => CacheService.Cache.GetCachedType(typeof(DictionaryGenerator<,>)));
+
+        internal static readonly Lazy<CachedType> IDictionary = new(() => CacheService.Cache.GetCachedType(typeof(IDictionary<,>)));
+        internal static readonly Lazy<CachedType> IEnumerable = new(() => CacheService.Cache.GetCachedType(typeof(IEnumerable<>)));
     }
 }

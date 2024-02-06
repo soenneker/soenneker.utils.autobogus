@@ -23,6 +23,9 @@ internal static class GenericTypeUtil
             interfacesList.Add(interfaceType);
         }
 
+        if (interfaces.Length == 0)
+            return (null, null);
+
         (CachedType?, GenericCollectionType?) result = interfacesList.GetTypeOfGenericCollectionFromInterfaceTypes();
 
         return result;

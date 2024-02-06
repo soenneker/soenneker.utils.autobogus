@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Soenneker.Utils.AutoBogus.Config;
+using System.Linq;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -20,8 +22,10 @@ public static class AutoGenerateContextExtension
     /// <returns>The generated instance.</returns>
     public static TType? Generate<TType>(this AutoFakerContext context)
     {
+        CachedType cachedType = CacheService.Cache.GetCachedType(typeof(TType));
+
         // Set the generate type for the current request
-        context.Setup(typeof(TType));
+        context.Setup(cachedType);
 
         // Get the type generator and return a value
         IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
@@ -30,7 +34,7 @@ public static class AutoGenerateContextExtension
         if (generatedInstance == null)
             return default;
 
-        return (TType?)generatedInstance;
+        return (TType?) generatedInstance;
     }
 
     /// <summary>
@@ -42,9 +46,9 @@ public static class AutoGenerateContextExtension
     /// <returns>The generated collection of instances.</returns>
     public static List<TType> GenerateMany<TType>(this AutoFakerContext context, int? count = null)
     {
-        var items = new List<TType>();
+        count ??= context.Config.RepeatCount;
 
-        GenerateMany(context, count, items, false);
+        List<TType> items = GenerateMany<TType>(context, count.Value, false);
 
         return items;
     }
@@ -58,17 +62,16 @@ public static class AutoGenerateContextExtension
     /// <returns>The generated collection of unique instances.</returns>
     public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContext context, int? count = null)
     {
-        var items = new List<TType>();
+        count ??= context.Config.RepeatCount;
 
-        GenerateMany(context, count, items, true);
+        List<TType> items = GenerateMany<TType>(context, count.Value, true);
 
         return items;
     }
 
-    internal static void GenerateMany<TType>(AutoFakerContext context, int? count, List<TType> items, bool unique, int attempts = 1, Func<TType>? generate = null)
+    internal static List<TType> GenerateMany<TType>(AutoFakerContext context, int count, bool unique, int maxAttempts = 1, Func<TType?>? generate = null)
     {
-        // Apply any defaults
-        count ??= context.Config.RepeatCount;
+        var items = new List<TType>();
 
         generate ??= context.Generate<TType>;
 
@@ -77,7 +80,7 @@ public static class AutoGenerateContextExtension
 
         for (var i = 0; i < required; i++)
         {
-            TType item = generate.Invoke();
+            TType? item = generate.Invoke();
 
             // Ensure the generated value is not null (which means the type couldn't be generated)
             if (item != null)
@@ -85,7 +88,7 @@ public static class AutoGenerateContextExtension
         }
 
         if (items.Count == count && !unique)
-            return;
+            return items;
 
         var hashSet = new HashSet<TType>();
 
@@ -96,26 +99,22 @@ public static class AutoGenerateContextExtension
         }
 
         if (hashSet.Count == items.Count)
-            return;
+            return items;
 
-        for (var i = 0; i < attempts; i++)
+        for (var i = 0; i < maxAttempts - 1; i++)
         {
-            TType item = generate.Invoke();
+            TType? item = generate.Invoke();
 
             // Ensure the generated value is not null (which means the type couldn't be generated)
-            if (item != null)
-                hashSet.Add(item);
-
-            if (hashSet.Count != count) 
+            if (item == null)
                 continue;
 
-            // To maintain the items reference, clear and reapply the filtered list
-            items.Clear();
-            items.AddRange(hashSet);
-            return;
+            hashSet.Add(item);
+
+            if (hashSet.Count == count)
+                break;
         }
 
-        items.Clear();
-        items.AddRange(hashSet);
+        return hashSet.ToList();
     }
 }

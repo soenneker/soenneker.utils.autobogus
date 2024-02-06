@@ -55,30 +55,30 @@ public static class AutoFakerGeneratorFactory
         if (fundamentalGenerator != null)
             return fundamentalGenerator;
 
-        Type? type = context.GenerateType;
+        CachedType? cachedType = context.CachedType;
 
         // Need check if the type is an in/out parameter and adjusted accordingly
         if (context.CachedType.IsByRef)
         {
-            type = type.GetElementType();
+            cachedType = cachedType.GetCachedElementType();
         }
 
         // Do some type -> generator mapping
         if (context.CachedType.IsArray)
         {
-            type = type.GetElementType();
-            return CreateGenericGenerator(CachedTypeService.ArrayGenerator.Value, type);
+            cachedType = cachedType.GetCachedElementType();
+            return CreateGenericGenerator(CachedTypeService.ArrayGenerator.Value, cachedType);
         }
 
         if (context.CachedType.IsEnum)
         {
-            return CreateGenericGenerator(CachedTypeService.EnumGenerator.Value, type);
+            return CreateGenericGenerator(CachedTypeService.EnumGenerator.Value, cachedType);
         }
 
         if (context.CachedType.IsNullable)
         {
-            type = context.CachedType.GetGenericArguments()![0];
-            return CreateGenericGenerator(CachedTypeService.NullableGenerator.Value, type);
+            cachedType = context.CachedType.GetCachedGenericArguments()![0];
+            return CreateGenericGenerator(CachedTypeService.NullableGenerator.Value, cachedType);
         }
 
         // Check if an expando object needs to generator
@@ -93,51 +93,51 @@ public static class AutoFakerGeneratorFactory
         if (collectionType != null)
         {
             // For generic types we need to interrogate the inner types
-            Type[] generics = collectionType.GetGenericArguments()!;
+            CachedType[] generics = collectionType.GetCachedGenericArguments()!;
 
             switch (genericCollectionType!.Name)
             {
                 case nameof(GenericCollectionType.ReadOnlyDictionary):
-                    {
-                        Type keyType = generics[0];
-                        Type valueType = generics[1];
+                {
+                    CachedType keyType = generics[0];
+                    CachedType valueType = generics[1];
 
-                        return CreateGenericGenerator(CachedTypeService.ReadOnlyDictionaryGenerator.Value, keyType, valueType);
-                    }
+                    return CreateGenericGenerator(CachedTypeService.ReadOnlyDictionaryGenerator.Value, keyType, valueType);
+                }
                 case nameof(GenericCollectionType.ImmutableDictionary):
                 case nameof(GenericCollectionType.Dictionary):
                 case nameof(GenericCollectionType.SortedList):
-                    {
-                        Type keyType = generics[0];
-                        Type valueType = generics[1];
+                {
+                    CachedType keyType = generics[0];
+                    CachedType valueType = generics[1];
 
-                        return CreateGenericGenerator(CachedTypeService.DictionaryGenerator.Value, keyType, valueType);
-                    }
+                    return CreateGenericGenerator(CachedTypeService.DictionaryGenerator.Value, keyType, valueType);
+                }
                 case nameof(GenericCollectionType.ReadOnlyList):
                 case nameof(GenericCollectionType.ListType):
                 case nameof(GenericCollectionType.ReadOnlyCollection):
                 case nameof(GenericCollectionType.Collection):
-                    {
-                        Type elementType = generics[0];
-                        return CreateGenericGenerator(CachedTypeService.ListGenerator.Value, elementType);
-                    }
+                {
+                    CachedType elementType = generics[0];
+                    return CreateGenericGenerator(CachedTypeService.ListGenerator.Value, elementType);
+                }
                 case nameof(GenericCollectionType.Set):
-                    {
-                        Type elementType = generics[0];
-                        return CreateGenericGenerator(CachedTypeService.SetGenerator.Value, elementType);
-                    }
+                {
+                    CachedType elementType = generics[0];
+                    return CreateGenericGenerator(CachedTypeService.SetGenerator.Value, elementType);
+                }
                 case nameof(GenericCollectionType.Enumerable):
+                {
+                    if (collectionType == cachedType)
                     {
-                        if (collectionType.Type == type)
-                        {
-                            // Not a full list type, we can't fake it if it's anything other than
-                            // the actual IEnumerable<T> interface itelf.
-                            Type elementType = generics[0];
-                            return CreateGenericGenerator(CachedTypeService.EnumerableGenerator.Value, elementType);
-                        }
-
-                        break;
+                        // Not a full list type, we can't fake it if it's anything other than
+                        // the actual IEnumerable<T> interface itelf.
+                        CachedType elementType = generics[0];
+                        return CreateGenericGenerator(CachedTypeService.EnumerableGenerator.Value, elementType);
                     }
+
+                    break;
+                }
             }
         }
 
@@ -151,14 +151,14 @@ public static class AutoFakerGeneratorFactory
             return dataSetGenerator;
         }
 
-        return CreateGenericGenerator(CachedTypeService.TypeGenerator.Value, type);
+        return CreateGenericGenerator(CachedTypeService.TypeGenerator.Value, cachedType);
     }
 
-    private static IAutoFakerGenerator CreateGenericGenerator(CachedType cachedType, params Type[] genericTypes)
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType cachedType, params CachedType[] genericTypes)
     {
         CachedType genericCachedType = cachedType.MakeCachedGenericType(genericTypes)!;
 
-        var generator = (IAutoFakerGenerator)genericCachedType.CreateInstance();
+        var generator = (IAutoFakerGenerator) genericCachedType.CreateInstance();
         return generator;
     }
 }

@@ -20,9 +20,9 @@ partial class AutoGeneratorsFixture
     {
         public static IEnumerable<object[]> GetTryCreateGeneratorTestCases()
         {
-            yield return new object[] { typeof(DataSet), true };
-            yield return new object[] { typeof(TypedDataSet), true };
-            yield return new object[] { typeof(object), false };
+            yield return new object[] {typeof(DataSet), true};
+            yield return new object[] {typeof(TypedDataSet), true};
+            yield return new object[] {typeof(object), false};
         }
 
         [Theory]
@@ -46,10 +46,10 @@ partial class AutoGeneratorsFixture
 
         public static IEnumerable<object[]> GetGenerateTestCases()
         {
-            yield return new object[] { typeof(DataSet) };
-            yield return new object[] { typeof(TypedDataSet) };
-            yield return new object[] { typeof(TypedDataSetWithRelations) };
-            yield return new object[] { typeof(TypedDataSetWithSelfReferencingTable) };
+            yield return new object[] {typeof(DataSet)};
+            yield return new object[] {typeof(TypedDataSet)};
+            yield return new object[] {typeof(TypedDataSetWithRelations)};
+            yield return new object[] {typeof(TypedDataSetWithSelfReferencingTable)};
         }
 
         [SkippableTheory]
@@ -59,7 +59,7 @@ partial class AutoGeneratorsFixture
             // Arrange
             AutoFakerContext context = CreateContext(dataSetType);
 
-            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = context.CachedType;
 
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
@@ -71,7 +71,7 @@ partial class AutoGeneratorsFixture
             // Assert
             result.Should().BeOfType(dataSetType);
 
-            var dataSet = (DataSet)result;
+            var dataSet = (DataSet) result;
 
             dataSet.Tables.Should().NotBeEmpty();
 
@@ -112,7 +112,7 @@ partial class AutoGeneratorsFixture
 
             AutoFakerContext context = CreateContext(dataSetType, dataTableRowCountFunctor: 3);
 
-            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = context.CachedType;
 
             bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
 
@@ -124,7 +124,7 @@ partial class AutoGeneratorsFixture
             // Assert
             result.Should().BeOfType(dataSetType);
 
-            var dataSet = (DataSet)result;
+            var dataSet = (DataSet) result;
 
             dataSet.Tables.Should().NotBeEmpty();
 
@@ -183,10 +183,10 @@ partial class AutoGeneratorsFixture
     {
         public static IEnumerable<object[]> GetTryCreateGeneratorTestCases()
         {
-            yield return new object[] { typeof(DataTable), true };
-            yield return new object[] { typeof(TypedDataTable1), true };
-            yield return new object[] { typeof(TypedDataTable2), true };
-            yield return new object[] { typeof(object), false };
+            yield return new object[] {typeof(DataTable), true};
+            yield return new object[] {typeof(TypedDataTable1), true};
+            yield return new object[] {typeof(TypedDataTable2), true};
+            yield return new object[] {typeof(object), false};
         }
 
         [Theory]
@@ -210,9 +210,9 @@ partial class AutoGeneratorsFixture
 
         public static IEnumerable<object[]> GetGenerateTestCases()
         {
-            yield return new object[] { typeof(DataTable) };
-            yield return new object[] { typeof(TypedDataTable1) };
-            yield return new object[] { typeof(TypedDataTable2) };
+            yield return new object[] {typeof(DataTable)};
+            yield return new object[] {typeof(TypedDataTable1)};
+            yield return new object[] {typeof(TypedDataTable2)};
         }
 
         [SkippableTheory]
@@ -222,7 +222,7 @@ partial class AutoGeneratorsFixture
             // Arrange
             AutoFakerContext context = CreateContext(dataTableType);
 
-            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = context.CachedType;
 
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
@@ -234,7 +234,7 @@ partial class AutoGeneratorsFixture
             // Assert
             result.Should().BeOfType(dataTableType);
 
-            var dataTable = (DataTable)result;
+            var dataTable = (DataTable) result;
 
             dataTable.Columns.Should().NotBeEmpty();
             dataTable.Rows.Should().NotBeEmpty();
@@ -250,7 +250,7 @@ partial class AutoGeneratorsFixture
 
             AutoFakerContext context = CreateContext(dataTableType, dataTableRowCountFunctor: 3);
 
-            CachedType cachedType = CacheService.Cache.GetCachedType(context.GenerateType);
+            CachedType cachedType = context.CachedType;
 
             bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
 
@@ -262,11 +262,12 @@ partial class AutoGeneratorsFixture
             // Assert
             result.Should().BeOfType(dataTableType);
 
-            var dataTable = (DataTable)result;
+            var dataTable = (DataTable) result;
 
             dataTable.Columns.Should().NotBeEmpty();
             dataTable.Rows.Should().HaveCount(RowCount);
         }
+
         internal class TypedDataTable1 : TypedTableBase<TypedDataRow1>
         {
             public TypedDataTable1()
@@ -283,7 +284,7 @@ partial class AutoGeneratorsFixture
                 Columns.Add(new DataColumn("IntColumn", typeof(int)));
                 Columns.Add(new DataColumn("GuidColumn", typeof(Guid)));
 
-                PrimaryKey = new[] { Columns[0] };
+                PrimaryKey = new[] {Columns[0]};
             }
         }
 
@@ -314,7 +315,7 @@ partial class AutoGeneratorsFixture
                 Columns.Add(new DataColumn("TimeSpanColumn", typeof(TimeSpan)));
                 Columns.Add(new DataColumn("StringColumn", typeof(string)));
 
-                PrimaryKey = new[] { Columns[0] };
+                PrimaryKey = new[] {Columns[0]};
             }
         }
 

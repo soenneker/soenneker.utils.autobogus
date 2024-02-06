@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
-using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Context;
 
@@ -15,13 +14,11 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The parent type of the type associated with the current generate request.
     /// </summary>
-    public Type? ParentType;
+    public CachedType? ParentType;
 
     /// <summary>
     /// The type associated with the current generate request.
     /// </summary>
-    public Type? GenerateType;
-
     public CachedType? CachedType;
 
     /// <summary>
@@ -47,7 +44,7 @@ public sealed class AutoFakerContext
 
     internal object? Instance;
 
-    internal AutoFakerContext(AutoFakerConfig config, Faker faker, AutoFakerBinder binder, Type? type = null)
+    internal AutoFakerContext(AutoFakerConfig config, Faker faker, AutoFakerBinder binder, CachedType? type = null)
     {
         TypesStack = new Stack<int>();
         Config = config;
@@ -61,17 +58,17 @@ public sealed class AutoFakerContext
         Setup(type);
     }
 
-    internal void Setup(Type parentType, CachedType generateType, string name)
+    internal void Setup(CachedType parentType, CachedType generateType, string name)
     {
         ParentType = parentType;
-        GenerateType = generateType.Type;
+        //GenerateType = generateType.Type;
         GenerateName = name;
         CachedType = generateType;
     }
 
-    internal void Setup(Type generateType)
+    internal void Setup(CachedType generateType)
     {
-        GenerateType = generateType;
-        CachedType = CacheService.Cache.GetCachedType(generateType);
+       // GenerateType = generateType.Type;
+        CachedType = generateType;
     }
 }

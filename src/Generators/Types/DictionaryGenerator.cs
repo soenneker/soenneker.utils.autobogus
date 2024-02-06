@@ -14,7 +14,7 @@ internal sealed class DictionaryGenerator<TKey, TValue>
         // Create an instance of a dictionary (public and non-public)
         IDictionary<TKey, TValue> items;
 
-        if (context.CachedType.IsInterface || context.GenerateType.Name == "Dictionary`2")
+        if (context.CachedType.IsInterface || context.CachedType.Type.Name == "Dictionary`2")
         {
             items = new Dictionary<TKey, TValue>();
         }

@@ -2,6 +2,7 @@ using System;
 using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 
@@ -23,7 +24,7 @@ public class AutoGeneratorOverridesFixture
 
         public override bool CanOverride(AutoFakerContext context)
         {
-            return context.GenerateType == typeof(OverrideClass);
+            return context.CachedType == CacheService.Cache.GetCachedType(typeof(OverrideClass));
         }
 
         public override void Generate(AutoFakerOverrideContext context)

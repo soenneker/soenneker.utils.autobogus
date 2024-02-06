@@ -25,9 +25,6 @@ public class AutoFakerBinder : IAutoFakerBinder
 {
     private readonly AutoFakerConfig _autoFakerConfig;
 
-    private readonly CachedType _genericDictionary = CacheService.Cache.GetCachedType(typeof(IDictionary<,>));
-    private readonly CachedType _enumerable = CacheService.Cache.GetCachedType(typeof(IEnumerable<>));
-
     private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
     private readonly Dictionary<CachedType, CachedConstructor> _constructorsCache = [];
 
@@ -42,13 +39,8 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// <typeparam name="TType">The type of instance to create.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
     /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
-    public TType? CreateInstance<TType>(AutoFakerContext? context)
+    public TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
     {
-        if (context == null)
-            return default;
-
-        Type type = typeof(TType);
-
         CachedConstructor? constructor = GetConstructor(context.CachedType);
 
         if (constructor == null)
@@ -65,7 +57,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            parameters[i] = GetParameterGenerator(type, cachedParameters[i], context).Generate(context);
+            parameters[i] = GetParameterGenerator(cachedType, cachedParameters[i], context).Generate(context);
         }
 
         return (TType?) constructor.Invoke(parameters);
@@ -81,10 +73,8 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
     /// </remarks>
-    public void PopulateInstance<TType>(object instance, AutoFakerContext context)
+    public void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType)
     {
-        CachedType cachedType = CacheService.Cache.GetCachedType(typeof(TType));
-
         // Iterate the members and bind a generated value
         List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
 
@@ -98,7 +88,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 continue;
             }
 
-            context.Setup(cachedType.Type, member.CachedType, member.Name);
+            context.Setup(cachedType, member.CachedType, member.Name);
 
             context.TypesStack.Push(member.CachedType.CacheKey.Value);
 
@@ -115,11 +105,11 @@ public class AutoFakerBinder : IAutoFakerBinder
                     {
                         member.Setter.Invoke(instance, value);
                     }
-                    else if (member.CachedType.IsDictionary)
+                    else if (member.IsDictionary)
                     {
                         PopulateDictionary(value, instance, member);
                     }
-                    else if (member.CachedType.IsCollection)
+                    else if (member.IsCollection)
                     {
                         PopulateCollection(value, instance, member);
                     }
@@ -171,10 +161,10 @@ public class AutoFakerBinder : IAutoFakerBinder
         CachedConstructor[]? constructors = type.GetCachedConstructors();
 
         if (type.IsDictionary)
-            return ResolveTypedConstructor(_genericDictionary, constructors);
+            return ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
 
         if (type.IsEnumerable)
-            return ResolveTypedConstructor(_enumerable, constructors);
+            return ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
 
         for (var i = 0; i < constructors.Length; i++)
         {
@@ -186,7 +176,7 @@ public class AutoFakerBinder : IAutoFakerBinder
             }
         }
 
-        var rtnValue = constructors.Length > 0 ? constructors[0] : null;
+        CachedConstructor? rtnValue = constructors.Length > 0 ? constructors[0] : null;
 
         _constructorsCache.TryAdd(type, rtnValue);
 
@@ -221,7 +211,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return null;
     }
 
-    private static IAutoFakerGenerator GetParameterGenerator(Type type, CachedParameter parameter, AutoFakerContext context)
+    private static IAutoFakerGenerator GetParameterGenerator(CachedType type, CachedParameter parameter, AutoFakerContext context)
     {
         context.Setup(type, parameter.CachedParameterType, parameter.Name);
 

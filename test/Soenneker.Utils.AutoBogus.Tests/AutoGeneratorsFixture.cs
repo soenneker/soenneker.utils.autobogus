@@ -84,7 +84,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), readOnlyDictionaryType);
+                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), CacheService.Cache.GetCachedType(readOnlyDictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -129,7 +129,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var config = new AutoFakerConfig();
 
-                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), dictionaryType);
+                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), CacheService.Cache.GetCachedType(dictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -172,7 +172,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config));
 
-                context.Setup(setType);
+                context.Setup(CacheService.Cache.GetCachedType(setType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -215,7 +215,7 @@ public partial class AutoGeneratorsFixture
 
                 var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config));
 
-                context.Setup(listType);
+                context.Setup(CacheService.Cache.GetCachedType(listType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -745,6 +745,6 @@ public partial class AutoGeneratorsFixture
             config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
-        return new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), type);
+        return new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), CacheService.Cache.GetCachedType(type));
     }
 }

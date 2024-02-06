@@ -34,7 +34,7 @@ public class AutoGenerateContextFixture
         public GenerateMany_Internal()
         {
             _value = _faker.Random.Int();
-            _items = new List<int> { _value };
+            _items = new List<int> {_value};
             _context = new AutoFakerContext(_fakerConfig, new Faker(), new AutoFakerBinder(_fakerConfig))
             {
                 RuleSets = _ruleSets
@@ -47,19 +47,19 @@ public class AutoGenerateContextFixture
             int count = _faker.Random.Int(3, 5);
             List<int> expected = Enumerable.Range(0, count).Select(i => _value).ToList();
 
-            _fakerConfig.RepeatCount =  count;
+            _fakerConfig.RepeatCount = count;
 
-            AutoGenerateContextExtension.GenerateMany(_context, null, _items, false, 1, () => _value);
+            List<int>? items = AutoGenerateContextExtension.GenerateMany(_context, count, false, 1, () => _value);
 
-            _items.Should().BeEquivalentTo(expected);
+            items.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
         public void Should_Generate_Duplicates_If_Not_Unique()
         {
-            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, false, 1, () => _value);
+            List<int>? items = AutoGenerateContextExtension.GenerateMany(_context, 2, false, 1, () => _value);
 
-            _items.Should().BeEquivalentTo(new[] { _value, _value });
+            items.Should().BeEquivalentTo(new[] {_value, _value});
         }
 
         [Fact]
@@ -68,7 +68,7 @@ public class AutoGenerateContextFixture
             int first = _value;
             int second = _faker.Random.Int();
 
-            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, 1, () =>
+            List<int>? items = AutoGenerateContextExtension.GenerateMany(_context, 2, true, 1, () =>
             {
                 int item = _value;
                 _value = second;
@@ -76,7 +76,7 @@ public class AutoGenerateContextFixture
                 return item;
             });
 
-            _items.Should().BeEquivalentTo(new[] { first, second });
+            items.Should().BeEquivalentTo(new[] {first, second});
         }
 
         [Fact]
@@ -84,7 +84,7 @@ public class AutoGenerateContextFixture
         {
             var attempts = 0;
 
-            AutoGenerateContextExtension.GenerateMany(_context, 2, _items, true, AutoFakerDefaultConfigOptions.GenerateAttemptsThreshold, () =>
+            List<int>? items = AutoGenerateContextExtension.GenerateMany(_context, 2, true, AutoFakerDefaultConfigOptions.GenerateAttemptsThreshold, () =>
             {
                 attempts++;
                 return _value;
@@ -92,7 +92,7 @@ public class AutoGenerateContextFixture
 
             attempts.Should().Be(AutoFakerDefaultConfigOptions.GenerateAttemptsThreshold + 1);
 
-            _items.Should().BeEquivalentTo(new[] { _value });
+            items.Should().BeEquivalentTo(new[] {_value});
         }
     }
 }

@@ -10,7 +10,7 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoFakerGene
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        Type generateType = context.GenerateType!;
+        Type generateType = context.CachedType.Type!;
 
         if (context.CachedType.IsInterface)
             generateType = typeof(Dictionary<TKey, TValue>);
@@ -18,7 +18,7 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoFakerGene
         // Create an instance of a dictionary (public and non-public)
         IDictionary<TKey, TValue> items;
 
-        if (context.CachedType.IsInterface || context.GenerateType.Name == "Dictionary`2")
+        if (context.CachedType.IsInterface || context.CachedType.Type.Name == "Dictionary`2")
         {
             items = new Dictionary<TKey, TValue>();
         }

@@ -7,7 +7,7 @@
 
 This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus).
 
-It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library. It's mostly plug and play. 
+It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
 
 The goals are to be *fast*, and support the latest types in .NET.
 
@@ -19,13 +19,10 @@ The goals are to be *fast*, and support the latest types in .NET.
 dotnet add package Soenneker.Utils.AutoBogus
 ```
 
+⚠️ A Bogus `Faker` takes a long time to initialize. It's recommended that a single instance of `AutoFaker` be used if possible. The static usage of `AutoFaker.Generate<>()` should be avoided (as it creates a new `Faker`), but is available. 
+
 ## Notes
-
-This is a work in progress. Contribution is welcomed.
-
-⚠️ A Bogus `Faker` takes a long time to initialize, so AutoFaker will mirror Faker in this sense.
-
-It's recommended that a single instance of `AutoFaker` be used if possible. The static usage of `AutoFaker.Generate<>()` should be avoided (as it creates a new `Faker`), but is available. 
+- This is a work in progress. Contribution is welcomed.
 
 ## Benchmarks
 
@@ -33,9 +30,9 @@ It's recommended that a single instance of `AutoFaker` be used if possible. The 
 
 | Method           | Mean         | Error      | StdDev     |
 |----------------- |-------------:|-----------:|-----------:|
-| Generate_int     |     78.81 ns |   0.764 ns |   0.677 ns |
-| Generate_string  |    235.03 ns |   1.267 ns |   1.185 ns |
-| Generate_complex | 19,868.49 ns | 180.241 ns | 150.509 ns |
+| Generate_int     |     73.86 ns |   0.843 ns |   0.747 ns |
+| Generate_string  |    227.31 ns |   2.601 ns |   2.433 ns |
+| Generate_complex | 17,681.91 ns | 128.889 ns | 120.563 ns |
 
 ### AutoBogus
 

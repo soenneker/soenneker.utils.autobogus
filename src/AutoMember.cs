@@ -10,8 +10,6 @@ internal sealed class AutoMember
 {
     internal readonly string Name;
 
-    //internal Type Type { get; }
-
     internal readonly CachedType CachedType;
 
     internal readonly bool IsReadOnly;
@@ -20,34 +18,11 @@ internal sealed class AutoMember
 
     internal readonly Action<object, object?> Setter;
 
-    internal bool ShouldSkip = false;
+    internal readonly bool ShouldSkip = false;
 
-    //internal AutoMember(CachedMember cachedMember)
-    //{
-    //    Name = cachedMember.Name;
+    internal readonly bool IsDictionary = false;
 
-    //    // Extract the required member info
-    //    if (cachedMember.IsField)
-    //    {
-    //        var fieldInfo = cachedMember.MemberInfo as FieldInfo;
-
-    //        Type = fieldInfo.FieldType;
-    //        CachedType = CacheService.Cache.GetCachedType(Type);
-    //        IsReadOnly = !fieldInfo.IsPrivate && fieldInfo.IsInitOnly;
-    //        Getter = fieldInfo.GetValue;
-    //        Setter = fieldInfo.SetValue;
-    //    }
-    //    else if (cachedMember.IsProperty)
-    //    {
-    //        var propertyInfo = cachedMember.MemberInfo as PropertyInfo;
-
-    //        Type = propertyInfo.PropertyType;
-    //        CachedType = CacheService.Cache.GetCachedType(Type);
-    //        IsReadOnly = !propertyInfo.CanWrite;
-    //        Getter = obj => propertyInfo.GetValue(obj, new object[0]);
-    //        Setter = (obj, value) => propertyInfo.SetValue(obj, value, new object[0]);
-    //    }
-    //}
+    internal readonly bool IsCollection = false;
 
     internal AutoMember(FieldInfo fieldInfo, AutoFakerConfig config)
     {
@@ -61,6 +36,9 @@ internal sealed class AutoMember
 
         if (!IsReadOnly)
             Setter = fieldInfo.SetValue;
+
+        IsDictionary = CachedType.IsDictionary;
+        IsCollection = CachedType.IsCollection;
 
         if (config.SkipTypes != null && config.SkipTypes.Contains(CachedType.Type))
         {
@@ -84,6 +62,9 @@ internal sealed class AutoMember
 
         if (!IsReadOnly)
             Setter = (obj, value) => propertyInfo.SetValue(obj, value, []);
+
+        IsDictionary = CachedType.IsDictionary;
+        IsCollection = CachedType.IsCollection;
 
         if (config.SkipTypes != null && config.SkipTypes.Contains(CachedType.Type))
         {

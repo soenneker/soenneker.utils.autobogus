@@ -24,7 +24,7 @@ internal sealed class ExpandoObjectGenerator : IAutoFakerGenerator
             // Configure the context
             Type type = property.Value.GetType();
 
-            context.Setup(context.GenerateType, CacheService.Cache.GetCachedType(type), property.Key);
+            context.Setup(context.CachedType, CacheService.Cache.GetCachedType(type), property.Key);
 
             CachedType cachedType = CacheService.Cache.GetCachedType(type);
 

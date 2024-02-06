@@ -20,7 +20,7 @@ internal sealed class SetGenerator<TType> : IAutoFakerGenerator
         {
             try
             {
-                set = (ISet<TType>)Activator.CreateInstance(context.GenerateType);
+                set = (ISet<TType>)Activator.CreateInstance(context.CachedType.Type);
             }
             catch (Exception e)
             {

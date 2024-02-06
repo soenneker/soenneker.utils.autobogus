@@ -2,6 +2,7 @@ using System;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Services;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,7 +39,7 @@ class ExampleStructOverride : AutoFakerGeneratorOverride
 
     public override bool CanOverride(AutoFakerContext context)
     {
-        return context.GenerateType == typeof(ExampleStruct);
+        return context.CachedType == CacheService.Cache.GetCachedType(typeof(ExampleStruct));
     }
 
     public override void Generate(AutoFakerOverrideContext context)

@@ -1,5 +1,6 @@
 using System;
 using Soenneker.Utils.AutoBogus.Context;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
@@ -23,7 +24,7 @@ internal sealed class AutoFakerGeneratorMemberOverride<TType, TValue> : AutoFake
 
     public override bool CanOverride(AutoFakerContext context)
     {
-        return context.ParentType == Type && MemberName.Equals(context.GenerateName, StringComparison.OrdinalIgnoreCase);
+        return context.ParentType == CacheService.Cache.GetCachedType(Type) && MemberName.Equals(context.GenerateName, StringComparison.OrdinalIgnoreCase);
     }
 
     public override void Generate(AutoFakerOverrideContext context)
