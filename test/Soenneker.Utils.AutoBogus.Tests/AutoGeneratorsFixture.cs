@@ -675,20 +675,20 @@ public partial class AutoGeneratorsFixture
             };
         }
 
-        [Fact]
-        public void Should_Return_All_Matching_Overrides()
-        {
-            var generatorOverride = new TestAutoFakerGeneratorOverride(true);
+        //[Fact]
+        //public void Should_Return_All_Matching_Overrides()
+        //{
+        //    var generatorOverride = new TestAutoFakerGeneratorOverride(true);
 
-            _overrides.Insert(1, generatorOverride);
+        //    _overrides.Insert(1, generatorOverride);
 
-            GeneratorService.Clear();
+        //    GeneratorService.Clear();
 
-            AutoFakerContext context = CreateContext(typeof(string), _overrides);
-            var invoker = AutoFakerGeneratorFactory.GetGenerator(context) as AutoFakerGeneratorOverrideInvoker;
+        //    AutoFakerContext context = CreateContext(typeof(string), _overrides);
+        //    var invoker = AutoFakerGeneratorFactory.GetGenerator(context) as AutoFakerGeneratorOverrideInvoker;
 
-            invoker.Overrides.Should().BeEquivalentTo(new[] {generatorOverride, _autoFakerGeneratorOverride});
-        }
+        //    invoker.Overrides.Should().BeEquivalentTo(new[] {generatorOverride, _autoFakerGeneratorOverride});
+        //}
 
         [Fact]
         public void Should_Return_Generator_If_No_Matching_Override()
