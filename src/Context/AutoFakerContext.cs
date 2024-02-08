@@ -21,7 +21,7 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The type associated with the current generate request.
     /// </summary>
-    public CachedType? CachedType;
+    public CachedType? CachedType { get;  private set; }
 
     /// <summary>
     /// The name associated with the current generate request.
@@ -37,6 +37,8 @@ public sealed class AutoFakerContext
 
     public readonly AutoFakerBinder Binder;
 
+    public readonly AutoFaker AutoFaker;
+
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
@@ -46,13 +48,15 @@ public sealed class AutoFakerContext
 
     internal object? Instance;
 
-    internal AutoFakerContext(AutoFakerConfig config, Faker faker, AutoFakerBinder binder, CachedType? type = null)
+    internal AutoFakerContext(AutoFaker autoFaker, CachedType? type = null)
     {
-        TypesStack = new Stack<int>();
-        Config = config;
+        AutoFaker = autoFaker;
+        Config = autoFaker.Config;
 
-        Binder = binder;
-        Faker = faker;
+        TypesStack = new Stack<int>();
+
+        Binder = autoFaker.Binder;
+        Faker = autoFaker.Faker;
 
         if (type == null)
             return;
@@ -63,14 +67,12 @@ public sealed class AutoFakerContext
     internal void Setup(CachedType parentType, CachedType generateType, string name)
     {
         ParentType = parentType;
-        //GenerateType = generateType.Type;
         GenerateName = name;
         CachedType = generateType;
     }
 
     internal void Setup(CachedType generateType)
     {
-       // GenerateType = generateType.Type;
         CachedType = generateType;
     }
 }

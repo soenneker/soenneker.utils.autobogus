@@ -35,7 +35,10 @@ public class AutoGenerateContextFixture
         {
             _value = _faker.Random.Int();
             _items = new List<int> {_value};
-            _context = new AutoFakerContext(_fakerConfig, new Faker(), new AutoFakerBinder(_fakerConfig))
+
+            var autoFaker = new AutoFaker();
+
+            _context = new AutoFakerContext(autoFaker)
             {
                 RuleSets = _ruleSets
             };

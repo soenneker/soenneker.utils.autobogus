@@ -82,9 +82,9 @@ public partial class AutoGeneratorsFixture
             public void Should_Handle_Subclasses(Type readOnlyDictionaryType)
             {
                 // Arrange
-                var config = new AutoFakerConfig();
+                var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), CacheService.Cache.GetCachedType(readOnlyDictionaryType));
+                var context = new AutoFakerContext(autoFaker, CacheService.Cache.GetCachedType(readOnlyDictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -127,9 +127,9 @@ public partial class AutoGeneratorsFixture
             public void Should_Handle_Subclasses(Type dictionaryType)
             {
                 // Arrange
-                var config = new AutoFakerConfig();
+                var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), CacheService.Cache.GetCachedType(dictionaryType));
+                var context = new AutoFakerContext(autoFaker, CacheService.Cache.GetCachedType(dictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -167,10 +167,10 @@ public partial class AutoGeneratorsFixture
             [MemberData(nameof(ListOfSetTypes))]
             public void Should_Handle_Subclasses(Type setType)
             {
-                var config = new AutoFakerConfig();
+                var autoFaker = new AutoFaker();
 
                 // Arrange
-                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config));
+                var context = new AutoFakerContext(autoFaker);
 
                 context.Setup(CacheService.Cache.GetCachedType(setType));
 
@@ -211,9 +211,9 @@ public partial class AutoGeneratorsFixture
             public void Should_Handle_Subclasses(Type listType)
             {
                 // Arrange
-                var config = new AutoFakerConfig();
+                var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config));
+                var context = new AutoFakerContext(autoFaker);
 
                 context.Setup(CacheService.Cache.GetCachedType(listType));
 
@@ -733,18 +733,18 @@ public partial class AutoGeneratorsFixture
 
     private static AutoFakerContext CreateContext(Type type, List<AutoFakerGeneratorOverride>? generatorOverrides = null, int? dataTableRowCountFunctor = null)
     {
-        var config = new AutoFakerConfig();
+        var autoFaker = new AutoFaker();
 
         if (generatorOverrides != null)
         {
-            config.Overrides = generatorOverrides;
+            autoFaker.Config.Overrides = generatorOverrides;
         }
 
         if (dataTableRowCountFunctor != null)
         {
-            config.DataTableRowCount = dataTableRowCountFunctor.Value;
+            autoFaker.Config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
-        return new AutoFakerContext(config, new Faker(), new AutoFakerBinder(config), CacheService.Cache.GetCachedType(type));
+        return new AutoFakerContext(autoFaker, CacheService.Cache.GetCachedType(type));
     }
 }

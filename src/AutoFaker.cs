@@ -99,11 +99,11 @@ public sealed class AutoFaker : IAutoFaker
     private AutoFakerContext CreateContext(Action<IAutoGenerateConfigBuilder>? configure)
     {
         if (configure == null)
-            return new AutoFakerContext(Config, Faker, Binder);
+            return new AutoFakerContext(this);
 
         var builder = new AutoFakerConfigBuilder(Config, this);
         configure.Invoke(builder);
 
-        return new AutoFakerContext(Config, Faker, Binder);
+        return new AutoFakerContext(this);
     }
 }
