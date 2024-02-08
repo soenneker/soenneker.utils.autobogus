@@ -1,5 +1,4 @@
 ﻿using System;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 
@@ -7,21 +6,11 @@ namespace Soenneker.Utils.AutoBogus.Override;
 
 public abstract class AutoFakerOverride<T> : AutoFakerGeneratorOverride
 {
-    protected Faker Faker { get; private set; }
-
     protected Type Type { get; }
 
-    private readonly bool _fakerSet;
-
-    protected AutoFakerOverride(Faker? faker = null)
+    protected AutoFakerOverride()
     {
         Type = typeof(T);
-
-        if (faker == null) 
-            return;
-
-        Faker = faker;
-        _fakerSet = true;
     }
 
     /// <summary>
@@ -30,9 +19,6 @@ public abstract class AutoFakerOverride<T> : AutoFakerGeneratorOverride
     public override bool CanOverride(AutoFakerContext context)
     {
         bool shouldOverride = context.CachedType.Type == Type;
-
-        if (shouldOverride && !_fakerSet)
-            Faker = context.Faker;
 
         return shouldOverride;
     }
