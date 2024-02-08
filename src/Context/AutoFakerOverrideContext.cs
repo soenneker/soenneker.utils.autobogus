@@ -30,20 +30,19 @@ public sealed class AutoFakerOverrideContext
     /// </summary>
     public Faker Faker { get; }
 
+    public AutoFaker AutoFaker { get; }
+
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
     public List<string>? RuleSets { get; }
 
-    internal AutoFakerContext GenerateContext { get; }
-
     internal AutoFakerOverrideContext(AutoFakerContext generateContext)
     {
-        GenerateContext = generateContext;
-
-        GenerateType = GenerateContext.CachedType;
-        GenerateName = GenerateContext.GenerateName;
-        Faker = GenerateContext.Faker;
-        RuleSets = GenerateContext.RuleSets;
+        GenerateType = generateContext.CachedType;
+        GenerateName = generateContext.GenerateName;
+        Faker = generateContext.Faker;
+        AutoFaker = generateContext.AutoFaker;
+        RuleSets = generateContext.RuleSets;
     }
 }
