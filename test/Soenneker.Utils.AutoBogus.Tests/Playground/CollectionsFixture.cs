@@ -21,14 +21,14 @@ public class CollectionsFixture
     [Fact]
     public void Should_Generate_Collections()
     {
-        var c1 = AutoFaker.Generate<ICollection<string>>();
-        var c2 = AutoFaker.Generate<IDictionary<string, string>>();
-        var c3 = AutoFaker.Generate<IEnumerable<string>>();
-        var c4 = AutoFaker.Generate<IList<string>>();
-        var c5 = AutoFaker.Generate<IReadOnlyCollection<string>>();
-        var c6 = AutoFaker.Generate<IReadOnlyDictionary<string, string>>();
-        var c7 = AutoFaker.Generate<IReadOnlyList<string>>();
-        var c8 = AutoFaker.Generate<ISet<string>>();
+        var c1 = AutoFaker.GenerateStatic<ICollection<string>>();
+        var c2 = AutoFaker.GenerateStatic<IDictionary<string, string>>();
+        var c3 = AutoFaker.GenerateStatic<IEnumerable<string>>();
+        var c4 = AutoFaker.GenerateStatic<IList<string>>();
+        var c5 = AutoFaker.GenerateStatic<IReadOnlyCollection<string>>();
+        var c6 = AutoFaker.GenerateStatic<IReadOnlyDictionary<string, string>>();
+        var c7 = AutoFaker.GenerateStatic<IReadOnlyList<string>>();
+        var c8 = AutoFaker.GenerateStatic<ISet<string>>();
 
         c1.Should().NotBeEmpty();
         c2.Should().NotBeEmpty();
@@ -43,7 +43,7 @@ public class CollectionsFixture
     [Fact]
     public void Should_Generate_Collection_Properties()
     {
-        var collections = AutoFaker.Generate<Collections>();
+        var collections = AutoFaker.GenerateStatic<Collections>();
 
         collections.C1.Should().NotBeEmpty();
         collections.C2.Should().NotBeEmpty();

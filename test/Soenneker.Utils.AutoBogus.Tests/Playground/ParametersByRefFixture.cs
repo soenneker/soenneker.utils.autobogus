@@ -27,7 +27,7 @@ public class ParametersByRefFixture
     [Fact]
     public void Should_Create_Instance()
     {
-        var instance = AutoFaker.Generate<TestClass>();
+        var instance = AutoFaker.GenerateStatic<TestClass>();
         instance.Should().NotBeNull();
     }
 }

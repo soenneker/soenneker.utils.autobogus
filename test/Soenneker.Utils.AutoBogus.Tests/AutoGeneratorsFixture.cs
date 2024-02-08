@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using Bogus;
 using FluentAssertions;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
@@ -71,9 +70,9 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] {typeof(NonGeneric)};
-                    yield return new[] {typeof(OneArgument<int>)};
-                    yield return new[] {typeof(TwoArgumentsThatAreDifferentFromBaseReadOnlyDictionaryClass<string, int>)};
+                    yield return [typeof(NonGeneric)];
+                    yield return [typeof(OneArgument<int>)];
+                    yield return [typeof(TwoArgumentsThatAreDifferentFromBaseReadOnlyDictionaryClass<string, int>)];
                 }
             }
 
@@ -116,9 +115,9 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] {typeof(NonGeneric)};
-                    yield return new[] {typeof(OneArgument<int>)};
-                    yield return new[] {typeof(TwoArgumentsThatAreDifferentFromBaseDictionaryClass<string, int>)};
+                    yield return [typeof(NonGeneric)];
+                    yield return [typeof(OneArgument<int>)];
+                    yield return [typeof(TwoArgumentsThatAreDifferentFromBaseDictionaryClass<string, int>)];
                 }
             }
 
@@ -158,8 +157,8 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] {typeof(NonGeneric)};
-                    yield return new[] {typeof(GenericWithDifferentType<string>)};
+                    yield return [typeof(NonGeneric)];
+                    yield return [typeof(GenericWithDifferentType<string>)];
                 }
             }
 
@@ -201,8 +200,8 @@ public partial class AutoGeneratorsFixture
             {
                 get
                 {
-                    yield return new[] {typeof(NonGeneric)};
-                    yield return new[] {typeof(GenericWithDifferentType<string>)};
+                    yield return [typeof(NonGeneric)];
+                    yield return [typeof(GenericWithDifferentType<string>)];
                 }
             }
 
@@ -300,11 +299,11 @@ public partial class AutoGeneratorsFixture
 
         public static IEnumerable<object[]> GetDataSetAndDataTableTypes()
         {
-            yield return new object[] {typeof(System.Data.DataSet), typeof(DataSetGenerator)};
-            yield return new object[] {typeof(DataSetGeneratorFacet.TypedDataSet), typeof(DataSetGenerator)};
-            yield return new object[] {typeof(System.Data.DataTable), typeof(DataTableGenerator)};
-            yield return new object[] {typeof(DataTableGeneratorFacet.TypedDataTable1), typeof(DataTableGenerator)};
-            yield return new object[] {typeof(DataTableGeneratorFacet.TypedDataTable2), typeof(DataTableGenerator)};
+            yield return [typeof(System.Data.DataSet), typeof(DataSetGenerator)];
+            yield return [typeof(DataSetGeneratorFacet.TypedDataSet), typeof(DataSetGenerator)];
+            yield return [typeof(System.Data.DataTable), typeof(DataTableGenerator)];
+            yield return [typeof(DataTableGeneratorFacet.TypedDataTable1), typeof(DataTableGenerator)];
+            yield return [typeof(DataTableGeneratorFacet.TypedDataTable2), typeof(DataTableGenerator)];
         }
     }
 
@@ -667,12 +666,14 @@ public partial class AutoGeneratorsFixture
         public GeneratorOverrides()
         {
             _autoFakerGeneratorOverride = new TestAutoFakerGeneratorOverride(true);
-            _overrides = new List<AutoFakerGeneratorOverride>
-            {
+            _overrides =
+            [
                 new TestAutoFakerGeneratorOverride(),
+
                 _autoFakerGeneratorOverride,
+
                 new TestAutoFakerGeneratorOverride()
-            };
+            ];
         }
 
         //[Fact]
@@ -693,10 +694,7 @@ public partial class AutoGeneratorsFixture
         [Fact]
         public void Should_Return_Generator_If_No_Matching_Override()
         {
-            _overrides = new List<AutoFakerGeneratorOverride>
-            {
-                new TestAutoFakerGeneratorOverride()
-            };
+            _overrides = [new TestAutoFakerGeneratorOverride()];
 
             AutoFakerContext context = CreateContext(typeof(int), _overrides);
             AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<IntGenerator>();

@@ -44,7 +44,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_BeUniversal()
         {
-            var person = AutoFaker.Generate<Human>();
+            var person = AutoFaker.GenerateStatic<Human>();
             person.Birthday.Should().Be(person.Birthday.ToUniversalTime());
         }
     }
@@ -178,11 +178,10 @@ public class AutoConfigBuilderFixture
             ];
             _builder.WithSkip<ITestBuilder>(type, "Value", null);
 
-            _fakerConfig.SkipPaths.Should().BeEquivalentTo(new[]
-            {
+            _fakerConfig.SkipPaths.Should().BeEquivalentTo([
                 path,
                 $"{type.FullName}.Value"
-            });
+            ]);
         }
     }
 
@@ -222,11 +221,10 @@ public class AutoConfigBuilderFixture
 
             _builder.WithSkip<ITestBuilder, TestSkip>("Value", null);
 
-            _fakerConfig.SkipPaths.Should().BeEquivalentTo(new[]
-            {
+            _fakerConfig.SkipPaths.Should().BeEquivalentTo([
                 path,
                 $"{type.FullName}.Value"
-            });
+            ]);
         }
     }
 

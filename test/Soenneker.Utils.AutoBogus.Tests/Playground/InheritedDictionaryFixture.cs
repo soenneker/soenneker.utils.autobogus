@@ -26,7 +26,7 @@ public class InheritedDictionaryFixture
     [Fact]
     public void Should_Populate_Object()
     {
-        var obj = AutoFaker.Generate<Obj>();
+        var obj = AutoFaker.GenerateStatic<Obj>();
 
         obj.Should().NotBeNull();
         obj.Properties.Should().NotBeNull();

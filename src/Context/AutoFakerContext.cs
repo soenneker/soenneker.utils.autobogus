@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
+using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
 
 namespace Soenneker.Utils.AutoBogus.Context;
@@ -37,7 +38,7 @@ public sealed class AutoFakerContext
 
     public readonly AutoFakerBinder Binder;
 
-    public readonly AutoFaker AutoFaker;
+    public readonly IAutoFaker AutoFaker;
 
     /// <summary>
     /// The requested rule sets provided for the generate request.

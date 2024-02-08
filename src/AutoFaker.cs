@@ -44,13 +44,13 @@ public sealed class AutoFaker : IAutoFaker
         Faker = faker;
     }
 
-    TType IAutoFaker.Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure)
+    public TType Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         AutoFakerContext context = CreateContext(configure);
-        return context.Generate<TType>();
+        return context.Generate<TType>()!;
     }
 
-    List<TType> IAutoFaker.Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure)
+    public List<TType> Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         AutoFakerContext context = CreateContext(configure);
         return context.GenerateMany<TType>(count);
@@ -76,10 +76,10 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated instance.</returns>
     [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
-    public static TType Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
+    public static TType GenerateStatic<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
-        IAutoFaker faker = new AutoFaker(configure);
-        return faker.Generate<TType>();
+        var faker = new AutoFaker(configure);
+        return faker.Generate<TType>()!;
     }
 
     /// <summary>
@@ -90,9 +90,9 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated collection of instances.</returns>
     [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
-    public static List<TType> Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
+    public static List<TType> GenerateStatic<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
     {
-        IAutoFaker faker = new AutoFaker(configure);
+        var faker = new AutoFaker(configure);
         return faker.Generate<TType>(count);
     }
 

@@ -32,7 +32,7 @@ public class EntityFrameworkFixture
     [Fact]
     public void TestAutoFaker()
     {
-        var parent = AutoFaker.Generate<Parent>(builder => builder.WithTreeDepth(2));
+        var parent = AutoFaker.GenerateStatic<Parent>(builder => builder.WithTreeDepth(2));
         parent.Should().NotBeNull();
     }
 }

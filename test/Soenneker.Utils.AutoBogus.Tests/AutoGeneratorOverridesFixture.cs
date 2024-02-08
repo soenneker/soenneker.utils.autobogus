@@ -36,7 +36,7 @@ public class AutoGeneratorOverridesFixture
     [Fact]
     public void Should_Initialize_As_Configured()
     {
-        AutoFaker.Generate<OverrideClass>(builder =>
+        AutoFaker.GenerateStatic<OverrideClass>(builder =>
         {
             builder
                 .WithOverride(new TestOverride(false, context => context.Instance.Should().BeNull()))
