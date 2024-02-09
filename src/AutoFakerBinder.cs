@@ -50,7 +50,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         if (cachedParameters.Length == 0)
         {
-            return (TType?)constructor.Invoke();
+            return (TType?) constructor.Invoke();
         }
 
         var parameters = new object[cachedParameters.Length];
@@ -231,16 +231,24 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         for (var i = 0; i < properties.Length; i++)
         {
+            if (properties[i].IsConstant())
+                continue;
+
             PropertyInfo property = properties[i];
             autoMembers.Add(new AutoMember(property, _autoFakerConfig));
         }
 
-        for (var i = 0; i < fields.Length; i++)
+        if (fields != null)
         {
-            FieldInfo field = fields[i];
-            autoMembers.Add(new AutoMember(field, _autoFakerConfig));
-        }
+            for (var i = 0; i < fields.Length; i++)
+            {
+                if (fields[i].IsConstant())
+                    continue;
 
+                FieldInfo field = fields[i];
+                autoMembers.Add(new AutoMember(field, _autoFakerConfig));
+            }
+        }
         _autoMembersCache.TryAdd(cachedType, autoMembers);
 
         return autoMembers;
@@ -255,7 +263,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
-        if (instance == null || addMethod == null) 
+        if (instance == null || addMethod == null)
             return;
 
         foreach (object? key in dictionary.Keys)
@@ -273,7 +281,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
-        if (instance == null || addMethod == null) 
+        if (instance == null || addMethod == null)
             return;
 
         foreach (object? item in collection)

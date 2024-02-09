@@ -6,7 +6,11 @@ namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 public sealed class Order
 {
     public DateTime Timestamp;
-    
+
+    private int _privateFieldId;
+
+    public const string Constant = "Order2x89ei";
+
     public Order(int id, ICalculator calculator)
     {
         Id = id;
