@@ -7,16 +7,6 @@ public sealed class Order
 {
     public DateTime Timestamp;
 
-    private int _privateFieldId;
-
-    public const string Constant = "Order2x89ei";
-
-    public Order(int id, ICalculator calculator)
-    {
-        Id = id;
-        Calculator = calculator;
-    }
-
     public int Id { get; }
 
     public ICalculator Calculator { get; }
@@ -32,4 +22,10 @@ public sealed class Order
     public DateTimeOffset DateCreated { get; set; }
 
     public ICollection<string> Comments { get; set; }
+
+    public Order(int id, ICalculator calculator)
+    {
+        Id = id;
+        Calculator = calculator;
+    }
 }

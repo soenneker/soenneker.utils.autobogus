@@ -6,24 +6,24 @@ namespace Soenneker.Utils.AutoBogus.Config;
 
 public sealed class AutoFakerConfig
 {
-    internal string Locale;
+    public string Locale;
 
-    internal int RepeatCount;
+    public int RepeatCount;
 
-    internal int DataTableRowCount;
-    internal int RecursiveDepth;
+    public int DataTableRowCount;
+    public int RecursiveDepth;
 
-    internal HashSet<Type>? SkipTypes;
+    public HashSet<Type>? SkipTypes;
 
-    internal HashSet<string>? SkipPaths;
+    public HashSet<string>? SkipPaths;
 
-    internal List<AutoFakerGeneratorOverride>? Overrides;
+    public List<AutoFakerGeneratorOverride>? Overrides;
 
     public int? TreeDepth;
 
     public DateTimeKind DateTimeKind;
 
-    internal AutoFakerConfig()
+    public AutoFakerConfig()
     {
         Locale = AutoFakerDefaultConfigOptions.DefaultLocale;
         RepeatCount = AutoFakerDefaultConfigOptions.DefaultRepeatCount;

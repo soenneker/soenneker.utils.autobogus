@@ -18,20 +18,6 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     TBuilder WithLocale(string locale);
     
     /// <summary>
-    /// Registers the DateTimeKind to use when generating date and time values.
-    /// </summary>
-    /// <param name="dateTimeKind">The dateTimeKind to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithDateTimeKind(Func<AutoFakerContext, DateTimeKind> dateTimeKind);
-
-    ///// <summary>
-    ///// Registers the DateTimeKind to use when generating date and time values.
-    ///// </summary>
-    ///// <param name="dateTimeKind">The dateTimeKind to use.</param>
-    ///// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithDateTimeKind(DateTimeKind dateTimeKind);
-
-    /// <summary>
     /// Registers the number of items to generate for a collection.
     /// </summary>
     /// <param name="count">The repeat count to use.</param>
@@ -39,25 +25,11 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     TBuilder WithRepeatCount(int count);
 
     /// <summary>
-    /// Registers the number of items to generate for a collection.
-    /// </summary>
-    /// <param name="count">The repeat count to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithRepeatCount(Func<AutoFakerContext, int> count);
-
-    /// <summary>
     /// Registers the number of rows to generate in a <see cref="System.Data.DataTable"/>.
     /// </summary>
     /// <param name="count">The row count to use.</param>
     /// <returns>The current configuration builder instance.</returns>
     TBuilder WithDataTableRowCount(int count);
-
-    /// <summary>
-    /// Registers the number of rows to generate in a <see cref="System.Data.DataTable"/>.
-    /// </summary>
-    /// <param name="count">The row count to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithDataTableRowCount(Func<AutoFakerContext, int> count);
 
     /// <summary>
     /// Registers the depth to recursively generate.
@@ -74,32 +46,11 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     TBuilder WithTreeDepth(int? depth);
 
     /// <summary>
-    /// Registers the depth to recursively generate.
-    /// </summary>
-    /// <param name="depth">The recursive depth to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithRecursiveDepth(Func<AutoFakerContext, int> depth);
-
-    /// <summary>
-    /// Registers the depth to generate the object tree
-    /// </summary>
-    /// <param name="depth">The depth to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithTreeDepth( int? depth);
-
-    /// <summary>
     /// Registers a binder instance to use when generating values.
     /// </summary>
     /// <param name="fakerBinder">The <see cref="IAutoFakerBinder"/> instance to use.</param>
     /// <returns>The current configuration builder instance.</returns>
     TBuilder WithBinder(AutoFakerBinder fakerBinder);
-
-    /// <summary>
-    /// Registers the <see cref="Faker"/> hub to use in underlying calls to Bogus.
-    /// </summary>
-    /// <param name="faker">The <see cref="Bogus.Faker"/> instance to use as the hub.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    //TBuilder WithFaker(Faker faker);
 
     /// <summary>
     /// Registers a type to skip when generating values.

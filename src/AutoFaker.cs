@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Bogus;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus;
 
 ///<inheritdoc cref="IAutoFaker"/>
 public sealed class AutoFaker : IAutoFaker
 {
-    public AutoFakerConfig Config { get; private set; }
+    public AutoFakerConfig Config { get; set; }
 
     internal AutoFakerBinder Binder { get; set; }
 
@@ -34,37 +37,35 @@ public sealed class AutoFaker : IAutoFaker
         Binder = new AutoFakerBinder(Config);
     }
 
-    public void SetConfig(AutoFakerConfig config)
+    public TType Generate<TType>()
     {
-        Config = config;
-    }
-
-    public void SetFaker(Faker faker)
-    {
-        Faker = faker;
-    }
-
-    public TType Generate<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
-    {
-        AutoFakerContext context = CreateContext(configure);
+        var context = new AutoFakerContext(this);
         return context.Generate<TType>()!;
     }
 
-    public List<TType> Generate<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
+    public List<TType> Generate<TType>(int count)
     {
-        AutoFakerContext context = CreateContext(configure);
+        var context = new AutoFakerContext(this);
         return context.GenerateMany<TType>(count);
+    }
+
+    public object Generate(Type type)
+    {
+        CachedType autoFakerType = CacheService.Cache.GetCachedType(typeof(AutoFaker));
+
+        // TODO: Optimize
+        MethodInfo method = autoFakerType.Type.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null).MakeGenericMethod(type);
+
+        object? result = method.Invoke(this, null);
+        return result!;
     }
 
     /// <summary>
     /// Configures all faker instances and generate requests.
     /// </summary>
     /// <param name="configure">A handler to build the default faker configuration.</param>
-    public void Configure(Action<IAutoFakerDefaultConfigBuilder>? configure)
+    public void Configure(Action<IAutoFakerDefaultConfigBuilder> configure)
     {
-        if (configure == null)
-            return;
-
         var builder = new AutoFakerConfigBuilder(Config, this);
         configure.Invoke(builder);
     }
@@ -94,16 +95,5 @@ public sealed class AutoFaker : IAutoFaker
     {
         var faker = new AutoFaker(configure);
         return faker.Generate<TType>(count);
-    }
-
-    private AutoFakerContext CreateContext(Action<IAutoGenerateConfigBuilder>? configure)
-    {
-        if (configure == null)
-            return new AutoFakerContext(this);
-
-        var builder = new AutoFakerConfigBuilder(Config, this);
-        configure.Invoke(builder);
-
-        return new AutoFakerContext(this);
     }
 }

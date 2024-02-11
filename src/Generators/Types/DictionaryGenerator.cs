@@ -25,7 +25,7 @@ internal sealed class DictionaryGenerator<TKey, TValue>
                // items = (IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
                 items = (IDictionary<TKey, TValue>)context.CachedType.CreateInstance(); //(IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
             }
-            catch (Exception e)
+            catch
             {
                 items = new Dictionary<TKey, TValue>();
             }

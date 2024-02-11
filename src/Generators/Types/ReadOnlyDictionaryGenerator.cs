@@ -28,7 +28,7 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoFakerGene
             {
                 items = (IDictionary<TKey, TValue>)context.CachedType.CreateInstance();
             }
-            catch (Exception e)
+            catch //(Exception e)
             {
                 items = new Dictionary<TKey, TValue>();
             }
