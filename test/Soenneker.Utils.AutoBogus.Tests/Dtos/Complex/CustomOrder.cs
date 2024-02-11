@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.Text.Json.Serialization;
-using Ardalis.SmartEnum.SystemTextJson;
-using Soenneker.Json.CollectionConverter;
 using Soenneker.Utils.AutoBogus.Tests.Enums;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
@@ -38,9 +35,7 @@ public sealed class CustomOrder : BaseCustomOrder
 
     public Longitude Longitude { get; set; }
 
-    [JsonPropertyName("daysOfWeek")]
-    [System.Text.Json.Serialization.JsonConverter(typeof(CollectionConverter<SmartEnumNameConverter<DayOfWeekType, int>>))]
-    [JsonProperty("daysOfWeek", ItemConverterType = typeof(Ardalis.SmartEnum.JsonNet.SmartEnumNameConverter<DayOfWeekType, int>))]
+    [JsonPropertyName("nullableDaysOfWeek")]
     public List<DayOfWeekType>? NullableDaysOfWeek { get; set; }
 
     public CustomOrder(int id, ICalculator calculator)
