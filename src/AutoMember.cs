@@ -16,19 +16,17 @@ internal sealed class AutoMember
 
     internal readonly Func<object, object?> Getter;
 
-    internal readonly Action<object, object?> Setter;
+    internal readonly Action<object, object?>? Setter;
 
-    internal readonly bool ShouldSkip = false;
+    internal bool ShouldSkip;
 
-    internal readonly bool IsDictionary = false;
+    internal readonly bool IsDictionary;
 
-    internal readonly bool IsCollection = false;
+    internal readonly bool IsCollection;
 
     internal AutoMember(FieldInfo fieldInfo, AutoFakerConfig config)
     {
         Name = fieldInfo.Name;
-
-        // Extract the required member info
 
         CachedType = CacheService.Cache.GetCachedType(fieldInfo.FieldType);
         IsReadOnly = !fieldInfo.IsPrivate && fieldInfo.IsInitOnly;
@@ -40,16 +38,7 @@ internal sealed class AutoMember
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;
 
-        if (config.SkipTypes != null && config.SkipTypes.Contains(CachedType.Type))
-        {
-            ShouldSkip = true;
-        }
-
-        // Skip if the path is found
-        if (config.SkipPaths != null && config.SkipPaths.Contains($"{CachedType.Type.FullName}.{Name}"))
-        {
-            ShouldSkip = true;
-        }
+        SetShouldSkip(config);
     }
 
     internal AutoMember(PropertyInfo propertyInfo, AutoFakerConfig config)
@@ -66,6 +55,11 @@ internal sealed class AutoMember
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;
 
+        SetShouldSkip(config);
+    }
+
+    private void SetShouldSkip(AutoFakerConfig config)
+    {
         if (config.SkipTypes != null && config.SkipTypes.Contains(CachedType.Type))
         {
             ShouldSkip = true;

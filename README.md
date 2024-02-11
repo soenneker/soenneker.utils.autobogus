@@ -5,9 +5,7 @@
 # ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Utils.AutoBogus
 ### The .NET Autogenerator 
 
-This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus).
-
-It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
+This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus). It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
 
 The goals are to be *fast*, and support the latest types in .NET.
 
@@ -21,28 +19,29 @@ dotnet add package Soenneker.Utils.AutoBogus
 
 ## Usage
 
-- Create an AutoFaker instance:
-```csharp 
-var autoFaker = new AutoFaker();
+- Create an `AutoFaker` instance:
+```csharp
+var optionalConfig = new AutoFakerConfig();
+var autoFaker = new AutoFaker(optionalConfig);
 ```
 
 - Call `Generate<>()` on any type you want:
 
 ```csharp
-var someRandomWord = autoFaker.Generate<string>();
+var randomWord = autoFaker.Generate<string>();
 var dictionary = autoFaker.Generate<Dictionary<int, string>>();
 var order = autoFaker.Generate<Order>();
 ```
 
-- Set a faker, configuration, rulesets, etc:
+- Set a faker, configuration, rules, etc:
 
 ```csharp
 autoFaker.Config.Faker = new Faker("de");
-autoFaker.Config.RecursiveDepth = 3;
+autoFaker.Config.RepeatCount = 3;
 ...
 ```
 
-- `AutoFakerOverride` can be used for type customization:
+### `AutoFakerOverride` can be used for type customization:
 
 ```csharp
 public class OrderOverride : AutoFakerOverride<Order>
@@ -61,7 +60,7 @@ public class OrderOverride : AutoFakerOverride<Order>
 }
 ```
 
-- Configuring `AutoFakerOverride` on the `AutoFaker`:
+Then just add `AutoFakerOverride` to the `AutoFaker.Config` instance:
 
 ```csharp
 autoFaker.Config.Overrides = new AutoFakerOverrides();
@@ -79,11 +78,11 @@ autoFaker.Config.Overrides.Add(new OrderOverride());
 
 ### Soenneker.Utils.AutoBogus
 
-| Method           | Mean         | Error      | StdDev     |
-|----------------- |-------------:|-----------:|-----------:|
-| Generate_int     |     73.86 ns |   0.843 ns |   0.747 ns |
-| Generate_string  |    227.31 ns |   2.601 ns |   2.433 ns |
-| Generate_complex | 17,681.91 ns | 128.889 ns | 120.563 ns |
+| Method           | Mean        | Error     | StdDev    |
+|----------------- |------------:|----------:|----------:|
+| Generate_int     |    81.44 ns |  1.603 ns |  1.499 ns |
+| Generate_string  |   249.01 ns |  2.095 ns |  1.959 ns |
+| Generate_complex | 6,949.16 ns | 57.973 ns | 54.228 ns |
 
 ### AutoBogus
 

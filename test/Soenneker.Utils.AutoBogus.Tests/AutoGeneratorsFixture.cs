@@ -260,7 +260,9 @@ public partial class AutoGeneratorsFixture
         public void Generate_Should_Return_Value(Type type)
         {
             CachedType cachedType = CacheService.Cache.GetCachedType(type);
-            IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
+            AutoFakerBinder binder = new AutoFakerBinder(new AutoFakerConfig());
+
+            IAutoFakerGenerator generator = binder.GeneratorService.GetFundamentalGenerator(cachedType);
 
             InvokeGenerator(type, generator).Should().BeOfType(type);
         }
@@ -271,9 +273,9 @@ public partial class AutoGeneratorsFixture
         {
             CachedType cachedType = CacheService.Cache.GetCachedType(type);
             AutoFakerContext context = CreateContext(type);
-            IAutoFakerGenerator generator = GeneratorService.GetFundamentalGenerator(cachedType);
+            IAutoFakerGenerator generator = context.Binder.GeneratorService.GetFundamentalGenerator(cachedType);
 
-            GeneratorService.Clear();
+            context.Binder.GeneratorService.Clear();
 
             AutoFakerGeneratorFactory.GetGenerator(context).Should().Be(generator);
         }

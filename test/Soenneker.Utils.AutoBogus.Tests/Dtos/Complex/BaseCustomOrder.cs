@@ -1,7 +1,6 @@
-﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex
+﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
+
+public class BaseCustomOrder
 {
-    public class BaseCustomOrder
-    {
-        public int Test { get; set; }
-    }
+    public int Test { get; set; }
 }

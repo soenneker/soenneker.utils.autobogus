@@ -25,20 +25,6 @@ public class AutoConfigBuilderFixture
         _builder = new AutoFakerConfigBuilder(_fakerConfig, autoFaker);
     }
 
-    public class WithLocale
-        : AutoConfigBuilderFixture
-    {
-        [Fact]
-        public void Should_Set_Config_Locale()
-        {
-            string? locale = _faker.Random.String();
-
-            _builder.WithLocale<ITestBuilder>(locale, null);
-
-            _fakerConfig.Locale.Should().Be(locale);
-        }
-    }
-
     public class WithDateTimeKind : AutoConfigBuilderFixture
     {
         [Fact]
@@ -46,20 +32,6 @@ public class AutoConfigBuilderFixture
         {
             var person = AutoFaker.GenerateStatic<Human>();
             person.Birthday.Should().Be(person.Birthday.ToUniversalTime());
-        }
-    }
-
-    public class WithRepeatCount
-        : AutoConfigBuilderFixture
-    {
-        [Fact]
-        public void Should_Set_Config_RepeatCount()
-        {
-            int count = _faker.Random.Int();
-
-            _builder.WithRepeatCount<ITestBuilder>(count, null);
-
-            _fakerConfig.RepeatCount.Should().Be(count);
         }
     }
 
@@ -94,7 +66,7 @@ public class AutoConfigBuilderFixture
         [Fact]
         public void Should_Set_Config_TreeDepth_To_Default_If_Null()
         {
-            int? depth = AutoFakerDefaultConfigOptions.DefaultTreeDepth;
+            int? depth = AutoFakerDefaultConfigOptions.TreeDepth;
 
             _builder.WithTreeDepth<ITestBuilder>(null, null);
 

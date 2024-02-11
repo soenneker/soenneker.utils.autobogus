@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex
+namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
+
+internal class Human
 {
-    internal class Human
-    {
-        public DateTime Birthday { get; set; }
-    }
+    public DateTime Birthday { get; set; }
 }

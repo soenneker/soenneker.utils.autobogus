@@ -1,7 +1,6 @@
-﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex
+﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
+
+public class Longitude
 {
-    public class Longitude
-    {
-        public double Value { get; set; }
-    }
+    public double Value { get; set; }
 }

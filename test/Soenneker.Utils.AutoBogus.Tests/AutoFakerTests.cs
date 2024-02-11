@@ -5,6 +5,8 @@ using System.Diagnostics;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Overrides;
+using System.Linq;
+using Soenneker.Utils.AutoBogus.Config;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -50,7 +52,7 @@ public class AutoFakerTests
         product.Should().NotBeNull();
         product.GetRevisions.Should().NotBeNullOrEmpty();
         // product.Reviews.Count.Should().BeGreaterThan(0);
-       // product.
+        // product.
     }
 
     [Fact]
@@ -85,35 +87,65 @@ public class AutoFakerTests
     }
 
     [Fact]
-    public void ConfigureOverride_after_initialization_should_succeed()
+    public void Generate_with_override_should_give_result()
+    {
+        for (var i = 0; i < 100; i++)
+        {
+            var config = new AutoFakerConfig
+            {
+                Overrides =
+                [
+                    new BaseCustomOrderOverride(),
+                    new LongitudeOverride(),
+                    new CustomOrderOverride()
+                ]
+            };
+
+            var autoFaker = new AutoFaker(config);
+
+            var order = autoFaker.Generate<CustomOrder>();
+            order.CustomId.Should().Be("Blah");
+        }
+    }
+
+    [Fact]
+    public void Generate_with_default_RepeatCount_should_generate_correct_count()
     {
         var autoFaker = new AutoFaker();
-        autoFaker.Config.TreeDepth = 1;
-
-        SetOverride(autoFaker);
 
         var order = autoFaker.Generate<CustomOrder>();
-        order.CustomId.Should().Be("Blah");
+        order.Items.Count().Should().Be(1);
+    }
+
+    [Fact]
+    public void Generate_with_set_RepeatCount_should_generate_correct_count()
+    {
+        var autoFaker = new AutoFaker();
+        autoFaker.Config.RepeatCount = 3;
+
+        var order = autoFaker.Generate<CustomOrder>();
+        order.Items.Count().Should().Be(3);
     }
 
     [Fact]
     public void Generate_with_smartenum_should_generate()
     {
-        var autoFaker = new AutoFaker();
+        var config = new AutoFakerConfig
+        {
+            Overrides =
+            [
+                new BaseCustomOrderOverride(),
+                new LongitudeOverride(),
+                new CustomOrderOverride()
+            ]
+        };
 
-        SetOverride(autoFaker);
+        var autoFaker = new AutoFaker(config);
 
         var order = autoFaker.Generate<CustomOrder>();
         order.DaysOfWeek.Should().NotBeNull();
         order.NullableDaysOfWeek.Should().NotBeNull();
         order.Longitude.Should().NotBeNull();
         CustomOrder.Constant.Should().Be("Order2x89ei");
-            }
-
-    private void SetOverride(AutoFaker autoFaker)
-    {
-        autoFaker.Configure(c => c.WithOverride(new BaseCustomOrderOverride()));
-        autoFaker.Configure(c => c.WithOverride(new LongitudeOverride()));
-        autoFaker.Configure(c => c.WithOverride(new CustomOrderOverride()));
     }
 }

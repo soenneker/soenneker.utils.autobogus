@@ -18,12 +18,12 @@ using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus;
 
-/// <summary>
-/// A class for binding generated instances.
-/// </summary>
+///<inheritdoc cref="IAutoFakerBinder"/>
 public class AutoFakerBinder : IAutoFakerBinder
 {
     private readonly AutoFakerConfig _autoFakerConfig;
+
+    internal readonly GeneratorService GeneratorService;
 
     private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
     private readonly Dictionary<CachedType, CachedConstructor> _constructorsCache = [];
@@ -31,6 +31,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     public AutoFakerBinder(AutoFakerConfig autoFakerConfig)
     {
         _autoFakerConfig = autoFakerConfig;
+        GeneratorService = new GeneratorService();
     }
 
     /// <summary>
@@ -81,6 +82,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         for (var i = 0; i < autoMembers.Count; i++)
         {
             AutoMember member = autoMembers[i];
+
             // Check if the member has a skip config or the type has already been generated as a parent
             // If so skip this generation otherwise track it for use later in the object tree
             if (ShouldSkip(member, context))
@@ -249,6 +251,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 autoMembers.Add(new AutoMember(field, _autoFakerConfig));
             }
         }
+
         _autoMembersCache.TryAdd(cachedType, autoMembers);
 
         return autoMembers;

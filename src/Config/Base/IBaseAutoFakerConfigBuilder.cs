@@ -11,20 +11,6 @@ namespace Soenneker.Utils.AutoBogus.Config.Base;
 public interface IBaseAutoFakerConfigBuilder<TBuilder>
 {
     /// <summary>
-    /// Registers the locale to use when generating values.
-    /// </summary>
-    /// <param name="locale">The locale to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithLocale(string locale);
-    
-    /// <summary>
-    /// Registers the number of items to generate for a collection.
-    /// </summary>
-    /// <param name="count">The repeat count to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithRepeatCount(int count);
-
-    /// <summary>
     /// Registers the number of rows to generate in a <see cref="System.Data.DataTable"/>.
     /// </summary>
     /// <param name="count">The row count to use.</param>

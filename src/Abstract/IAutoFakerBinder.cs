@@ -4,7 +4,7 @@ using Soenneker.Utils.AutoBogus.Context;
 namespace Soenneker.Utils.AutoBogus.Abstract;
 
 /// <summary>
-/// An interface for binding generated instances.
+/// For binding generated instances.
 /// </summary>
 public interface IAutoFakerBinder 
 {

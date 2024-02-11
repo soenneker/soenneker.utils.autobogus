@@ -13,7 +13,7 @@ public static class AutoFakerGeneratorFactory
 {
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
     {
-        IAutoFakerGenerator? cachedGenerator = GeneratorService.GetGenerator(context.CachedType);
+        IAutoFakerGenerator? cachedGenerator = context.Binder.GeneratorService.GetGenerator(context.CachedType);
 
         if (cachedGenerator != null)
             return cachedGenerator;
@@ -37,19 +37,19 @@ public static class AutoFakerGeneratorFactory
 
         if (overrides == null || overrides.Count == 0)
         {
-            GeneratorService.SetGenerator(context.CachedType, generator);
+            context.Binder.GeneratorService.SetGenerator(context.CachedType, generator);
             return generator;
         }
 
         var newOverrideGenerator = new AutoFakerGeneratorOverrideInvoker(generator, overrides);
 
-        GeneratorService.SetGenerator(context.CachedType, newOverrideGenerator);
+        context.Binder.GeneratorService.SetGenerator(context.CachedType, newOverrideGenerator);
         return newOverrideGenerator;
     }
 
     internal static IAutoFakerGenerator CreateGenerator(AutoFakerContext context)
     {
-        IAutoFakerGenerator? fundamentalGenerator = GeneratorService.GetFundamentalGenerator(context.CachedType);
+        IAutoFakerGenerator? fundamentalGenerator = context.Binder.GeneratorService.GetFundamentalGenerator(context.CachedType);
 
         if (fundamentalGenerator != null)
             return fundamentalGenerator;

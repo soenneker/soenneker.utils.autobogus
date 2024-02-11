@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Base;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -20,10 +19,7 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     }
 
     internal object[]? Args { get; private set; }
-
-    IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoFakerDefaultConfigBuilder>(locale, this);
   
-    IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoFakerDefaultConfigBuilder>(count, this);
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithDataTableRowCount(int count) => WithDataTableRowCount<IAutoFakerDefaultConfigBuilder>(count, this);
 
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithRecursiveDepth(int depth) => WithRecursiveDepth<IAutoFakerDefaultConfigBuilder>(depth, this);
@@ -41,9 +37,6 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
     IAutoFakerDefaultConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerDefaultConfigBuilder>.WithOverride(AutoFakerGeneratorOverride autoFakerGeneratorOverride) =>
         WithOverride<IAutoFakerDefaultConfigBuilder>(autoFakerGeneratorOverride, this);
 
-    IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoGenerateConfigBuilder>(locale, this);
-    IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoGenerateConfigBuilder>(count, this);
-
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithDataTableRowCount(int count) => WithDataTableRowCount<IAutoGenerateConfigBuilder>(count, this);
 
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithRecursiveDepth(int depth) => WithRecursiveDepth<IAutoGenerateConfigBuilder>(depth, this);
@@ -58,9 +51,6 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
     IAutoGenerateConfigBuilder IBaseAutoFakerConfigBuilder<IAutoGenerateConfigBuilder>.WithOverride(AutoFakerGeneratorOverride autoFakerGeneratorOverride) =>
         WithOverride<IAutoGenerateConfigBuilder>(autoFakerGeneratorOverride, this);
-
-    IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithLocale(string locale) => WithLocale<IAutoFakerConfigBuilder>(locale, this);
-    IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithRepeatCount(int count) => WithRepeatCount<IAutoFakerConfigBuilder>(count, this);
 
     IAutoFakerConfigBuilder IBaseAutoFakerConfigBuilder<IAutoFakerConfigBuilder>.WithDataTableRowCount(int count) => WithDataTableRowCount<IAutoFakerConfigBuilder>(count, this);
 
@@ -77,20 +67,6 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         WithOverride<IAutoFakerConfigBuilder>(autoFakerGeneratorOverride, this);
 
     IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(params object[] args) => WithArgs<IAutoFakerConfigBuilder>(args, this);
-
-    internal TBuilder WithLocale<TBuilder>(string locale, TBuilder builder)
-    {
-        _autoFakerConfig.Locale = locale;
-
-        return builder;
-    }
-
-    internal TBuilder WithRepeatCount<TBuilder>(int count, TBuilder builder)
-    {
-        _autoFakerConfig.RepeatCount = count;
-
-        return builder;
-    }
 
     internal TBuilder WithDataTableRowCount<TBuilder>(int count, TBuilder builder)
     {
@@ -113,16 +89,10 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
         return builder;
     }
 
-    private TBuilder WithBinder<TBuilder>(AutoFakerBinder? fakerBinder, TBuilder builder)
+    private TBuilder WithBinder<TBuilder>(AutoFakerBinder fakerBinder, TBuilder builder)
     {
         _autoFaker.Binder = fakerBinder;
 
-        return builder;
-    }
-
-    internal TBuilder WithFaker<TBuilder>(Faker faker, TBuilder builder)
-    {
-        _autoFaker.Faker = faker;
         return builder;
     }
 

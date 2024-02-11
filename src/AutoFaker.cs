@@ -21,7 +21,19 @@ public sealed class AutoFaker : IAutoFaker
 
     public Faker Faker { get; set; }
 
-    public AutoFaker(Action<IAutoGenerateConfigBuilder>? configure = null)
+    public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
+    {
+        Faker = new Faker();
+
+        if (autoFakerConfig == null)
+            Config = new AutoFakerConfig();
+        else
+            Config = autoFakerConfig;
+
+        Binder = new AutoFakerBinder(Config);
+    }
+
+    public AutoFaker(Action<IAutoGenerateConfigBuilder>? configure)
     {
         Faker = new Faker();
 

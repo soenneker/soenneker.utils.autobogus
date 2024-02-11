@@ -69,10 +69,10 @@ public class AutoFakerFixture
         }
 
         [Theory]
-        [MemberData(nameof(GetTypes))]
-        public void Should_Generate_Many_Types(Type type)
+        [ClassData(typeof(TypeTestData))]
+        public void Should_Generate_Many_Types(Type type, Type expectedType)
         {
-            int count = AutoFakerDefaultConfigOptions.DefaultRepeatCount;
+            int count = AutoFakerDefaultConfigOptions.RepeatCount;
             Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>();
 
             AssertGenerateMany(type, _generateMany, null, count, configure);
@@ -88,7 +88,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Many_Complex_Types()
         {
-            int count = AutoFakerDefaultConfigOptions.DefaultRepeatCount;
+            int count = AutoFakerDefaultConfigOptions.RepeatCount;
             Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>();
             List<Order> instances = AutoFaker.GenerateStatic<Order>(count, configure);
 
@@ -112,34 +112,42 @@ public class AutoFakerFixture
         }
     }
 
-    public class Behaviors_Recursive
-        : AutoFakerFixture
+    public class Behaviors_Recursive: AutoFakerFixture
     {
         private readonly TestRecursiveClass _instance;
 
+        readonly AutoFaker _autoFaker;
+
         public Behaviors_Recursive()
         {
-            _instance = AutoFaker.GenerateStatic<TestRecursiveClass>(builder => { builder.WithRecursiveDepth(3); });
+            var config = new AutoFakerConfig();
+            config.RecursiveDepth = 3;
+            config.RepeatCount = 3;
+
+            _autoFaker = new AutoFaker(config);
         }
 
         [Fact]
         public void Should_Generate_Recursive_Types()
         {
-            _instance.Child.Should().NotBeNull();
-            _instance.Child.Child.Should().NotBeNull();
-            _instance.Child.Child.Child.Should().NotBeNull();
-            _instance.Child.Child.Child.Child.Should().BeNull();
+            TestRecursiveClass instance = _autoFaker.Generate<TestRecursiveClass>();
+
+            instance.Child.Should().NotBeNull();
+            instance.Child.Child.Should().NotBeNull();
+            instance.Child.Child.Child.Should().NotBeNull();
+            instance.Child.Child.Child.Child.Should().BeNull();
         }
 
         [Fact]
         public void Should_Generate_Recursive_Lists()
         {
-            IEnumerable<TestRecursiveClass> children = _instance.Children;
-            List<TestRecursiveClass> children1 = children.SelectMany(c => c.Children).ToList();
+            TestRecursiveClass instance = _autoFaker.Generate<TestRecursiveClass>();
+
+            List<TestRecursiveClass> children1 = instance.Children.SelectMany(c => c.Children).ToList();
             List<TestRecursiveClass> children2 = children1.SelectMany(c => c.Children).ToList();
             List<TestRecursiveClass> children3 = children2.Where(c => c.Children != null).ToList();
 
-            children.Should().HaveCount(3);
+            instance.Children.Should().HaveCount(3);
             children1.Should().HaveCount(9);
             children2.Should().HaveCount(27);
             children3.Should().HaveCount(0);
@@ -148,25 +156,13 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Recursive_Sub_Types()
         {
-            _instance.Sub.Should().NotBeNull();
-            _instance.Sub.Value.Sub.Should().NotBeNull();
-            _instance.Sub.Value.Sub.Value.Sub.Should().NotBeNull();
-            _instance.Sub.Value.Sub.Value.Sub.Value.Sub.Should().BeNull();
-        }
-    }
+            TestRecursiveClass instance = _autoFaker.Generate<TestRecursiveClass>();
 
-    public static IEnumerable<object[]> GetTypes()
-    {
-        foreach (Type? type in GeneratorService.GetSupportedFundamentalTypes())
-        {
-            yield return [type];
+            instance.Sub.Should().NotBeNull();
+            instance.Sub.Value.Sub.Should().NotBeNull();
+            instance.Sub.Value.Sub.Value.Sub.Should().NotBeNull();
+            instance.Sub.Value.Sub.Value.Sub.Value.Sub.Should().BeNull();
         }
-
-        yield return [typeof(string[])];
-        yield return [typeof(TestEnum)];
-        yield return [typeof(IDictionary<Guid, TestStruct>)];
-        yield return [typeof(IEnumerable<TestClass>)];
-        yield return [typeof(int?)];
     }
 
     private static Action<TBuilder> CreateConfigure<TBuilder>(Action<TBuilder>? configure = null)
@@ -190,7 +186,7 @@ public class AutoFakerFixture
 
     public static void AssertGenerateMany(Type type, MethodInfo methodInfo, AutoFaker autoFaker, params object[] args)
     {
-        int count = AutoFakerDefaultConfigOptions.DefaultRepeatCount;
+        int count = AutoFakerDefaultConfigOptions.RepeatCount;
         MethodInfo method = methodInfo.MakeGenericMethod(type);
         var instances = method.Invoke(autoFaker, args) as ICollection;
 
@@ -204,7 +200,7 @@ public class AutoFakerFixture
 
     public static void AssertGenerateMany(IEnumerable<Order> instances)
     {
-        int count = AutoFakerDefaultConfigOptions.DefaultRepeatCount;
+        int count = AutoFakerDefaultConfigOptions.RepeatCount;
 
         instances.Should().HaveCount(count);
 
