@@ -64,10 +64,8 @@ public class OrderOverride : AutoFakerOverride<Order>
 - Configuring `AutoFakerOverride` on the `AutoFaker`:
 
 ```csharp
-autoFaker.Configure(builder =>
-{
-    builder.WithOverride(new OrderOverride());
-});
+autoFaker.Config.Overrides = new AutoFakerOverrides();
+autoFaker.Config.Overrides.Add(new OrderOverride());
 ```
 
 ## Tips

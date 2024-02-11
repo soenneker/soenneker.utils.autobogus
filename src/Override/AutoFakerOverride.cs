@@ -18,7 +18,7 @@ public abstract class AutoFakerOverride<T> : AutoFakerGeneratorOverride
     /// </summary>
     public override bool CanOverride(AutoFakerContext context)
     {
-        bool shouldOverride = context.CachedType.Type == Type;
+        bool shouldOverride = context.GenerateType == Type;
 
         return shouldOverride;
     }
