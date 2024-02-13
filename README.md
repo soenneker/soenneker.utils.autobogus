@@ -7,7 +7,7 @@
 
 This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus). It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
 
-The goals are to be *fast*, and support the latest types in .NET. Thus it uses the fastest .NET Reflection caching library: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache)
+The goals are to be *fast*, and support the latest types in .NET. It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache)
 
 .NET 6+ is supported.
 
