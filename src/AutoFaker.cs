@@ -63,7 +63,7 @@ public sealed class AutoFaker : IAutoFaker
 
     public object Generate(Type type)
     {
-        CachedType autoFakerType = CacheService.Cache.GetCachedType(typeof(AutoFaker));
+        CachedType autoFakerType = CachedTypeService.AutoFaker.Value;
 
         // TODO: Optimize
         MethodInfo method = autoFakerType.Type.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null).MakeGenericMethod(type);

@@ -63,7 +63,7 @@ public class OrderOverride : AutoFakerOverride<Order>
 Then just add `AutoFakerOverride` to the `AutoFaker.Config` instance:
 
 ```csharp
-autoFaker.Config.Overrides = new AutoFakerOverrides();
+autoFaker.Config.Overrides = new List<AutoFakerGeneratorOverride>();
 autoFaker.Config.Overrides.Add(new OrderOverride());
 ```
 

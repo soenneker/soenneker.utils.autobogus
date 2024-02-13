@@ -21,8 +21,6 @@ public class AutoGenerateContextFixture
         _faker = new Faker();
         _ruleSets = new List<string>();
         _fakerConfig = new AutoFakerConfig();
-
-        //ConfigService.SetCustomConfig(_fakerConfig);
     }
 
     public class GenerateMany_Internal

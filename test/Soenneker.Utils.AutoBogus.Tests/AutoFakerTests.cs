@@ -38,9 +38,6 @@ public class AutoFakerTests
 
         var structObj = faker.Generate<TestStruct>();
         structObj.Should().NotBeNull();
-
-        // product.Reviews.Count.Should().BeGreaterThan(0);
-        // product.
     }
 
     [Fact]
@@ -51,8 +48,6 @@ public class AutoFakerTests
         var product = faker.Generate<Product>();
         product.Should().NotBeNull();
         product.GetRevisions.Should().NotBeNullOrEmpty();
-        // product.Reviews.Count.Should().BeGreaterThan(0);
-        // product.
     }
 
     [Fact]
@@ -75,7 +70,7 @@ public class AutoFakerTests
     {
         var faker = new AutoFaker();
 
-        List<int> intList = new List<int>();
+        var intList = new List<int>();
 
         for (var i = 0; i < 1000; i++)
         {
