@@ -33,6 +33,12 @@ var dictionary = autoFaker.Generate<Dictionary<int, string>>();
 var order = autoFaker.Generate<Order>();
 ```
 
+- It's also possible to generate types via an argument:
+
+```csharp
+var randomWord = autoFaker.Generate(typeof(string));
+```
+
 - Set a faker, configuration, rules, etc:
 
 ```csharp
