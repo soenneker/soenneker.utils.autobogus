@@ -1,10 +1,12 @@
 ﻿using System;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Override.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Override;
 
-public abstract class AutoFakerOverride<T> : AutoFakerGeneratorOverride
+///<inheritdoc cref="IAutoFakerOverride"/>
+public abstract class AutoFakerOverride<T> : AutoFakerGeneratorOverride, IAutoFakerOverride
 {
     protected Type Type { get; }
 

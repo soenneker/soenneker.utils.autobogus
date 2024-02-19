@@ -16,6 +16,9 @@ internal sealed class TypeGenerator<TType> : IAutoFakerGenerator
 
         object instance = context.Binder.CreateInstance<TType>(context, cachedType);
 
+        if (instance == null)
+            return null!;
+
         // Populate the generated instance
         context.Binder.PopulateInstance<TType>(instance, context, cachedType);
 

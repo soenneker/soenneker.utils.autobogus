@@ -4,8 +4,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
-internal sealed class AutoFakerGeneratorOverrideInvoker
-    : IAutoFakerGenerator
+internal sealed class AutoFakerGeneratorOverrideInvoker : IAutoFakerGenerator
 {
     internal AutoFakerGeneratorOverrideInvoker(IAutoFakerGenerator generator, List<AutoFakerGeneratorOverride> overrides)
     {
@@ -13,9 +12,9 @@ internal sealed class AutoFakerGeneratorOverrideInvoker
         Overrides = overrides;
     }
 
-    internal IAutoFakerGenerator Generator { get; }
+    private IAutoFakerGenerator Generator { get; }
 
-    internal List<AutoFakerGeneratorOverride> Overrides { get; }
+    private List<AutoFakerGeneratorOverride> Overrides { get; }
 
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {

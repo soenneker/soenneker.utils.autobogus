@@ -40,6 +40,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// </summary>
     /// <typeparam name="TType">The type of instance to create.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
+    /// <param name="cachedType"></param>
     /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
     public TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
     {
@@ -71,6 +72,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// <typeparam name="TType">The type of instance to populate.</typeparam>
     /// <param name="instance">The instance to populate.</param>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
+    /// <param name="cachedType"></param>
     /// <remarks>
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
@@ -134,23 +136,19 @@ public class AutoFakerBinder : IAutoFakerBinder
             return true;
 
         //check if tree depth is reached
-        int? treeDepth = _autoFakerConfig.TreeDepth;
-
-        if (treeDepth != null)
+        if (_autoFakerConfig.TreeDepth != null)
         {
-            if (context.TypesStack.Count >= treeDepth)
+            if (context.TypesStack.Count >= _autoFakerConfig.TreeDepth)
                 return true;
         }
 
-        if (context.TypesStack.Count == 0)
+        if (context.TypesStack.Count < _autoFakerConfig.RecursiveDepth)
             return false;
 
         // Finally check if the recursive depth has been reached
+        int typeCount = context.TypesStack.Count(c => c == autoMember.CachedType.CacheKey);
 
-        int count = context.TypesStack.Count(c => c == autoMember.CachedType.CacheKey);
-        int recursiveDepth = _autoFakerConfig.RecursiveDepth;
-
-        if (count >= recursiveDepth)
+        if (typeCount >= _autoFakerConfig.RecursiveDepth)
             return true;
 
         return false;
@@ -163,14 +161,14 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         CachedConstructor[]? constructors = cachedType.GetCachedConstructors();
 
+        if (constructors == null)
+            return null;
+
         if (cachedType.IsDictionary)
             return ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
 
         if (cachedType.IsEnumerable)
             return ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
-
-        if (constructors == null)
-            return null;
 
         for (var i = 0; i < constructors.Length; i++)
         {
@@ -232,14 +230,14 @@ public class AutoFakerBinder : IAutoFakerBinder
         var autoMembers = new List<AutoMember>();
 
         CachedProperty[] cachedProperties = cachedType.GetCachedProperties()!;
+        CachedField[]? cachedFields = cachedType.GetCachedFields();
+        autoMembers.Capacity = cachedProperties.Length + (cachedFields?.Length ?? 0);
 
         for (var i = 0; i < cachedProperties.Length; i++)
         {
             CachedProperty cachedProperty = cachedProperties[i];
             autoMembers.Add(new AutoMember(cachedProperty, _autoFakerConfig));
         }
-
-        CachedField[]? cachedFields = cachedType.GetCachedFields();
 
         if (cachedFields != null)
         {

@@ -9,7 +9,7 @@ internal sealed class DateTimeOffsetGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        DateTime dateTime = context.Faker.Date.Recent();
-        return new DateTimeOffset(dateTime);
+        DateTimeOffset result = context.Faker.Date.RecentOffset();
+        return result;
     }
 }

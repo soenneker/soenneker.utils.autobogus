@@ -7,20 +7,20 @@ namespace Soenneker.Utils.AutoBogus.Generators;
 
 internal sealed class AutoFakerGeneratorTypeOverride<TType> : AutoFakerGeneratorOverride
 {
-    private CachedType CachedType { get; }
+    private readonly CachedType _cachedType;
 
     private Func<AutoFakerOverrideContext, TType> Generator { get; }
 
     internal AutoFakerGeneratorTypeOverride(Func<AutoFakerOverrideContext, TType> generator)
     {
-        CachedType = CacheService.Cache.GetCachedType(typeof(TType));
-
         Generator = generator ?? throw new ArgumentNullException(nameof(generator));
+
+        _cachedType = CacheService.Cache.GetCachedType(typeof(TType));
     }
 
     public override bool CanOverride(AutoFakerContext context)
     {
-        return context.CachedType == CachedType;
+        return context.CachedType == _cachedType;
     }
 
     public override void Generate(AutoFakerOverrideContext context)

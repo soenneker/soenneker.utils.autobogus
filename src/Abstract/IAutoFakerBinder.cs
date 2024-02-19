@@ -13,6 +13,7 @@ public interface IAutoFakerBinder
     /// </summary>
     /// <typeparam name="TType">The type of instance to create.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
+    /// <param name="cachedType"></param>
     /// <returns>The created instance.</returns>
     TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType);
 
@@ -22,6 +23,7 @@ public interface IAutoFakerBinder
     /// <typeparam name="TType">The type of instance to populate.</typeparam>
     /// <param name="instance">The instance to populate.</param>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
+    /// <param name="cachedType"></param>
     /// <remarks>
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
     /// values are applied to the provided instance and not a copy.
