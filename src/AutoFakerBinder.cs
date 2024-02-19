@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Soenneker.Extensions.FieldInfo;
+using Soenneker.Extensions.PropertyInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
 using Soenneker.Reflection.Cache.Methods;
@@ -155,18 +157,21 @@ public class AutoFakerBinder : IAutoFakerBinder
         return false;
     }
 
-    private CachedConstructor? GetConstructor(CachedType type)
+    private CachedConstructor? GetConstructor(CachedType cachedType)
     {
-        if (_constructorsCache.TryGetValue(type, out CachedConstructor? cachedConstructor))
+        if (_constructorsCache.TryGetValue(cachedType, out CachedConstructor? cachedConstructor))
             return cachedConstructor;
 
-        CachedConstructor[]? constructors = type.GetCachedConstructors();
+        CachedConstructor[]? constructors = cachedType.GetCachedConstructors();
 
-        if (type.IsDictionary)
+        if (cachedType.IsDictionary)
             return ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
 
-        if (type.IsEnumerable)
+        if (cachedType.IsEnumerable)
             return ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
+
+        if (constructors == null)
+            return null;
 
         for (var i = 0; i < constructors.Length; i++)
         {
@@ -180,7 +185,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         CachedConstructor? rtnValue = constructors.Length > 0 ? constructors[0] : null;
 
-        _constructorsCache.TryAdd(type, rtnValue);
+        _constructorsCache.TryAdd(cachedType, rtnValue);
 
         return rtnValue;
     }
@@ -301,6 +306,9 @@ public class AutoFakerBinder : IAutoFakerBinder
             return method;
 
         CachedType[]? interfaces = cachedType.GetCachedInterfaces();
+
+        if (interfaces == null)
+            return method;
 
         for (int i = 0; i < interfaces.Length; i++)
         {
