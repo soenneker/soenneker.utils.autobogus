@@ -86,9 +86,9 @@ autoFaker.Config.Overrides.Add(new OrderOverride());
 
 | Method           | Mean        | Error     | StdDev    |
 |----------------- |------------:|----------:|----------:|
-| Generate_int     |    81.44 ns |  1.603 ns |  1.499 ns |
-| Generate_string  |   249.01 ns |  2.095 ns |  1.959 ns |
-| Generate_complex | 6,949.16 ns | 57.973 ns | 54.228 ns |
+| Generate_int     |    79.40 ns |  0.635 ns |  0.563 ns |
+| Generate_string  |   241.35 ns |  3.553 ns |  3.324 ns |
+| Generate_complex | 6,782.34 ns | 43.811 ns | 38.837 ns |
 
 ### AutoBogus
 

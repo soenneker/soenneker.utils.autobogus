@@ -502,8 +502,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class SetGenerator
-        : AutoGeneratorsFixture
+    public class SetGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(ISet<TestEnum>))]
@@ -512,6 +511,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(ISet<ITestInterface>))]
         [InlineData(typeof(ISet<TestAbstractClass>))]
         [InlineData(typeof(HashSet<TestClass>))]
+        [InlineData(typeof(IReadOnlySet<TestClass>))]
         public void Generate_Should_Return_Set(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -530,6 +530,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(ISet<ITestInterface>))]
         [InlineData(typeof(ISet<TestAbstractClass>))]
         [InlineData(typeof(HashSet<TestClass>))]
+        [InlineData(typeof(IReadOnlySet<TestClass>))]
         public void GetGenerator_Should_Return_SetGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);

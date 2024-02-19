@@ -21,6 +21,14 @@ public sealed class AutoFaker : IAutoFaker
 
     public Faker Faker { get; set; }
 
+    private readonly Lazy<MethodInfo> _nonTypeParameterMethod = new(() => {
+        CachedType autoFakerType = CachedTypeService.AutoFaker.Value;
+
+        MethodInfo methodInfo = autoFakerType.Type!.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
+
+        return methodInfo;
+    });
+
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
     {
         Faker = new Faker();
@@ -63,10 +71,8 @@ public sealed class AutoFaker : IAutoFaker
 
     public object Generate(Type type)
     {
-        CachedType autoFakerType = CachedTypeService.AutoFaker.Value;
-
         // TODO: Optimize
-        MethodInfo method = autoFakerType.Type.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null).MakeGenericMethod(type);
+        MethodInfo method = _nonTypeParameterMethod.Value.MakeGenericMethod(type);
 
         object? result = method.Invoke(this, null);
         return result!;

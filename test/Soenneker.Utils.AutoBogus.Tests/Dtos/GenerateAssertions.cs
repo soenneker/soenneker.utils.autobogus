@@ -7,7 +7,7 @@ using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
-using Soenneker.Utils.AutoBogus.Extensions;
+using Soenneker.Extensions.MemberInfo;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
@@ -344,12 +344,6 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
             .ForCondition(message == null)
             .FailWith(message)
             .Then;
-    }
-
-    private object GetDefaultValue<TType>()
-    {
-        // This method is used via reflection above
-        return default(TType);
     }
 
     private static string GetAssertionMessage(string path, Type type, object value)

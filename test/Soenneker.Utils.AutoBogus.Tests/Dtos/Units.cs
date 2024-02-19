@@ -1,4 +1,6 @@
-﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
+﻿using Soenneker.Utils.AutoBogus.Tests.Enums;
+
+namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
 
 public sealed class Units
 {

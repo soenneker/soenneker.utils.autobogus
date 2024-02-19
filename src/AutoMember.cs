@@ -1,5 +1,6 @@
 using System;
-using System.Reflection;
+using Soenneker.Reflection.Cache.Fields;
+using Soenneker.Reflection.Cache.Properties;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Services;
@@ -24,16 +25,16 @@ internal sealed class AutoMember
 
     internal readonly bool IsCollection;
 
-    internal AutoMember(FieldInfo fieldInfo, AutoFakerConfig config)
+    internal AutoMember(CachedField cachedField, AutoFakerConfig config)
     {
-        Name = fieldInfo.Name;
+        Name = cachedField.FieldInfo.Name;
 
-        CachedType = CacheService.Cache.GetCachedType(fieldInfo.FieldType);
-        IsReadOnly = !fieldInfo.IsPrivate && fieldInfo.IsInitOnly;
-        Getter = fieldInfo.GetValue;
+        CachedType = CacheService.Cache.GetCachedType(cachedField.FieldInfo.FieldType);
+        IsReadOnly = !cachedField.FieldInfo.IsPrivate && cachedField.FieldInfo.IsInitOnly;
+        Getter = cachedField.FieldInfo.GetValue;
 
         if (!IsReadOnly)
-            Setter = fieldInfo.SetValue;
+            Setter = cachedField.FieldInfo.SetValue;
 
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;
@@ -41,16 +42,16 @@ internal sealed class AutoMember
         SetShouldSkip(config);
     }
 
-    internal AutoMember(PropertyInfo propertyInfo, AutoFakerConfig config)
+    internal AutoMember(CachedProperty cachedProperty, AutoFakerConfig config)
     {
-        Name = propertyInfo.Name;
+        Name = cachedProperty.PropertyInfo.Name;
 
-        CachedType = CacheService.Cache.GetCachedType(propertyInfo.PropertyType);
-        IsReadOnly = !propertyInfo.CanWrite;
-        Getter = obj => propertyInfo.GetValue(obj, []);
+        CachedType = CacheService.Cache.GetCachedType(cachedProperty.PropertyInfo.PropertyType);
+        IsReadOnly = !cachedProperty.PropertyInfo.CanWrite;
+        Getter = obj => cachedProperty.PropertyInfo.GetValue(obj, []);
 
         if (!IsReadOnly)
-            Setter = (obj, value) => propertyInfo.SetValue(obj, value, []);
+            Setter = (obj, value) => cachedProperty.PropertyInfo.SetValue(obj, value, []);
 
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;

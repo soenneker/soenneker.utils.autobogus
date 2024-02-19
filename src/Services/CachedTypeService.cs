@@ -20,4 +20,5 @@ internal static class CachedTypeService
     internal static readonly Lazy<CachedType> IDictionary = new(() => CacheService.Cache.GetCachedType(typeof(IDictionary<,>)));
     internal static readonly Lazy<CachedType> IEnumerable = new(() => CacheService.Cache.GetCachedType(typeof(IEnumerable<>)));
     internal static readonly Lazy<CachedType> AutoFaker = new(() => CacheService.Cache.GetCachedType(typeof(AutoFaker)));
+    internal static readonly Lazy<CachedType> Object = new(() => CacheService.Cache.GetCachedType(typeof(object)));
 }

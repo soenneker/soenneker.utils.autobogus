@@ -2,13 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Soenneker.Extensions.FieldInfo;
-using Soenneker.Extensions.PropertyInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
+using Soenneker.Reflection.Cache.Fields;
 using Soenneker.Reflection.Cache.Methods;
 using Soenneker.Reflection.Cache.Parameters;
+using Soenneker.Reflection.Cache.Properties;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
@@ -232,28 +231,22 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         var autoMembers = new List<AutoMember>();
 
-        PropertyInfo[] properties = cachedType.GetProperties()!;
+        CachedProperty[] cachedProperties = cachedType.GetCachedProperties()!;
 
-        FieldInfo[]? fields = cachedType.GetFields();
-
-        for (var i = 0; i < properties.Length; i++)
+        for (var i = 0; i < cachedProperties.Length; i++)
         {
-            if (properties[i].IsConstant())
-                continue;
-
-            PropertyInfo property = properties[i];
-            autoMembers.Add(new AutoMember(property, _autoFakerConfig));
+            CachedProperty cachedProperty = cachedProperties[i];
+            autoMembers.Add(new AutoMember(cachedProperty, _autoFakerConfig));
         }
 
-        if (fields != null)
-        {
-            for (var i = 0; i < fields.Length; i++)
-            {
-                if (fields[i].IsConstant())
-                    continue;
+        CachedField[]? cachedFields = cachedType.GetCachedFields();
 
-                FieldInfo field = fields[i];
-                autoMembers.Add(new AutoMember(field, _autoFakerConfig));
+        if (cachedFields != null)
+        {
+            for (var i = 0; i < cachedFields.Length; i++)
+            {
+                CachedField cachedField = cachedFields[i];
+                autoMembers.Add(new AutoMember(cachedField, _autoFakerConfig));
             }
         }
 

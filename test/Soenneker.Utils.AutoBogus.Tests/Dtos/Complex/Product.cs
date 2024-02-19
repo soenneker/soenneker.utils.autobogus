@@ -23,4 +23,6 @@ public class Product
     protected ICollection<DateTime> Revisions => _revisions;
 
     public ICollection<DateTime> GetRevisions => Revisions;
+
+    public IReadOnlySet<int> ReadOnlySet { get; set; }
 }

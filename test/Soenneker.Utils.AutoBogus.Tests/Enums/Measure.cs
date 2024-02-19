@@ -1,4 +1,4 @@
-﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
+﻿namespace Soenneker.Utils.AutoBogus.Tests.Enums;
 
 public enum Measure
 {

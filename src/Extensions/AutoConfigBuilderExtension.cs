@@ -1,6 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Soenneker.Extensions.MemberInfo;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
@@ -23,7 +24,7 @@ public static class AutoConfigBuilderExtension
         where TBinder : AutoFakerBinder, new()
     {
         var binder = new TBinder();
-        return builder?.WithBinder(binder);
+        return builder.WithBinder(binder);
     }
 
     /// <summary>
@@ -36,7 +37,7 @@ public static class AutoConfigBuilderExtension
         where TBinder : AutoFakerBinder, new()
     {
         var binder = new TBinder();
-        return builder?.WithBinder(binder);
+        return builder.WithBinder(binder);
     }
 
     /// <summary>
@@ -49,7 +50,7 @@ public static class AutoConfigBuilderExtension
         where TBinder : AutoFakerBinder, new()
     {
         var binder = new TBinder();
-        return builder?.WithBinder(binder);
+        return builder.WithBinder(binder);
     }
 
     /// <summary>
@@ -61,7 +62,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoFakerDefaultConfigBuilder WithSkip<TType>(this IAutoFakerDefaultConfigBuilder builder)
     {
         Type type = typeof(TType);
-        return builder?.WithSkip(type);
+        return builder.WithSkip(type);
     }
 
     /// <summary>
@@ -73,7 +74,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoGenerateConfigBuilder WithSkip<TType>(this IAutoGenerateConfigBuilder builder)
     {
         Type type = typeof(TType);
-        return builder?.WithSkip(type);
+        return builder.WithSkip(type);
     }
 
     /// <summary>
@@ -85,7 +86,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoFakerConfigBuilder WithSkip<TType>(this IAutoFakerConfigBuilder builder)
     {
         Type type = typeof(TType);
-        return builder?.WithSkip(type);
+        return builder.WithSkip(type);
     }
 
     /// <summary>
@@ -98,7 +99,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoFakerDefaultConfigBuilder WithSkip<TType>(this IAutoFakerDefaultConfigBuilder builder, Expression<Func<TType, object>> member)
     {
         string? memberName = GetMemberName(member);
-        return builder?.WithSkip<TType>(memberName);
+        return builder.WithSkip<TType>(memberName);
     }
 
     /// <summary>
@@ -111,7 +112,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoGenerateConfigBuilder WithSkip<TType>(this IAutoGenerateConfigBuilder builder, Expression<Func<TType, object>> member)
     {
         string? memberName = GetMemberName(member);
-        return builder?.WithSkip<TType>(memberName);
+        return builder.WithSkip<TType>(memberName);
     }
 
     /// <summary>
@@ -124,7 +125,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoFakerConfigBuilder WithSkip<TType>(this IAutoFakerConfigBuilder builder, Expression<Func<TType, object>> member)
     {
         string? memberName = GetMemberName(member);
-        return builder?.WithSkip<TType>(memberName);
+        return builder.WithSkip<TType>(memberName);
     }
 
     /// <summary>
@@ -137,7 +138,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoFakerDefaultConfigBuilder WithOverride<TType>(this IAutoFakerDefaultConfigBuilder builder, Func<AutoFakerOverrideContext, TType> generator)
     {
         var generatorOverride = new AutoFakerGeneratorTypeOverride<TType>(generator);
-        return builder?.WithOverride(generatorOverride);
+        return builder.WithOverride(generatorOverride);
     }
 
     /// <summary>
@@ -150,7 +151,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoGenerateConfigBuilder WithOverride<TType>(this IAutoGenerateConfigBuilder builder, Func<AutoFakerOverrideContext, TType> generator)
     {
         var generatorOverride = new AutoFakerGeneratorTypeOverride<TType>(generator);
-        return builder?.WithOverride(generatorOverride);
+        return builder.WithOverride(generatorOverride);
     }
 
     /// <summary>
@@ -163,7 +164,7 @@ public static class AutoConfigBuilderExtension
     public static IAutoFakerConfigBuilder WithOverride<TType>(this IAutoFakerConfigBuilder builder, Func<AutoFakerOverrideContext, TType> generator)
     {
         var generatorOverride = new AutoFakerGeneratorTypeOverride<TType>(generator);
-        return builder?.WithOverride(generatorOverride);
+        return builder.WithOverride(generatorOverride);
     }
 
     /// <summary>
@@ -180,7 +181,7 @@ public static class AutoConfigBuilderExtension
         string? memberName = GetMemberName(member);
         var generatorOverride = new AutoFakerGeneratorMemberOverride<TType, TValue>(memberName, generator);
 
-        return builder?.WithOverride(generatorOverride);
+        return builder.WithOverride(generatorOverride);
     }
 
     /// <summary>
@@ -197,7 +198,7 @@ public static class AutoConfigBuilderExtension
         string? memberName = GetMemberName(member);
         var generatorOverride = new AutoFakerGeneratorMemberOverride<TType, TValue>(memberName, generator);
 
-        return builder?.WithOverride(generatorOverride);
+        return builder.WithOverride(generatorOverride);
     }
 
     /// <summary>
@@ -214,7 +215,7 @@ public static class AutoConfigBuilderExtension
         string? memberName = GetMemberName(member);
         var generatorOverride = new AutoFakerGeneratorMemberOverride<TType, TValue>(memberName, generator);
 
-        return builder?.WithOverride(generatorOverride);
+        return builder.WithOverride(generatorOverride);
     }
 
     private static string? GetMemberName<TType>(Expression<Func<TType, object>>? member)

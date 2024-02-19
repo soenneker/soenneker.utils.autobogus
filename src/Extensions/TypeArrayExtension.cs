@@ -15,6 +15,7 @@ internal static class TypeArrayExtension
         for (var i = 0; i < cachedTypes.Count; i++)
         {
             CachedType cachedType = cachedTypes[i];
+
             switch (cachedType.Type.Name)
             {
                 case "SortedList`2":
@@ -64,6 +65,7 @@ internal static class TypeArrayExtension
 
                     break;
                 case "ISet`1":
+                case "IReadOnlySet`1":
                     if (genericCollectionType < GenericCollectionType.Set)
                     {
                         genericCollectionType = GenericCollectionType.Set;

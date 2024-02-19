@@ -48,6 +48,7 @@ public class AutoFakerTests
         var product = faker.Generate<Product>();
         product.Should().NotBeNull();
         product.GetRevisions.Should().NotBeNullOrEmpty();
+        product.ReadOnlySet.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
