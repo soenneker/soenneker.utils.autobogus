@@ -47,6 +47,8 @@ public sealed class AutoFakerContext
 
     internal readonly Stack<int> TypesStack;
 
+    internal readonly Stack<int> RecursiveConstructorStack;
+
     internal object? Instance;
 
     internal AutoFakerContext(AutoFaker autoFaker, CachedType? type = null)
@@ -55,6 +57,7 @@ public sealed class AutoFakerContext
         Config = autoFaker.Config;
 
         TypesStack = new Stack<int>();
+        RecursiveConstructorStack = new Stack<int>();
 
         Binder = autoFaker.Binder;
         Faker = autoFaker.Faker;

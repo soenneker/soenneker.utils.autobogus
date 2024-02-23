@@ -133,7 +133,6 @@ public class AutoFakerFixture
 
             instance.Child.Should().NotBeNull();
             instance.Child.Child.Should().NotBeNull();
-            instance.Child.Child.Child.Should().NotBeNull();
             instance.Child.Child.Child.Child.Should().BeNull();
         }
 

@@ -41,6 +41,36 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_record_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var record = faker.Generate<TestRecord>();
+        record.Should().NotBeNull();
+        record.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestRecordWithRecursiveConstructor_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var record = faker.Generate<TestRecordWithRecursiveConstructor>();
+        record.Should().NotBeNull();
+        record.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithRecursiveConstructor_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var classObj = faker.Generate<TestClassWithRecursiveConstructor>();
+        classObj.Should().NotBeNull();
+        classObj.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
     public void Generate_Product_should_generate()
     {
         var faker = new AutoFaker();

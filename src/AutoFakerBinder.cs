@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
 using Soenneker.Reflection.Cache.Fields;
@@ -46,6 +47,14 @@ public class AutoFakerBinder : IAutoFakerBinder
     {
         CachedConstructor? constructor = GetConstructor(context.CachedType);
 
+        if (context.RecursiveConstructorStack.Count(c => c == context.CachedType.CacheKey) >= _autoFakerConfig.RecursiveDepth)
+        {
+            context.RecursiveConstructorStack.Pop();
+            return default;
+        }
+
+        context.RecursiveConstructorStack.Push(context.CachedType.CacheKey.Value);
+
         if (constructor == null)
             return default;
 
@@ -81,6 +90,7 @@ public class AutoFakerBinder : IAutoFakerBinder
     {
         // Iterate the members and bind a generated value
         List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
+        context.RecursiveConstructorStack.Clear();
 
         for (var i = 0; i < autoMembers.Count; i++)
         {
@@ -242,8 +252,12 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (cachedFields != null)
         {
             for (var i = 0; i < cachedFields.Length; i++)
-            {
+            {              
                 CachedField cachedField = cachedFields[i];
+
+                if (cachedField.FieldInfo.IsConstant())
+                    continue;
+                
                 autoMembers.Add(new AutoMember(cachedField, _autoFakerConfig));
             }
         }
