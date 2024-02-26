@@ -1,12 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
 public class GenerateBenchmarks
 {
-    private IAutoFaker _autoFaker = default!;
+    private AutoFaker _autoFaker = default!;
 
     [GlobalSetup]
     public void Setup()

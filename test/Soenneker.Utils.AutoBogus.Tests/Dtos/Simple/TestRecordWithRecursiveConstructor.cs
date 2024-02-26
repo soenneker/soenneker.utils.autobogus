@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
 internal record TestRecordWithRecursiveConstructor
 {

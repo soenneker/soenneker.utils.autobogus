@@ -94,43 +94,43 @@ public static class AutoFakerGeneratorFactory
             // For generic types we need to interrogate the inner types
             CachedType[] generics = collectionType.GetCachedGenericArguments()!;
 
-            switch (genericCollectionType!.Name)
+            switch (genericCollectionType)
             {
-                case nameof(GenericCollectionType.ReadOnlyDictionary):
+                case GenericCollectionType.ReadOnlyDictionary:
                 {
                     CachedType keyType = generics[0];
                     CachedType valueType = generics[1];
 
                     return CreateGenericGenerator(CachedTypeService.ReadOnlyDictionaryGenerator.Value, keyType, valueType);
                 }
-                case nameof(GenericCollectionType.ImmutableDictionary):
-                case nameof(GenericCollectionType.Dictionary):
-                case nameof(GenericCollectionType.SortedList):
+                case GenericCollectionType.ImmutableDictionary:
+                case GenericCollectionType.Dictionary:
+                case GenericCollectionType.SortedList:
                 {
                     CachedType keyType = generics[0];
                     CachedType valueType = generics[1];
 
                     return CreateGenericGenerator(CachedTypeService.DictionaryGenerator.Value, keyType, valueType);
                 }
-                case nameof(GenericCollectionType.ReadOnlyList):
-                case nameof(GenericCollectionType.ListType):
-                case nameof(GenericCollectionType.ReadOnlyCollection):
-                case nameof(GenericCollectionType.Collection):
+                case GenericCollectionType.ReadOnlyList:
+                case GenericCollectionType.ListType:
+                case GenericCollectionType.ReadOnlyCollection:
+                case GenericCollectionType.Collection:
                 {
                     CachedType elementType = generics[0];
                     return CreateGenericGenerator(CachedTypeService.ListGenerator.Value, elementType);
                 }
-                case nameof(GenericCollectionType.Set):
+                case GenericCollectionType.Set:
                 {
                     CachedType elementType = generics[0];
                     return CreateGenericGenerator(CachedTypeService.SetGenerator.Value, elementType);
                 }
-                case nameof(GenericCollectionType.Enumerable):
+                case GenericCollectionType.Enumerable:
                 {
                     if (collectionType == cachedType)
                     {
                         // Not a full list type, we can't fake it if it's anything other than
-                        // the actual IEnumerable<T> interface itelf.
+                        // the actual IEnumerable<T> interface itself.
                         CachedType elementType = generics[0];
                         return CreateGenericGenerator(CachedTypeService.EnumerableGenerator.Value, elementType);
                     }

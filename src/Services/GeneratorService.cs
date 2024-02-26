@@ -9,7 +9,7 @@ using System.Net;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
-internal class GeneratorService
+internal sealed class GeneratorService
 {
     // I believe this can be static because there aren't context/config adjustments
     private static readonly Dictionary<Type, Lazy<IAutoFakerGenerator>> _cachedFundamentalGenerators = new()
