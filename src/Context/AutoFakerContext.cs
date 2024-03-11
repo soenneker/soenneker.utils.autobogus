@@ -38,6 +38,8 @@ public sealed class AutoFakerContext
 
     public readonly AutoFakerBinder Binder;
 
+    public readonly AutoFaker? AutoFaker;
+
     internal readonly CacheService CacheService;
 
     /// <summary>
@@ -50,6 +52,12 @@ public sealed class AutoFakerContext
     internal readonly Stack<int> RecursiveConstructorStack;
 
     internal object? Instance;
+
+    internal AutoFakerContext(AutoFaker autoFaker, CachedType? type = null)
+        : this(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, type)
+    {
+        AutoFaker = autoFaker;
+    }
 
     internal AutoFakerContext(AutoFakerConfig config, AutoFakerBinder binder, Faker faker, CacheService cacheService, CachedType? type = null)
     {

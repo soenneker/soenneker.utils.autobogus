@@ -35,7 +35,7 @@ public class AutoGenerateContextFixture
 
             var autoFaker = new AutoFaker();
 
-            _context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService)
+            _context = new AutoFakerContext(autoFaker)
             {
                 RuleSets = _ruleSets
             };

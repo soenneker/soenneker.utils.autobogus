@@ -24,6 +24,8 @@ public sealed class AutoFakerOverrideContext
     /// </summary>
     public string GenerateName { get; }
 
+    public AutoFaker? AutoFaker { get; }
+
     /// <summary>
     /// The underlying <see cref="Bogus.Faker"/> instance used to generate random values.
     /// </summary>
@@ -36,6 +38,7 @@ public sealed class AutoFakerOverrideContext
 
     internal AutoFakerOverrideContext(AutoFakerContext generateContext)
     {
+        AutoFaker = generateContext.AutoFaker;
         GenerateType = generateContext.CachedType;
         GenerateName = generateContext.GenerateName;
         Faker = generateContext.Faker;

@@ -64,13 +64,13 @@ public sealed class AutoFaker : IAutoFaker
 
     public TType Generate<TType>()
     {
-        var context = new AutoFakerContext(Config, Binder, Faker, CacheService);
+        var context = new AutoFakerContext(this);
         return context.Generate<TType>()!;
     }
 
     public List<TType> Generate<TType>(int count)
     {
-        var context = new AutoFakerContext(Config, Binder, Faker, CacheService);
+        var context = new AutoFakerContext(this);
         return context.GenerateMany<TType>(count);
     }
 

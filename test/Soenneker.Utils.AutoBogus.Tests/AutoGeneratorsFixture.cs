@@ -85,7 +85,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, autoFaker.CacheService.Cache.GetCachedType(readOnlyDictionaryType));
+                var context = new AutoFakerContext(autoFaker, autoFaker.CacheService.Cache.GetCachedType(readOnlyDictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -130,7 +130,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, autoFaker.CacheService.Cache.GetCachedType(dictionaryType));
+                var context = new AutoFakerContext(autoFaker, autoFaker.CacheService.Cache.GetCachedType(dictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -171,7 +171,7 @@ public partial class AutoGeneratorsFixture
                 var autoFaker = new AutoFaker();
 
                 // Arrange
-                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService);
+                var context = new AutoFakerContext(autoFaker);
 
                 context.Setup(autoFaker.CacheService.Cache.GetCachedType(setType));
 
@@ -214,7 +214,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService);
+                var context = new AutoFakerContext(autoFaker);
 
                 context.Setup(autoFaker.CacheService.Cache.GetCachedType(listType));
 
@@ -751,6 +751,6 @@ public partial class AutoGeneratorsFixture
             autoFaker.Config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
-        return new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, autoFaker.CacheService.Cache.GetCachedType(type));
+        return new AutoFakerContext(autoFaker, autoFaker.CacheService.Cache.GetCachedType(type));
     }
 }
