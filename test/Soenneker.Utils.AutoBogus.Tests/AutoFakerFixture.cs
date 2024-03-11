@@ -31,7 +31,7 @@ public class AutoFakerFixture
             autoFaker.Configure(builder =>
             {
                 var instance = builder as AutoFakerConfigBuilder;
-                fakerConfig = instance._autoFakerConfig;
+                fakerConfig = instance.AutoFakerConfig;
             });
 
             fakerConfig.Should().Be(autoFaker.Config);
@@ -129,7 +129,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Recursive_Types()
         {
-            TestRecursiveClass instance = _autoFaker.Generate<TestRecursiveClass>();
+            var instance = _autoFaker.Generate<TestRecursiveClass>();
 
             instance.Child.Should().NotBeNull();
             instance.Child.Child.Should().NotBeNull();
@@ -139,7 +139,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Recursive_Lists()
         {
-            TestRecursiveClass instance = _autoFaker.Generate<TestRecursiveClass>();
+            var instance = _autoFaker.Generate<TestRecursiveClass>();
 
             List<TestRecursiveClass> children1 = instance.Children.SelectMany(c => c.Children).ToList();
             List<TestRecursiveClass> children2 = children1.SelectMany(c => c.Children).ToList();
@@ -154,7 +154,7 @@ public class AutoFakerFixture
         [Fact]
         public void Should_Generate_Recursive_Sub_Types()
         {
-            TestRecursiveClass instance = _autoFaker.Generate<TestRecursiveClass>();
+            var instance = _autoFaker.Generate<TestRecursiveClass>();
 
             instance.Sub.Should().NotBeNull();
             instance.Sub.Value.Sub.Should().NotBeNull();

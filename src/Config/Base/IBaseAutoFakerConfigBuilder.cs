@@ -1,5 +1,4 @@
 using System;
-using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Config.Base;
@@ -30,13 +29,6 @@ public interface IBaseAutoFakerConfigBuilder<TBuilder>
     /// <param name="depth">The depth to use.</param>
     /// <returns>The current configuration builder instance.</returns>
     TBuilder WithTreeDepth(int? depth);
-
-    /// <summary>
-    /// Registers a binder instance to use when generating values.
-    /// </summary>
-    /// <param name="fakerBinder">The <see cref="IAutoFakerBinder"/> instance to use.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    TBuilder WithBinder(AutoFakerBinder fakerBinder);
 
     /// <summary>
     /// Registers a type to skip when generating values.

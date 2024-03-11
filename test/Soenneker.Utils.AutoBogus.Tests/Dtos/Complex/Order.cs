@@ -7,7 +7,7 @@ public sealed class Order
 {
     public DateTime Timestamp;
 
-    public int Id { get; }
+    public int Id { get; set; }
 
     public ICalculator Calculator { get; }
 

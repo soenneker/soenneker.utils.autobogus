@@ -22,7 +22,7 @@ public class AutoConfigBuilderFixture
         var autoFaker = new AutoFaker();
         _faker = new Faker();
         _fakerConfig = new AutoFakerConfig();
-        _builder = new AutoFakerConfigBuilder(_fakerConfig, autoFaker);
+        _builder = new AutoFakerConfigBuilder(_fakerConfig);
     }
 
     public class WithDateTimeKind : AutoConfigBuilderFixture

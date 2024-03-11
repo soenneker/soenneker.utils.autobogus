@@ -19,12 +19,11 @@ public class AutoGenerateContextFixture
     public AutoGenerateContextFixture()
     {
         _faker = new Faker();
-        _ruleSets = new List<string>();
+        _ruleSets = [];
         _fakerConfig = new AutoFakerConfig();
     }
 
-    public class GenerateMany_Internal
-        : AutoGenerateContextFixture
+    public class GenerateMany_Internal: AutoGenerateContextFixture
     {
         private int _value;
         private readonly List<int> _items;
@@ -32,11 +31,11 @@ public class AutoGenerateContextFixture
         public GenerateMany_Internal()
         {
             _value = _faker.Random.Int();
-            _items = new List<int> {_value};
+            _items = [_value];
 
             var autoFaker = new AutoFaker();
 
-            _context = new AutoFakerContext(autoFaker)
+            _context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService)
             {
                 RuleSets = _ruleSets
             };

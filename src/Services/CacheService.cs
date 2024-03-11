@@ -3,9 +3,14 @@ using Soenneker.Reflection.Cache;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
-internal static class CacheService
+public class CacheService
 {
-    internal static ReflectionCache Cache => _cacheLazy.Value;
+    internal ReflectionCache Cache => _cacheLazy.Value;
 
-    private static readonly Lazy<ReflectionCache> _cacheLazy = new(() => new ReflectionCache(), true);
+    private Lazy<ReflectionCache> _cacheLazy = new(() => new ReflectionCache(), true);
+
+    internal void ClearCache()
+    {
+        _cacheLazy = new Lazy<ReflectionCache>(() => new ReflectionCache(), true);
+    }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Bogus;
@@ -17,11 +17,14 @@ public sealed class AutoFaker : IAutoFaker
 {
     public AutoFakerConfig Config { get; set; }
 
-    internal AutoFakerBinder Binder { get; set; }
+    public AutoFakerBinder Binder { get; set; }
 
     public Faker Faker { get; set; }
 
-    private readonly Lazy<MethodInfo> _nonTypeParameterMethod = new(() => {
+    internal CacheService CacheService { get; set; }
+
+    private readonly Lazy<MethodInfo> _nonTypeParameterMethod = new(() =>
+    {
         CachedType autoFakerType = CachedTypeService.AutoFaker.Value;
 
         MethodInfo methodInfo = autoFakerType.Type!.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
@@ -39,6 +42,7 @@ public sealed class AutoFaker : IAutoFaker
             Config = autoFakerConfig;
 
         Binder = new AutoFakerBinder(Config);
+        CacheService = new CacheService();
     }
 
     public AutoFaker(Action<IAutoGenerateConfigBuilder>? configure)
@@ -49,23 +53,24 @@ public sealed class AutoFaker : IAutoFaker
 
         if (configure != null)
         {
-            var builder = new AutoFakerConfigBuilder(Config, this);
+            var builder = new AutoFakerConfigBuilder(Config);
 
             configure.Invoke(builder);
         }
 
         Binder = new AutoFakerBinder(Config);
+        CacheService = new CacheService();
     }
 
     public TType Generate<TType>()
     {
-        var context = new AutoFakerContext(this);
+        var context = new AutoFakerContext(Config, Binder, Faker, CacheService);
         return context.Generate<TType>()!;
     }
 
     public List<TType> Generate<TType>(int count)
     {
-        var context = new AutoFakerContext(this);
+        var context = new AutoFakerContext(Config, Binder, Faker, CacheService);
         return context.GenerateMany<TType>(count);
     }
 
@@ -84,17 +89,18 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="configure">A handler to build the default faker configuration.</param>
     public void Configure(Action<IAutoFakerDefaultConfigBuilder> configure)
     {
-        var builder = new AutoFakerConfigBuilder(Config, this);
+        var builder = new AutoFakerConfigBuilder(Config);
         configure.Invoke(builder);
     }
 
     /// <summary>
-    /// Generates an instance of type <typeparamref name="TType"/>.
+    /// Generates an instance of type <typeparamref name="TType"/>. <para/>
+    /// ⚠️ This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context.
     /// </summary>
     /// <typeparam name="TType">The type of instance to generate.</typeparam>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated instance.</returns>
-    [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
+    [Obsolete("")]
     public static TType GenerateStatic<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         var faker = new AutoFaker(configure);
@@ -102,13 +108,13 @@ public sealed class AutoFaker : IAutoFaker
     }
 
     /// <summary>
-    /// Generates a collection of instances of type <typeparamref name="TType"/>.
+    /// Generates a collection of instances of type <typeparamref name="TType"/>. <para/>
+    /// ⚠️ This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context.
     /// </summary>
     /// <typeparam name="TType">The type of instance to generate.</typeparam>
     /// <param name="count">The number of instances to generate.</param>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated collection of instances.</returns>
-    [Obsolete("This creates a new Bogus.Faker on each call (expensive); use one AutoFaker across your context")]
     public static List<TType> GenerateStatic<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         var faker = new AutoFaker(configure);

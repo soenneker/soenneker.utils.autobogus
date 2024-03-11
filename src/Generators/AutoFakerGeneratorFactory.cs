@@ -4,6 +4,8 @@ using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Enums;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Utils;
 
@@ -140,12 +142,12 @@ public static class AutoFakerGeneratorFactory
             }
         }
 
-        if (DataTableGenerator.TryCreateGenerator(context.CachedType, out DataTableGenerator dataTableGenerator))
+        if (BaseDataTableGenerator.TryCreateGenerator(context.CachedType, out BaseDataTableGenerator dataTableGenerator))
         {
             return dataTableGenerator;
         }
 
-        if (DataSetGenerator.TryCreateGenerator(context.CachedType, out DataSetGenerator dataSetGenerator))
+        if (BaseDataSetGenerator.TryCreateGenerator(context.CachedType, out BaseDataSetGenerator dataSetGenerator))
         {
             return dataSetGenerator;
         }

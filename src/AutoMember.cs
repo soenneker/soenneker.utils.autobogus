@@ -25,11 +25,11 @@ internal sealed class AutoMember
 
     internal readonly bool IsCollection;
 
-    internal AutoMember(CachedField cachedField, AutoFakerConfig config)
+    internal AutoMember( CachedField cachedField, CacheService cacheService, AutoFakerConfig config)
     {
         Name = cachedField.FieldInfo.Name;
 
-        CachedType = CacheService.Cache.GetCachedType(cachedField.FieldInfo.FieldType);
+        CachedType = cacheService.Cache.GetCachedType(cachedField.FieldInfo.FieldType);
         IsReadOnly = !cachedField.FieldInfo.IsPrivate && cachedField.FieldInfo.IsInitOnly;
         Getter = cachedField.FieldInfo.GetValue;
 
@@ -42,11 +42,11 @@ internal sealed class AutoMember
         SetShouldSkip(config);
     }
 
-    internal AutoMember(CachedProperty cachedProperty, AutoFakerConfig config)
+    internal AutoMember(CachedProperty cachedProperty, CacheService cacheService, AutoFakerConfig config)
     {
         Name = cachedProperty.PropertyInfo.Name;
 
-        CachedType = CacheService.Cache.GetCachedType(cachedProperty.PropertyInfo.PropertyType);
+        CachedType = cacheService.Cache.GetCachedType(cachedProperty.PropertyInfo.PropertyType);
         IsReadOnly = !cachedProperty.PropertyInfo.CanWrite;
         Getter = obj => cachedProperty.PropertyInfo.GetValue(obj, []);
 

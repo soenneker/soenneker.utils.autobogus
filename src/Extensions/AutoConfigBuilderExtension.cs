@@ -2,7 +2,6 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using Soenneker.Extensions.MemberInfo;
-using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -14,45 +13,6 @@ namespace Soenneker.Utils.AutoBogus.Extensions;
 /// </summary>
 public static class AutoConfigBuilderExtension
 {
-    /// <summary>
-    /// Registers a binder type to use when generating values.
-    /// </summary>
-    /// <typeparam name="TBinder">The <see cref="IAutoFakerBinder"/> type to use.</typeparam>
-    /// <param name="builder">The current configuration builder instance.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    public static IAutoFakerDefaultConfigBuilder WithBinder<TBinder>(this IAutoFakerDefaultConfigBuilder builder)
-        where TBinder : AutoFakerBinder, new()
-    {
-        var binder = new TBinder();
-        return builder.WithBinder(binder);
-    }
-
-    /// <summary>
-    /// Registers a binder type to use when generating values.
-    /// </summary>
-    /// <typeparam name="TBinder">The <see cref="IAutoFakerBinder"/> type to use.</typeparam>
-    /// <param name="builder">The current configuration builder instance.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    public static IAutoGenerateConfigBuilder WithBinder<TBinder>(this IAutoGenerateConfigBuilder builder)
-        where TBinder : AutoFakerBinder, new()
-    {
-        var binder = new TBinder();
-        return builder.WithBinder(binder);
-    }
-
-    /// <summary>
-    /// Registers a binder type to use when generating values.
-    /// </summary>
-    /// <typeparam name="TBinder">The <see cref="IAutoFakerBinder"/> type to use.</typeparam>
-    /// <param name="builder">The current configuration builder instance.</param>
-    /// <returns>The current configuration builder instance.</returns>
-    public static IAutoFakerConfigBuilder WithBinder<TBinder>(this IAutoFakerConfigBuilder builder)
-        where TBinder : AutoFakerBinder, new()
-    {
-        var binder = new TBinder();
-        return builder.WithBinder(binder);
-    }
-
     /// <summary>
     /// Registers a type to skip when generating values.
     /// </summary>

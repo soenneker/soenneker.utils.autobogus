@@ -16,7 +16,7 @@ internal static class GenericTypeUtil
         if (cachedType.IsGenericType)
             interfacesList.Add(cachedType);
 
-        for (int i = 0; i < interfaces.Length; i++)
+        for (var i = 0; i < interfaces.Length; i++)
         {
             CachedType interfaceType = interfaces[i];
 

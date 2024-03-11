@@ -7,21 +7,21 @@ public static class TestTypeExtensions
 {
     internal static bool IsEnum(this Type type)
     {
-        return CacheService.Cache.GetCachedType(type).IsEnum;
+        return StaticCacheService.Cache.GetCachedType(type).IsEnum;
     }
 
     internal static bool IsAbstract(this Type type)
     {
-        return CacheService.Cache.GetCachedType(type).IsAbstract;
+        return StaticCacheService.Cache.GetCachedType(type).IsAbstract;
     }
 
     internal static bool IsInterface(this Type type)
     {
-        return CacheService.Cache.GetCachedType(type).IsInterface;
+        return StaticCacheService.Cache.GetCachedType(type).IsInterface;
     }
 
     internal static bool IsGenericType(this Type type)
     {
-        return CacheService.Cache.GetCachedType(type).IsGenericType;
+        return StaticCacheService.Cache.GetCachedType(type).IsGenericType;
     }
 }

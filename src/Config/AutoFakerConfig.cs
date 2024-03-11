@@ -9,6 +9,7 @@ public sealed class AutoFakerConfig
     /// <summary>
     /// The Bogus.Faker locale to use when generating values.
     /// </summary>
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public string Locale;
 
     /// <summary>
@@ -27,6 +28,7 @@ public sealed class AutoFakerConfig
 
     public int? TreeDepth;
 
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public DateTimeKind DateTimeKind;
 
     public AutoFakerConfig()

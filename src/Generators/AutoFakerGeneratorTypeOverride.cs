@@ -15,7 +15,7 @@ internal sealed class AutoFakerGeneratorTypeOverride<TType> : AutoFakerGenerator
     {
         Generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
-        _cachedType = CacheService.Cache.GetCachedType(typeof(TType));
+        _cachedType = StaticCacheService.Cache.GetCachedType(typeof(TType));
     }
 
     public override bool CanOverride(AutoFakerContext context)

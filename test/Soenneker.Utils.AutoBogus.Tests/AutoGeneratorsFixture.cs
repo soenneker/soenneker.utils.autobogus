@@ -13,8 +13,10 @@ using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
 using Soenneker.Utils.AutoBogus.Services;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -32,7 +34,7 @@ public partial class AutoGeneratorsFixture
                         _store[item.Key] = item.Value;
                 }
 
-                Dictionary<TKey, TValue> _store = new Dictionary<TKey, TValue>();
+                Dictionary<TKey, TValue> _store = [];
 
                 public TValue this[TKey key] => _store[key];
                 public IEnumerable<TKey> Keys => _store.Keys;
@@ -83,7 +85,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(autoFaker, CacheService.Cache.GetCachedType(readOnlyDictionaryType));
+                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, autoFaker.CacheService.Cache.GetCachedType(readOnlyDictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -128,7 +130,7 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(autoFaker, CacheService.Cache.GetCachedType(dictionaryType));
+                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, autoFaker.CacheService.Cache.GetCachedType(dictionaryType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -169,9 +171,9 @@ public partial class AutoGeneratorsFixture
                 var autoFaker = new AutoFaker();
 
                 // Arrange
-                var context = new AutoFakerContext(autoFaker);
+                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService);
 
-                context.Setup(CacheService.Cache.GetCachedType(setType));
+                context.Setup(autoFaker.CacheService.Cache.GetCachedType(setType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -212,9 +214,9 @@ public partial class AutoGeneratorsFixture
                 // Arrange
                 var autoFaker = new AutoFaker();
 
-                var context = new AutoFakerContext(autoFaker);
+                var context = new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService);
 
-                context.Setup(CacheService.Cache.GetCachedType(listType));
+                context.Setup(autoFaker.CacheService.Cache.GetCachedType(listType));
 
                 // Act
                 IAutoFakerGenerator generator = AutoFakerGeneratorFactory.CreateGenerator(context);
@@ -259,10 +261,12 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void Generate_Should_Return_Value(Type type)
         {
-            CachedType cachedType = CacheService.Cache.GetCachedType(type);
-            AutoFakerBinder binder = new AutoFakerBinder(new AutoFakerConfig());
+            var autoFaker = new AutoFaker();
 
-            IAutoFakerGenerator generator = binder.GeneratorService.GetFundamentalGenerator(cachedType);
+            CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(type);
+            var binder = new AutoFakerBinder(new AutoFakerConfig());
+
+            IAutoFakerGenerator generator = binder.GeneratorService.GetFundamentalGenerator(cachedType)!;
 
             InvokeGenerator(type, generator).Should().BeOfType(type);
         }
@@ -271,9 +275,10 @@ public partial class AutoGeneratorsFixture
         [MemberData(nameof(GetRegisteredTypes))]
         public void GetGenerator_Should_Return_Generator(Type type)
         {
-            CachedType cachedType = CacheService.Cache.GetCachedType(type);
+            var autoFaker = new AutoFaker();
+            CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(type);
             AutoFakerContext context = CreateContext(type);
-            IAutoFakerGenerator generator = context.Binder.GeneratorService.GetFundamentalGenerator(cachedType);
+            IAutoFakerGenerator generator = context.Binder.GeneratorService.GetFundamentalGenerator(cachedType)!;
 
             context.Binder.GeneratorService.Clear();
 
@@ -301,11 +306,11 @@ public partial class AutoGeneratorsFixture
 
         public static IEnumerable<object[]> GetDataSetAndDataTableTypes()
         {
-            yield return [typeof(System.Data.DataSet), typeof(DataSetGenerator)];
-            yield return [typeof(DataSetGeneratorFacet.TypedDataSet), typeof(DataSetGenerator)];
-            yield return [typeof(System.Data.DataTable), typeof(DataTableGenerator)];
-            yield return [typeof(DataTableGeneratorFacet.TypedDataTable1), typeof(DataTableGenerator)];
-            yield return [typeof(DataTableGeneratorFacet.TypedDataTable2), typeof(DataTableGenerator)];
+            yield return [typeof(System.Data.DataSet), typeof(BaseDataSetGenerator)];
+            yield return [typeof(DataSetGeneratorFacet.TypedDataSet), typeof(BaseDataSetGenerator)];
+            yield return [typeof(System.Data.DataTable), typeof(BaseDataTableGenerator)];
+            yield return [typeof(DataTableGeneratorFacet.TypedDataTable1), typeof(BaseDataTableGenerator)];
+            yield return [typeof(DataTableGeneratorFacet.TypedDataTable2), typeof(BaseDataTableGenerator)];
         }
     }
 
@@ -746,6 +751,6 @@ public partial class AutoGeneratorsFixture
             autoFaker.Config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
-        return new AutoFakerContext(autoFaker, CacheService.Cache.GetCachedType(type));
+        return new AutoFakerContext(autoFaker.Config, autoFaker.Binder, autoFaker.Faker, autoFaker.CacheService, autoFaker.CacheService.Cache.GetCachedType(type));
     }
 }

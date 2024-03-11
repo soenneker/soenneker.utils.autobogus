@@ -22,7 +22,7 @@ internal sealed class AutoFakerGeneratorMemberOverride<TType, TValue> : AutoFake
         }
 
         Type = typeof(TType);
-        _cachedType = CacheService.Cache.GetCachedType(Type);
+        _cachedType = StaticCacheService.Cache.GetCachedType(Type);
         MemberName = memberName;
         Generator = generator ?? throw new ArgumentNullException(nameof(generator));
     }

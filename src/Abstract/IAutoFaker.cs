@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Bogus;
+using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Abstract;
@@ -9,6 +11,12 @@ namespace Soenneker.Utils.AutoBogus.Abstract;
 /// </summary>
 public interface IAutoFaker
 {
+    AutoFakerConfig Config { get; set; }
+
+    AutoFakerBinder Binder { get; set; }
+
+    Faker Faker { get; set; }
+
     /// <summary>
     /// Generates an instance of type <typeparamref name="TType"/>.
     /// </summary>

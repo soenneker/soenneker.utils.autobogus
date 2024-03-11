@@ -24,15 +24,22 @@ namespace Soenneker.Utils.AutoBogus;
 public class AutoFakerBinder : IAutoFakerBinder
 {
     private readonly AutoFakerConfig _autoFakerConfig;
+    private readonly CacheService _cacheService;
 
     internal readonly GeneratorService GeneratorService;
 
     private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
     private readonly Dictionary<CachedType, CachedConstructor> _constructorsCache = [];
 
-    public AutoFakerBinder(AutoFakerConfig autoFakerConfig)
+    public AutoFakerBinder(AutoFakerConfig autoFakerConfig, CacheService? cacheService = null)
     {
         _autoFakerConfig = autoFakerConfig;
+
+        if (cacheService != null)
+            _cacheService = cacheService;
+        else
+            _cacheService = new CacheService();
+
         GeneratorService = new GeneratorService();
     }
 
@@ -67,7 +74,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         var parameters = new object[cachedParameters.Length];
 
-        for (int i = 0; i < parameters.Length; i++)
+        for (var i = 0; i < parameters.Length; i++)
         {
             parameters[i] = GetParameterGenerator(cachedType, cachedParameters[i], context).Generate(context);
         }
@@ -92,6 +99,12 @@ public class AutoFakerBinder : IAutoFakerBinder
         List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
         context.RecursiveConstructorStack.Clear();
 
+        PopulateMembers(instance, context, cachedType, autoMembers);
+    }
+
+    internal void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember> autoMembers)
+    {
+        // Iterate the members and bind a generated value
         for (var i = 0; i < autoMembers.Count; i++)
         {
             AutoMember member = autoMembers[i];
@@ -199,7 +212,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private static CachedConstructor? ResolveTypedConstructor(CachedType type, CachedConstructor[] constructors)
     {
-        for (int i = 0; i < constructors.Length; i++)
+        for (var i = 0; i < constructors.Length; i++)
         {
             CachedConstructor c = constructors[i];
 
@@ -232,7 +245,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
-    private List<AutoMember> GetMembersToPopulate(CachedType cachedType)
+    internal List<AutoMember> GetMembersToPopulate(CachedType cachedType)
     {
         if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? members))
             return members;
@@ -246,19 +259,19 @@ public class AutoFakerBinder : IAutoFakerBinder
         for (var i = 0; i < cachedProperties.Length; i++)
         {
             CachedProperty cachedProperty = cachedProperties[i];
-            autoMembers.Add(new AutoMember(cachedProperty, _autoFakerConfig));
+            autoMembers.Add(new AutoMember(cachedProperty, _cacheService, _autoFakerConfig));
         }
 
         if (cachedFields != null)
         {
             for (var i = 0; i < cachedFields.Length; i++)
-            {              
+            {
                 CachedField cachedField = cachedFields[i];
 
                 if (cachedField.FieldInfo.IsConstant())
                     continue;
-                
-                autoMembers.Add(new AutoMember(cachedField, _autoFakerConfig));
+
+                autoMembers.Add(new AutoMember(cachedField, _cacheService, _autoFakerConfig));
             }
         }
 
@@ -315,7 +328,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (interfaces == null)
             return method;
 
-        for (int i = 0; i < interfaces.Length; i++)
+        for (var i = 0; i < interfaces.Length; i++)
         {
             CachedMethod? interfaceMethod = GetAddMethod(interfaces[i], argTypes);
 

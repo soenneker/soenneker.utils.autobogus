@@ -7,7 +7,7 @@
 
 This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus). It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
 
-The goals are to be *fast*, and support the latest types in .NET. It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache)
+The goals are to be *fast*, and support the latest types in .NET. It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache).
 
 .NET 6+ is supported.
 
@@ -47,7 +47,9 @@ autoFaker.Config.RepeatCount = 3;
 ...
 ```
 
-### `AutoFakerOverride` can be used for type customization:
+## `AutoFakerOverride`
+
+This is the recommended way for controlling type customization:
 
 ```csharp
 public class OrderOverride : AutoFakerOverride<Order>
@@ -73,11 +75,22 @@ autoFaker.Config.Overrides = new List<AutoFakerGeneratorOverride>();
 autoFaker.Config.Overrides.Add(new OrderOverride());
 ```
 
+## `AutoFaker<T>`
+
+This inherits from `Bogus.Faker`, and can be used to designate rules specific to the `AutoFaker` instance.
+
+```csharp
+var autoFaker = new AutoFaker<Order>());
+autoFaker.RuleFor(x => x.Id, f => f.Random.Number());
+var order = autoFaker.Generate();
+```
+
 ## Tips
-  - ⚠️ Instantiating a Bogus `Faker` takes a substantial amount of time (almost 1ms). An instance of `AutoFaker` will create one `Faker`. Thus, it's recommended that a single instance be used if possible.
-- `AutoFaker.GenerateStatic<>()` is available, but should be avoided (as it creates a new `AutoFaker`/`Faker` on each call).
+- ⚠️ Instantiating an `AutoFaker` takes a non-trivial amount of time because of Bogus `Faker` initialization (almost 1ms). It's recommended that a single instance be used if possible.
+- `AutoFaker.GenerateStatic<T>()` is also available, but should be avoided (as it creates a new `AutoFaker`/`Faker` on each call).
 
 ## Notes
+- Some patterns that existed in AutoBogus have been removed due to the complexity and performance impact.
 - This is a work in progress. Contribution is welcomed.
 
 ## Benchmarks

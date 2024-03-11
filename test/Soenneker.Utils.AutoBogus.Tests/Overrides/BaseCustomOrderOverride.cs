@@ -9,6 +9,5 @@ public class BaseCustomOrderOverride : AutoFakerOverride<BaseCustomOrder>
     public override void Generate(AutoFakerOverrideContext context)
     {
         var target = (context.Instance as BaseCustomOrder)!;
-
     }
 }

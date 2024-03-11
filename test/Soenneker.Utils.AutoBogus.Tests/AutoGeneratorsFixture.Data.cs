@@ -6,8 +6,8 @@ using System.Reflection;
 using FluentAssertions;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
-using Soenneker.Utils.AutoBogus.Generators.Types;
-using Soenneker.Utils.AutoBogus.Services;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 using Xunit;
 using Xunit.Sdk;
 
@@ -29,10 +29,12 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
-            CachedType cachedType = CacheService.Cache.GetCachedType(dataSetType);
+            AutoFaker autoFaker = new AutoFaker();
+
+            CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(dataSetType);
 
             // Act
-            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
+            bool success = BaseDataSetGenerator.TryCreateGenerator(cachedType, out BaseDataSetGenerator? generator);
 
             // Assert
             if (shouldSucceed)
@@ -61,7 +63,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
+            bool success = BaseDataSetGenerator.TryCreateGenerator(cachedType, out BaseDataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -114,7 +116,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = DataSetGenerator.TryCreateGenerator(cachedType, out DataSetGenerator? generator);
+            bool success = BaseDataSetGenerator.TryCreateGenerator(cachedType, out BaseDataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -193,10 +195,12 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
-            CachedType cachedType = CacheService.Cache.GetCachedType(dataTableType);
+            AutoFaker autoFaker = new AutoFaker();
+
+            CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(dataTableType);
 
             // Act
-            bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
+            bool success = BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? generator);
 
             // Assert
             if (shouldSucceed)
@@ -224,7 +228,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
+            bool success = BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
@@ -252,7 +256,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = DataTableGenerator.TryCreateGenerator(cachedType, out DataTableGenerator? generator);
+            bool success = BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 

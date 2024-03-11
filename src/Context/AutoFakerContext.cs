@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
-using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Context;
 
@@ -22,7 +22,7 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The type associated with the current generate request.
     /// </summary>
-    public CachedType? CachedType { get;  private set; }
+    public CachedType? CachedType { get; set; }
 
     /// <summary>
     /// The name associated with the current generate request.
@@ -38,7 +38,7 @@ public sealed class AutoFakerContext
 
     public readonly AutoFakerBinder Binder;
 
-    public readonly IAutoFaker AutoFaker;
+    internal readonly CacheService CacheService;
 
     /// <summary>
     /// The requested rule sets provided for the generate request.
@@ -51,16 +51,15 @@ public sealed class AutoFakerContext
 
     internal object? Instance;
 
-    internal AutoFakerContext(AutoFaker autoFaker, CachedType? type = null)
+    internal AutoFakerContext(AutoFakerConfig config, AutoFakerBinder binder, Faker faker, CacheService cacheService, CachedType? type = null)
     {
-        AutoFaker = autoFaker;
-        Config = autoFaker.Config;
+        Config = config;
+        Binder = binder;
+        Faker = faker;
+        CacheService = cacheService;
 
         TypesStack = new Stack<int>();
         RecursiveConstructorStack = new Stack<int>();
-
-        Binder = autoFaker.Binder;
-        Faker = autoFaker.Faker;
 
         if (type == null)
             return;

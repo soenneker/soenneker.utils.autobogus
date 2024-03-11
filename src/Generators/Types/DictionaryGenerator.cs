@@ -35,7 +35,7 @@ internal sealed class DictionaryGenerator<TKey, TValue>
 
         int length = keys.Count;
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             TKey key = keys[i];
 

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
-using Soenneker.Utils.AutoBogus.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Context;
 
@@ -30,8 +29,6 @@ public sealed class AutoFakerOverrideContext
     /// </summary>
     public Faker Faker { get; }
 
-    public IAutoFaker AutoFaker { get; }
-
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
@@ -42,7 +39,6 @@ public sealed class AutoFakerOverrideContext
         GenerateType = generateContext.CachedType;
         GenerateName = generateContext.GenerateName;
         Faker = generateContext.Faker;
-        AutoFaker = generateContext.AutoFaker;
         RuleSets = generateContext.RuleSets;
     }
 }

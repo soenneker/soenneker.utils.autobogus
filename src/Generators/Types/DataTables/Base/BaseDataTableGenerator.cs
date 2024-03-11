@@ -5,14 +5,25 @@ using System.Linq;
 using System.Threading;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
-using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
+using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Dtos;
 using Soenneker.Utils.AutoBogus.Services;
 
-namespace Soenneker.Utils.AutoBogus.Generators.Types;
+namespace Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 
-internal abstract class DataTableGenerator : IAutoFakerGenerator
+internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
 {
+    public object Generate(AutoFakerContext context)
+    {
+        DataTable table = CreateTable(context);
+
+        context.Instance = table;
+
+        PopulateRows(table, context);
+
+        return table;
+    }
+
     public static bool IsTypedDataTableType(CachedType cachedType, out Type rowType)
     {
         rowType = default;
@@ -28,13 +39,13 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
             if (cachedType.Type.BaseType == null)
                 break;
 
-            cachedType = CacheService.Cache.GetCachedType(cachedType.Type.BaseType);
+            cachedType = StaticCacheService.Cache.GetCachedType(cachedType.Type.BaseType);
         }
 
         return false;
     }
 
-    public static bool TryCreateGenerator(CachedType tableType, out DataTableGenerator generator)
+    public static bool TryCreateGenerator(CachedType tableType, out BaseDataTableGenerator generator)
     {
         generator = default;
 
@@ -44,32 +55,15 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
         {
             Type generatorType = typeof(TypedDataTableGenerator<,>).MakeGenericType(tableType.Type, rowType);
 
-            generator = (DataTableGenerator) Activator.CreateInstance(generatorType);
+            generator = (BaseDataTableGenerator) Activator.CreateInstance(generatorType);
         }
 
         return generator != null;
     }
 
-    public object Generate(AutoFakerContext context)
-    {
-        DataTable table = CreateTable(context);
-
-        context.Instance = table;
-
-        PopulateRows(table, context);
-
-        return table;
-    }
-
-    class ConstrainedColumnInformation
-    {
-        public ForeignKeyConstraint Constraint;
-        public DataColumn RelatedColumn;
-    }
-
     public static void PopulateRows(DataTable table, AutoFakerContext context)
     {
-        bool rowCountIsSpecified = false;
+        var rowCountIsSpecified = false;
 
         int rowCount = -1;
 
@@ -82,7 +76,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
         if (rowCount < 0)
             rowCount = context.Faker.Random.Number(1, 20);
 
-        var constrainedColumns = new Dictionary<DataColumn, ConstrainedColumnInformation>();
+        var constrainedColumns = new Dictionary<DataColumn, ConstrainedColumnInfo>();
         var constraintHasUniqueColumns = new HashSet<ForeignKeyConstraint>();
         var referencedRowByConstraint = new Dictionary<ForeignKeyConstraint, DataRow>();
 
@@ -92,7 +86,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
                 col.Unique ||
                 table.Constraints.OfType<UniqueConstraint>().Any(constraint => constraint.Columns.Contains(col)));
 
-            for (int i = 0; i < foreignKey.Columns.Length; i++)
+            for (var i = 0; i < foreignKey.Columns.Length; i++)
             {
                 DataColumn column = foreignKey.Columns[i];
                 DataColumn relatedColumn = foreignKey.RelatedColumns[i];
@@ -101,7 +95,7 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
                     throw new Exception($"Column is constrained in multiple foreign key relationships simultaneously: {column.ColumnName} in DataTable {table.TableName}");
 
                 constrainedColumns[column] =
-                    new ConstrainedColumnInformation
+                    new ConstrainedColumnInfo
                     {
                         Constraint = foreignKey,
                         RelatedColumn = relatedColumn,
@@ -155,9 +149,9 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
 
             object[] columnValues = new object[table.Columns.Count];
 
-            for (int i = 0; i < table.Columns.Count; i++)
+            for (var i = 0; i < table.Columns.Count; i++)
             {
-                if (constrainedColumns.TryGetValue(table.Columns[i], out ConstrainedColumnInformation? constraintInfo))
+                if (constrainedColumns.TryGetValue(table.Columns[i], out ConstrainedColumnInfo? constraintInfo))
                     columnValues[i] = referencedRowByConstraint[constraintInfo.Constraint]?[constraintInfo.RelatedColumn] ?? DBNull.Value;
                 else
                     columnValues[i] = GenerateColumnValue(table.Columns[i], context);
@@ -207,48 +201,5 @@ internal abstract class DataTableGenerator : IAutoFakerGenerator
         }
     }
 
-    abstract class Proxy
-    {
-        public abstract object Generate(AutoFakerContext context);
-    }
-
-    class Proxy<T> : Proxy
-    {
-        public override object Generate(AutoFakerContext context)
-            => context.Generate<T>();
-    }
-
     protected abstract DataTable CreateTable(AutoFakerContext context);
-
-    class UntypedDataTableGenerator
-        : DataTableGenerator
-    {
-        protected override DataTable CreateTable(AutoFakerContext context)
-        {
-            var table = new DataTable();
-
-            for (int i = context.Faker.Random.Int(3, 10); i >= 0; i--)
-            {
-                table.Columns.Add(
-                    new DataColumn
-                    {
-                        ColumnName = context.Faker.Database.Column() + i,
-                        DataType = Type.GetType("System." + context.Faker.PickRandom(
-                            ((TypeCode[]) Enum.GetValues(typeof(TypeCode)))
-                            .Except(new[] {TypeCode.Empty, TypeCode.Object, TypeCode.DBNull})
-                            .ToArray())),
-                    });
-            }
-
-            return table;
-        }
-    }
-
-    class TypedDataTableGenerator<TTable, TRow>
-        : DataTableGenerator
-        where TTable : DataTable, new()
-    {
-        protected override DataTable CreateTable(AutoFakerContext context)
-            => new TTable();
-    }
 }

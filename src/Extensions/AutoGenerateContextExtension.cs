@@ -5,7 +5,6 @@ using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
-using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -22,7 +21,7 @@ public static class AutoGenerateContextExtension
     /// <returns>The generated instance.</returns>
     public static TType? Generate<TType>(this AutoFakerContext context)
     {
-        CachedType cachedType = CacheService.Cache.GetCachedType(typeof(TType));
+        CachedType cachedType = context.CacheService.Cache.GetCachedType(typeof(TType));
 
         // Set the generate type for the current request
         context.Setup(cachedType);

@@ -18,7 +18,8 @@ public class TypeExtensionTests
     {
         Type derivedType = typeof(DerivedDictionary);
 
-        CachedType cachedType = CacheService.Cache.GetCachedType(derivedType);
+        var cacheService = new CacheService();
+        CachedType cachedType = cacheService.Cache.GetCachedType(derivedType);
 
         bool result = cachedType.IsDictionary;
         result.Should().BeTrue();
@@ -27,7 +28,8 @@ public class TypeExtensionTests
     [Fact]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_readonly_dictionary()
     {
-        CachedType derivedType = CacheService.Cache.GetCachedType(typeof(DerivedReadOnlyDictionary));
+        var cacheService = new CacheService();
+        CachedType derivedType = cacheService.Cache.GetCachedType(typeof(DerivedReadOnlyDictionary));
         List<CachedType> interfaces = derivedType.GetCachedInterfaces().ToList();
 
         (CachedType?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
@@ -38,7 +40,8 @@ public class TypeExtensionTests
     [Fact]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_dictionary_for_Derived()
     {
-        CachedType derivedType = CacheService.Cache.GetCachedType(typeof(DerivedDictionary));
+        var cacheService = new CacheService();
+        CachedType derivedType = cacheService.Cache.GetCachedType(typeof(DerivedDictionary));
         List<CachedType> interfaces = derivedType.GetCachedInterfaces().ToList();
 
         (CachedType?, GenericCollectionType?) result = interfaces.GetTypeOfGenericCollectionFromInterfaceTypes();
@@ -49,7 +52,8 @@ public class TypeExtensionTests
     [Fact]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_dictionary_for_DoubleDerived()
     {
-        CachedType derivedType = CacheService.Cache.GetCachedType(typeof(DoubleDerivedDictionary));
+        var cacheService = new CacheService();
+        CachedType derivedType = cacheService.Cache.GetCachedType(typeof(DoubleDerivedDictionary));
 
         List <CachedType> interfaces = derivedType.GetCachedInterfaces().ToList();
 
@@ -61,8 +65,9 @@ public class TypeExtensionTests
     [Fact]
     public void IsReadOnlyDictionary_should_be_true()
     {
+        var cacheService = new CacheService();
         Type derivedType = typeof(DerivedReadOnlyDictionary);
-        CachedType cachedType = CacheService.Cache.GetCachedType(derivedType);
+        CachedType cachedType = cacheService.Cache.GetCachedType(derivedType);
 
         bool result = cachedType.IsReadOnlyDictionary;
         result.Should().BeTrue();

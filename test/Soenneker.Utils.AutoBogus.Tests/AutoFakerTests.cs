@@ -2,6 +2,7 @@
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Overrides;
@@ -20,7 +21,6 @@ public class AutoFakerTests
         var order = faker.Generate<Order>();
         order.Should().NotBeNull();
     }
-
 
     [Fact]
     public void Generate_dictionary_should_generate()
@@ -86,7 +86,7 @@ public class AutoFakerTests
     {
         var faker = new AutoFaker();
 
-        Stopwatch stopwatch = Stopwatch.StartNew();
+        var stopwatch = Stopwatch.StartNew();
 
         for (var i = 0; i < 1000; i++)
         {
@@ -173,5 +173,34 @@ public class AutoFakerTests
         order.NullableDaysOfWeek.Should().NotBeNull();
         order.Longitude.Should().NotBeNull();
         CustomOrder.Constant.Should().Be("Order2x89ei");
+    }
+
+    [Fact]
+    public void Generate_Stream_should_be_null()
+    {
+        var faker = new AutoFaker();
+
+        var stream = faker.Generate<Stream>();
+        stream.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_MemoryStream_should_be_null()
+    {
+        var faker = new AutoFaker();
+
+        var stream = faker.Generate<MemoryStream>();
+        stream.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_Video_should_generate()
+    {
+        var faker = new AutoFaker();
+        
+        var video = faker.Generate<Video>();
+        video.Should().NotBeNull();
+        video.MemoryStreamsList.Should().NotBeNullOrEmpty();
+        video.StreamsArray.Should().BeEmpty();
     }
 }

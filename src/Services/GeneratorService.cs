@@ -4,11 +4,15 @@ using Soenneker.Utils.AutoBogus.Generators.Types;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
+/// <summary>
+/// This lives on the binder, so if you create a new Binder, you will lose the cache.
+/// </summary>
 internal sealed class GeneratorService
 {
     // I believe this can be static because there aren't context/config adjustments
@@ -35,6 +39,7 @@ internal sealed class GeneratorService
         {typeof(DateOnly), new Lazy<IAutoFakerGenerator>(() => new DateOnlyGenerator())},
         {typeof(TimeOnly), new Lazy<IAutoFakerGenerator>(() => new TimeOnlyGenerator())},
         {typeof(IPAddress), new Lazy<IAutoFakerGenerator>(() => new IpAddressGenerator())},
+        {typeof(MemoryStream), new Lazy<IAutoFakerGenerator>(() => new MemoryStreamGenerator())},
     };
 
     private readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt;
