@@ -24,7 +24,10 @@ public sealed class AutoFakerOverrideContext
     /// </summary>
     public string GenerateName { get; }
 
-    public AutoFaker? AutoFaker { get; }
+    /// <summary>
+    /// Will be null when using AutoFaker{T}, but don't want to warn on it.
+    /// </summary>
+    public AutoFaker AutoFaker { get; }
 
     /// <summary>
     /// The underlying <see cref="Bogus.Faker"/> instance used to generate random values.
