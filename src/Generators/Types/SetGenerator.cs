@@ -30,8 +30,9 @@ internal sealed class SetGenerator<TType> : IAutoFakerGenerator
 
         List<TType> items = context.GenerateMany<TType>();
 
-        foreach (TType? item in items)
+        for (var i = 0; i < items.Count; i++)
         {
+            TType? item = items[i];
             set.Add(item);
         }
 

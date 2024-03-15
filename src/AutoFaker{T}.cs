@@ -233,8 +233,9 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
             List<string> memberNames = GetRuleSetsMemberNames(context);
 
-            foreach (AutoMember autoMember in autoMembers)
+            for (var i = 0; i < autoMembers.Count; i++)
             {
+                AutoMember autoMember = autoMembers[i];
                 if (!memberNames.Contains(autoMember.Name))
                 {
                     finalAutoMembers.Add(autoMember);

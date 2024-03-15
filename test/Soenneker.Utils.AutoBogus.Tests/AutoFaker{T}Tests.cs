@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Diagnostics;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
@@ -21,11 +23,36 @@ public class AutoFakerTTests
     }
 
     [Fact]
+    public void Generate_order_with_count_should_generate()
+    {
+        var autoFaker = new AutoFaker<Order>();
+        autoFaker.RuleFor(x => x.Id, () => 1);
+
+        List<Order> orders = autoFaker.Generate(3);
+        orders.Should().NotBeNullOrEmpty();
+        orders.Count.Should().Be(3);
+        orders.All(x => x.Id == 1).Should().BeTrue();
+    }
+
+    [Fact]
+    public void Generate_order_inline_with_count_should_generate()
+    {
+        List<Order>? orders = new AutoFaker<Order>()
+            .RuleFor(e => e.Id, 1)
+            .RuleFor(e => e.DateCreated, DateTime.UtcNow)
+            .Generate(3);
+
+        orders.Should().NotBeNullOrEmpty();
+        orders.Count.Should().Be(3);
+        orders.All(x => x.Id == 1).Should().BeTrue();
+    }
+
+    [Fact]
     public void Generate_record_should_generate()
     {
         var faker = new AutoFaker<TestRecord>();
 
-        var record = faker.Generate();
+        TestRecord record = faker.Generate();
 
         record.Should().NotBeNull();
         record.Name.Should().NotBeNullOrEmpty();
@@ -36,7 +63,7 @@ public class AutoFakerTTests
     {
         var faker = new AutoFaker<Product>();
 
-        var product = faker.Generate();
+        Product product = faker.Generate();
         product.Should().NotBeNull();
         product.GetRevisions.Should().NotBeNullOrEmpty();
         product.ReadOnlySet.Should().NotBeNullOrEmpty();
@@ -49,10 +76,14 @@ public class AutoFakerTTests
 
         var stopwatch = Stopwatch.StartNew();
 
+        var orders = new List<Order>();
+
         for (var i = 0; i < 1000; i++)
         {
-            var order = faker.Generate();
+            orders.Add(faker.Generate());
         }
+
+        orders.Count.Should().Be(1000);
 
         stopwatch.Stop();
     }
@@ -62,7 +93,7 @@ public class AutoFakerTTests
     {
         var autoFaker = new AutoFaker<CustomOrder>();
 
-        var order = autoFaker.Generate();
+        CustomOrder order = autoFaker.Generate();
         order.Items.Count().Should().Be(1);
     }
 
@@ -77,7 +108,7 @@ public class AutoFakerTTests
             }
         };
 
-        var order = autoFaker.Generate();
+        CustomOrder order = autoFaker.Generate();
         order.Items.Count().Should().Be(3);
     }
 }

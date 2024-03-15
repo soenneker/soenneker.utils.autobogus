@@ -23,6 +23,14 @@ public class GenerateRunner : BenchmarkTest
     }
 
     [LocalFact]
+    public async Task GenerateT()
+    {
+        Summary summary = BenchmarkRunner.Run<GenerateTBenchmarks>(DefaultConf);
+
+        await OutputSummaryToLog(summary);
+    }
+
+    [LocalFact]
     public async Task Bogus()
     {
         Summary summary = BenchmarkRunner.Run<BogusBenchmarks>(DefaultConf);

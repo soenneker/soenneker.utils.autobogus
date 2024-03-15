@@ -20,8 +20,9 @@ internal sealed class AutoFakerGeneratorOverrideInvoker : IAutoFakerGenerator
     {
         var overrideContext = new AutoFakerOverrideContext(context);
 
-        foreach (AutoFakerGeneratorOverride generatorOverride in Overrides)
+        for (var i = 0; i < Overrides.Count; i++)
         {
+            AutoFakerGeneratorOverride generatorOverride = Overrides[i];
             // Check if an initialized instance is needed
             if (generatorOverride.Preinitialize && overrideContext.Instance == null)
             {
@@ -30,7 +31,7 @@ internal sealed class AutoFakerGeneratorOverrideInvoker : IAutoFakerGenerator
 
             // Let each override apply updates to the instance
             generatorOverride.Generate(overrideContext);
-        }      
+        }
 
         return overrideContext.Instance;
     }
