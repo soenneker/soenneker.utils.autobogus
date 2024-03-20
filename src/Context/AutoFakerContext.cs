@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
+using Soenneker.Utils.AutoBogus.Override;
 using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Context;
@@ -17,7 +18,10 @@ public sealed class AutoFakerContext
     /// </summary>
     public CachedType? ParentType;
 
-    public Type? GenerateType => CachedType?.Type;
+    /// <summary>
+    /// Possible null reference if <see cref="CachedType"/> is null, but remaining as non-nullable for <see cref="AutoFakerOverride{T}"/> warnings.
+    /// </summary>
+    public Type GenerateType => CachedType?.Type!;
 
     /// <summary>
     /// The type associated with the current generate request.
