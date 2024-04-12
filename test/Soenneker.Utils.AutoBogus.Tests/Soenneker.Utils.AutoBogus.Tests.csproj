@@ -26,7 +26,7 @@
         <PackageReference Include="Soenneker.Facts.Local" Version="2.1.241" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="2.1.102" />
         <PackageReference Include="xunit" Version="2.7.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
