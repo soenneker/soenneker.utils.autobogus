@@ -5,6 +5,9 @@ using Soenneker.Utils.AutoBogus.Tests.Enums;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 
+/// <summary>
+/// Don't modify this as it's used in benchmarking.
+/// </summary>
 public sealed class CustomOrder : BaseCustomOrder
 {
     public DateTime Timestamp;

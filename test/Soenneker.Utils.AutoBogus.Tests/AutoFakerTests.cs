@@ -71,6 +71,16 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_TestClassIReadOnlyCollection_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var classObj = faker.Generate<TestClassIReadOnlyCollection>();
+        classObj.Should().NotBeNull();
+        classObj.Ints.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
     public void Generate_Product_should_generate()
     {
         var faker = new AutoFaker();

@@ -4,11 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Remove="appsettings.json" />
-    </ItemGroup>
 
     <ItemGroup>
         <Content Include="appsettings.json">

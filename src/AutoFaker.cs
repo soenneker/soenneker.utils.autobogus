@@ -100,7 +100,6 @@ public sealed class AutoFaker : IAutoFaker
     /// <typeparam name="TType">The type of instance to generate.</typeparam>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated instance.</returns>
-    [Obsolete("")]
     public static TType GenerateStatic<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         var faker = new AutoFaker(configure);
