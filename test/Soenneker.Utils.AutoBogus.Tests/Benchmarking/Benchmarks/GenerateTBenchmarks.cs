@@ -5,17 +5,25 @@ namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
 public class GenerateTBenchmarks
 {
-    private AutoFaker<Order> _autoFaker = default!;
+    private AutoFaker<Order> _autoFakerComplex = default!;
+    private AutoFaker<string> _autoFakerString = default!;
 
     [GlobalSetup]
     public void Setup()
     {
-        _autoFaker = new AutoFaker<Order>();
+        _autoFakerComplex = new AutoFaker<Order>();
+        _autoFakerString = new AutoFaker<string>();
     }
 
     [Benchmark]
     public Order Generate_complex()
     {
-        return _autoFaker.Generate();
+        return _autoFakerComplex.Generate();
+    }
+
+    [Benchmark]
+    public string Generate_string()
+    {
+        return _autoFakerString.Generate();
     }
 }

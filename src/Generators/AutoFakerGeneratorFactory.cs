@@ -114,10 +114,18 @@ public static class AutoFakerGeneratorFactory
 
                     return CreateGenericGenerator(CachedTypeService.DictionaryGenerator.Value, keyType, valueType);
                 }
-                case GenericCollectionType.ReadOnlyList:
-                case GenericCollectionType.ListType:
                 case GenericCollectionType.ReadOnlyCollection:
+                {
+                    CachedType elementType = generics[0];
+                    return CreateGenericGenerator(CachedTypeService.ReadOnlyCollectionGenerator.Value, elementType);
+                }
                 case GenericCollectionType.Collection:
+                {
+                    CachedType elementType = generics[0];
+                    return CreateGenericGenerator(CachedTypeService.CollectionGenerator.Value, elementType);
+                }
+                case GenericCollectionType.ReadOnlyList:
+                case GenericCollectionType.List:
                 {
                     CachedType elementType = generics[0];
                     return CreateGenericGenerator(CachedTypeService.ListGenerator.Value, elementType);

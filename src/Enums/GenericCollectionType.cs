@@ -1,6 +1,4 @@
-﻿#pragma warning disable CA2211
-
-namespace Soenneker.Utils.AutoBogus.Enums;
+﻿namespace Soenneker.Utils.AutoBogus.Enums;
 
 public enum GenericCollectionType
 {
@@ -9,7 +7,7 @@ public enum GenericCollectionType
     Collection = 2,
     ReadOnlyCollection = 3,
     Set = 4,
-    ListType = 5,
+    List = 5,
     ReadOnlyList = 6,
     SortedList = 7,
     ReadOnlyDictionary = 8,

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
@@ -458,8 +459,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class ListGenerator
-        : AutoGeneratorsFixture
+    public class ListGenerator: AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(IList<TestEnum>))]
@@ -467,12 +467,11 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(IList<TestClass>))]
         [InlineData(typeof(IList<ITestInterface>))]
         [InlineData(typeof(IList<TestAbstractClass>))]
-        [InlineData(typeof(ICollection<TestEnum>))]
-        [InlineData(typeof(ICollection<TestStruct>))]
-        [InlineData(typeof(ICollection<TestClass>))]
-        [InlineData(typeof(ICollection<ITestInterface>))]
-        [InlineData(typeof(ICollection<TestAbstractClass>))]
+        [InlineData(typeof(List<TestEnum>))]
         [InlineData(typeof(List<TestClass>))]
+        [InlineData(typeof(List<TestStruct>))]
+        [InlineData(typeof(List<ITestInterface>))]
+        [InlineData(typeof(List<TestAbstractClass>))]
         public void Generate_Should_Return_List(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -485,23 +484,65 @@ public partial class AutoGeneratorsFixture
         }
 
         [Theory]
-        [InlineData(typeof(IList<TestEnum>))]
-        [InlineData(typeof(IList<TestStruct>))]
-        [InlineData(typeof(IList<TestClass>))]
-        [InlineData(typeof(IList<ITestInterface>))]
-        [InlineData(typeof(IList<TestAbstractClass>))]
         [InlineData(typeof(ICollection<TestEnum>))]
         [InlineData(typeof(ICollection<TestStruct>))]
         [InlineData(typeof(ICollection<TestClass>))]
         [InlineData(typeof(ICollection<ITestInterface>))]
         [InlineData(typeof(ICollection<TestAbstractClass>))]
+        [InlineData(typeof(Collection<TestEnum>))]
+        [InlineData(typeof(Collection<TestClass>))]
+        [InlineData(typeof(Collection<TestStruct>))]
+        [InlineData(typeof(Collection<ITestInterface>))]
+        [InlineData(typeof(Collection<TestAbstractClass>))]
+        public void Generate_Should_Return_Collection(Type type)
+        {
+            Type[] genericTypes = type.GetGenericArguments();
+            Type itemType = genericTypes.ElementAt(0);
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            IAutoFakerGenerator generator = CreateGenerator(typeof(CollectionGenerator<>), itemType);
+            var collection = InvokeGenerator(type, generator) as IEnumerable;
+
+            collection.Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData(typeof(IList<TestEnum>))]
+        [InlineData(typeof(IList<TestStruct>))]
+        [InlineData(typeof(IList<TestClass>))]
+        [InlineData(typeof(IList<ITestInterface>))]
+        [InlineData(typeof(IList<TestAbstractClass>))]
+        [InlineData(typeof(List<TestEnum>))]
         [InlineData(typeof(List<TestClass>))]
+        [InlineData(typeof(List<TestStruct>))]
+        [InlineData(typeof(List<ITestInterface>))]
+        [InlineData(typeof(List<TestAbstractClass>))]
         public void GetGenerator_Should_Return_ListGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
             Type generatorType = GetGeneratorType(typeof(ListGenerator<>), itemType);
+
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
+        }
+
+        [Theory]
+        [InlineData(typeof(ICollection<TestEnum>))]
+        [InlineData(typeof(ICollection<TestStruct>))]
+        [InlineData(typeof(ICollection<TestClass>))]
+        [InlineData(typeof(ICollection<ITestInterface>))]
+        [InlineData(typeof(ICollection<TestAbstractClass>))]
+        [InlineData(typeof(Collection<TestEnum>))]
+        [InlineData(typeof(Collection<TestClass>))]
+        [InlineData(typeof(Collection<TestStruct>))]
+        [InlineData(typeof(Collection<ITestInterface>))]
+        [InlineData(typeof(Collection<TestAbstractClass>))]
+        public void GetGenerator_Should_Return_CollectionGenerator(Type type)
+        {
+            AutoFakerContext context = CreateContext(type);
+            Type[] genericTypes = type.GetGenericArguments();
+            Type itemType = genericTypes.ElementAt(0);
+            Type generatorType = GetGeneratorType(typeof(CollectionGenerator<>), itemType);
 
             AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }

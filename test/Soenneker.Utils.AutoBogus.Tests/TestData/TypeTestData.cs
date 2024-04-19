@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 
 namespace Soenneker.Utils.AutoBogus.Tests.TestData;
@@ -25,7 +26,7 @@ public class TypeTestData : IEnumerable<object[]>
         yield return [typeof(short?), typeof(short)];
         yield return [typeof(uint?), typeof(uint)];
         yield return [typeof(ulong?), typeof(ulong)];
-        yield return [typeof(Uri), typeof(Uri)]; // Uri is a reference type
+        yield return [typeof(Uri), typeof(Uri)];
 
         // Non-nullable types
         yield return [typeof(string), typeof(string)];
@@ -43,7 +44,9 @@ public class TypeTestData : IEnumerable<object[]>
         yield return [typeof(short), typeof(short)];
         yield return [typeof(uint), typeof(uint)];
         yield return [typeof(ulong), typeof(ulong)];
-        yield return [typeof(Uri), typeof(Uri)]; // Uri is a reference type
+        yield return [typeof(Uri), typeof(Uri)];
+        yield return [typeof(DateTimeOffset), typeof(DateTimeOffset)];
+        yield return [typeof(IPAddress), typeof(IPAddress)];
 
         // Enumerable types
         yield return [typeof(IEnumerable<string>), typeof(List<string>)];
@@ -65,25 +68,47 @@ public class TypeTestData : IEnumerable<object[]>
         yield return [typeof(IEnumerable<ushort>), typeof(List<ushort>)];
         yield return [typeof(IEnumerable<DateTimeOffset>), typeof(List<DateTimeOffset>)];
         yield return [typeof(IEnumerable<IPAddress>), typeof(List<IPAddress>)];
-        yield return [typeof(ICollection<string>), typeof(List<string>)];
-        yield return [typeof(ICollection<bool>), typeof(List<bool>)];
-        yield return [typeof(ICollection<int>), typeof(List<int>)];
-        yield return [typeof(ICollection<double>), typeof(List<double>)];
-        yield return [typeof(ICollection<DateTime>), typeof(List<DateTime>)];
-        yield return [typeof(ICollection<byte>), typeof(List<byte>)];
-        yield return [typeof(ICollection<char>), typeof(List<char>)];
-        yield return [typeof(ICollection<decimal>), typeof(List<decimal>)];
-        yield return [typeof(ICollection<float>), typeof(List<float>)];
-        yield return [typeof(ICollection<long>), typeof(List<long>)];
-        yield return [typeof(ICollection<Guid>), typeof(List<Guid>)];
-        yield return [typeof(ICollection<sbyte>), typeof(List<sbyte>)];
-        yield return [typeof(ICollection<short>), typeof(List<short>)];
-        yield return [typeof(ICollection<uint>), typeof(List<uint>)];
-        yield return [typeof(ICollection<ulong>), typeof(List<ulong>)];
-        yield return [typeof(ICollection<Uri>), typeof(List<Uri>)];
-        yield return [typeof(ICollection<ushort>), typeof(List<ushort>)];
-        yield return [typeof(ICollection<DateTimeOffset>), typeof(List<DateTimeOffset>)];
-        yield return [typeof(ICollection<IPAddress>), typeof(List<IPAddress>)];
+
+        yield return [typeof(ICollection<string>), typeof(Collection<string>)];
+        yield return [typeof(ICollection<bool>), typeof(Collection<bool>)];
+        yield return [typeof(ICollection<int>), typeof(Collection<int>)];
+        yield return [typeof(ICollection<double>), typeof(Collection<double>)];
+        yield return [typeof(ICollection<DateTime>), typeof(Collection<DateTime>)];
+        yield return [typeof(ICollection<byte>), typeof(Collection<byte>)];
+        yield return [typeof(ICollection<char>), typeof(Collection<char>)];
+        yield return [typeof(ICollection<decimal>), typeof(Collection<decimal>)];
+        yield return [typeof(ICollection<float>), typeof(Collection<float>)];
+        yield return [typeof(ICollection<long>), typeof(Collection<long>)];
+        yield return [typeof(ICollection<Guid>), typeof(Collection<Guid>)];
+        yield return [typeof(ICollection<sbyte>), typeof(Collection<sbyte>)];
+        yield return [typeof(ICollection<short>), typeof(Collection<short>)];
+        yield return [typeof(ICollection<uint>), typeof(Collection<uint>)];
+        yield return [typeof(ICollection<ulong>), typeof(Collection<ulong>)];
+        yield return [typeof(ICollection<Uri>), typeof(Collection<Uri>)];
+        yield return [typeof(ICollection<ushort>), typeof(Collection<ushort>)];
+        yield return [typeof(ICollection<DateTimeOffset>), typeof(Collection<DateTimeOffset>)];
+        yield return [typeof(ICollection<IPAddress>), typeof(Collection<IPAddress>)];
+
+        yield return [typeof(Collection<string>), typeof(Collection<string>)];
+        yield return [typeof(Collection<bool>), typeof(Collection<bool>)];
+        yield return [typeof(Collection<int>), typeof(Collection<int>)];
+        yield return [typeof(Collection<double>), typeof(Collection<double>)];
+        yield return [typeof(Collection<DateTime>), typeof(Collection<DateTime>)];
+        yield return [typeof(Collection<byte>), typeof(Collection<byte>)];
+        yield return [typeof(Collection<char>), typeof(Collection<char>)];
+        yield return [typeof(Collection<decimal>), typeof(Collection<decimal>)];
+        yield return [typeof(Collection<float>), typeof(Collection<float>)];
+        yield return [typeof(Collection<long>), typeof(Collection<long>)];
+        yield return [typeof(Collection<Guid>), typeof(Collection<Guid>)];
+        yield return [typeof(Collection<sbyte>), typeof(Collection<sbyte>)];
+        yield return [typeof(Collection<short>), typeof(Collection<short>)];
+        yield return [typeof(Collection<uint>), typeof(Collection<uint>)];
+        yield return [typeof(Collection<ulong>), typeof(Collection<ulong>)];
+        yield return [typeof(Collection<Uri>), typeof(Collection<Uri>)];
+        yield return [typeof(Collection<ushort>), typeof(Collection<ushort>)];
+        yield return [typeof(Collection<DateTimeOffset>), typeof(Collection<DateTimeOffset>)];
+        yield return [typeof(Collection<IPAddress>), typeof(Collection<IPAddress>)];
+
         yield return [typeof(IList<string>), typeof(List<string>)];
         yield return [typeof(IList<bool>), typeof(List<bool>)];
         yield return [typeof(IList<int>), typeof(List<int>)];

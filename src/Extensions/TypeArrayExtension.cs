@@ -32,6 +32,10 @@ internal static class TypeArrayExtension
                     }
 
                     break;
+                case "ReadOnlyCollection`1":
+                    return (cachedType, GenericCollectionType.ReadOnlyCollection);
+                case "Collection`1":
+                    return (cachedType, GenericCollectionType.Collection);
                 case "IImmutableDictionary`2":
                     if (genericCollectionType < GenericCollectionType.ImmutableDictionary)
                     {
@@ -56,10 +60,10 @@ internal static class TypeArrayExtension
                     }
 
                     break;
-                case "Ilist`1":
-                    if (genericCollectionType < GenericCollectionType.ListType)
+                case "IList`1":
+                    if (genericCollectionType < GenericCollectionType.List)
                     {
-                        genericCollectionType = GenericCollectionType.ListType;
+                        genericCollectionType = GenericCollectionType.List;
                         returnType = cachedType;
                     }
 

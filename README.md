@@ -7,7 +7,11 @@
 
 This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus). It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
 
-The goals are to be *fast*, and support the latest types in .NET. It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache).
+The goals:
+- Be *fast*
+- Support the latest types in .NET
+
+It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache). Bogus updates are automatically integrated.
 
 .NET 6+ is supported.
 
@@ -95,13 +99,20 @@ var order = autoFaker.Generate();
 
 ## Benchmarks
 
-### Soenneker.Utils.AutoBogus
+### Soenneker.Utils.AutoBogus - `AutoFaker`
 
 | Method           | Mean        | Error     | StdDev    |
 |----------------- |------------:|----------:|----------:|
 | Generate_int     |    79.40 ns |  0.635 ns |  0.563 ns |
 | Generate_string  |   241.35 ns |  3.553 ns |  3.324 ns |
 | Generate_complex | 6,782.34 ns | 43.811 ns | 38.837 ns |
+
+### Soenneker.Utils.AutoBogus - `AutoFaker<T>`
+
+| Method           | Mean       | Error    | StdDev   |
+|----------------- |-----------:|---------:|---------:|
+| Generate_string  |   283.6 ns |  3.28 ns |  3.07 ns |
+| Generate_complex | 8,504.0 ns | 76.58 ns | 67.89 ns |
 
 ### AutoBogus
 
@@ -112,8 +123,9 @@ var order = autoFaker.Generate();
 
 ### Bogus
 
-| Method       | Mean          | Error         | StdDev       |
-|------------- |--------------:|--------------:|-------------:|
-| Bogus_int    |      19.58 ns |      0.150 ns |     0.133 ns |
-| Bogus_string |     172.25 ns |      2.510 ns |     2.347 ns |
-| Bogus_ctor   | 717,799.56 ns | 10,086.875 ns | 9,435.269 ns |
+| Method       | Mean          | Error        | StdDev       |
+|------------- |--------------:|-------------:|-------------:|
+| Bogus_int    |      19.70 ns |     0.176 ns |     0.165 ns |
+| Bogus_string |     171.75 ns |     2.763 ns |     2.585 ns |
+| Bogus_ctor   | 730,669.06 ns | 8,246.622 ns | 7,310.416 ns |
+

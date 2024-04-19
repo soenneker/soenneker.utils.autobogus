@@ -14,15 +14,15 @@ public class BogusBenchmarks
     }
 
     [Benchmark]
-    public string Bogus_string()
-    {
-       return _faker.Random.Word();
-    }
-
-    [Benchmark]
     public int Bogus_int()
     {
         return _faker.Random.Int();
+    }
+
+    [Benchmark]
+    public string Bogus_string()
+    {
+       return _faker.Random.Word();
     }
 
     [Benchmark]

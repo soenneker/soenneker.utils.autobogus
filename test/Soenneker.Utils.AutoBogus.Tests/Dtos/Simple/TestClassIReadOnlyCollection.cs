@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple
+namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+
+public class TestClassIReadOnlyCollection
 {
-    public class TestClassIReadOnlyCollection
-    {
-        public IReadOnlyCollection<int> Ints { get; set; }
-    }
+    public IReadOnlyCollection<int> Ints { get; set; }
 }

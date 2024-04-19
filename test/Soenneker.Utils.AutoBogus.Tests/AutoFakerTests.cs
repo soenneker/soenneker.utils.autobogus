@@ -81,6 +81,26 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_TestClassCollection_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var classObj = faker.Generate<TestClassCollection>();
+        classObj.Should().NotBeNull();
+        classObj.Strings.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassReadOnlyCollection_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var classObj = faker.Generate<TestClassReadOnlyCollection>();
+        classObj.Should().NotBeNull();
+        classObj.Strings.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
     public void Generate_Product_should_generate()
     {
         var faker = new AutoFaker();
