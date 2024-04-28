@@ -52,7 +52,11 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
     public TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
     {
+        if (cachedType.IsAbstract)
+            return default;
+
         CachedConstructor? constructor = GetConstructor(context.CachedType);
+
 
         if (context.RecursiveConstructorStack.Count(c => c == context.CachedType.CacheKey) >= _autoFakerConfig.RecursiveDepth)
         {
@@ -197,17 +201,30 @@ public class AutoFakerBinder : IAutoFakerBinder
         {
             CachedConstructor constructor = constructors[i];
 
+           if (constructor.ConstructorInfo.IsStatic)
+                continue;
+
             if (constructor.GetCachedParameters().Length == 0)
             {
+                _constructorsCache.TryAdd(cachedType, constructor);
+
                 return constructor;
             }
         }
 
-        CachedConstructor? rtnValue = constructors.Length > 0 ? constructors[0] : null;
+        for (var i = 0; i < constructors.Length; i++)
+        {
+            CachedConstructor constructor = constructors[i];
 
-        _constructorsCache.TryAdd(cachedType, rtnValue);
+            if (constructor.ConstructorInfo.IsStatic)
+                continue;
 
-        return rtnValue;
+            _constructorsCache.TryAdd(cachedType, constructor);
+
+            return constructor;
+        }
+
+        return null;
     }
 
     private static CachedConstructor? ResolveTypedConstructor(CachedType type, CachedConstructor[] constructors)
@@ -269,6 +286,9 @@ public class AutoFakerBinder : IAutoFakerBinder
                 CachedField cachedField = cachedFields[i];
 
                 if (cachedField.FieldInfo.IsConstant())
+                    continue;
+//
+                if (cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
                 autoMembers.Add(new AutoMember(cachedField, _cacheService, _autoFakerConfig));

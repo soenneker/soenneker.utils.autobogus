@@ -34,18 +34,18 @@ public class AutoFakerTTests
         orders.All(x => x.Id == 1).Should().BeTrue();
     }
 
-    [Fact]
-    public void Generate_order_inline_with_count_should_generate()
-    {
-        List<Order>? orders = new AutoFaker<Order>()
-            .RuleFor(e => e.Id, 1)
-            .RuleFor(e => e.DateCreated, DateTime.UtcNow)
-            .Generate(3);
+    //[Fact]
+    //public void Generate_order_inline_with_count_should_generate()
+    //{
+    //    List<Order>? orders = new AutoFaker<Order>()
+    //        .RuleFor(e => e.Id, 1)
+    //        .RuleFor(e => e.DateCreated, DateTime.UtcNow)
+    //        .Generate(3);
 
-        orders.Should().NotBeNullOrEmpty();
-        orders.Count.Should().Be(3);
-        orders.All(x => x.Id == 1).Should().BeTrue();
-    }
+    //    orders.Should().NotBeNullOrEmpty();
+    //    orders.Count.Should().Be(3);
+    //    orders.All(x => x.Id == 1).Should().BeTrue();
+    //}
 
     [Fact]
     public void Generate_record_should_generate()

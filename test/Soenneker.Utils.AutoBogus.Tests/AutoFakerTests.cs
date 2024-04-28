@@ -233,4 +233,22 @@ public class AutoFakerTests
         video.MemoryStreamsList.Should().NotBeNullOrEmpty();
         video.StreamsArray.Should().BeEmpty();
     }
+
+    [Fact]
+    public void Generate_should_generate_internal_property()
+    {
+        var faker = new AutoFaker();
+
+        var video = faker.Generate<Video>();
+        video.Name.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_should_generate_internal_field()
+    {
+        var faker = new AutoFaker();
+
+        var video = faker.Generate<Video>();
+        video.Id.Should().NotBeNull();
+    }
 }
