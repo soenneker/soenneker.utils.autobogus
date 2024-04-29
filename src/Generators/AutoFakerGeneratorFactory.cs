@@ -98,6 +98,11 @@ public static class AutoFakerGeneratorFactory
 
             switch (genericCollectionType)
             {
+                case GenericCollectionType.ImmutableList:
+                {
+                    CachedType elementType = generics[0];
+                    return CreateGenericGenerator(CachedTypeService.ImmutableListGenerator.Value, elementType);
+                }
                 case GenericCollectionType.ReadOnlyDictionary:
                 {
                     CachedType keyType = generics[0];

@@ -8,6 +8,7 @@ using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Overrides;
 using System.Linq;
 using Soenneker.Utils.AutoBogus.Config;
+using Soenneker.Utils.AutoBogus.Tests.Dtos;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -264,5 +265,16 @@ public class AutoFakerTests
 
         var video = faker.Generate<Video>();
         video.Id.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_ImmutableList_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var immutableListDto = faker.Generate<ImmutableListDto>();
+        immutableListDto.Should().NotBeNull();
+        immutableListDto.List.Should().NotBeNullOrEmpty();
+        immutableListDto.IList.Should().NotBeNullOrEmpty();
     }
 }

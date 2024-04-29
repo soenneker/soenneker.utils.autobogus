@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Soenneker.Reflection.Cache;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Generators.Types.Immutables;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
@@ -21,6 +22,7 @@ internal static class CachedTypeService
     internal static readonly Lazy<CachedType> DictionaryGenerator = new(() => ReflectionCache.GetCachedType(typeof(DictionaryGenerator<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> CollectionGenerator = new(() => ReflectionCache.GetCachedType(typeof(CollectionGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> ReadOnlyCollectionGenerator = new(() => ReflectionCache.GetCachedType(typeof(ReadOnlyCollectionGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    internal static readonly Lazy<CachedType> ImmutableListGenerator = new(() => ReflectionCache.GetCachedType(typeof(ImmutableListGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     internal static readonly Lazy<CachedType> IDictionary = new(() => ReflectionCache.GetCachedType(typeof(IDictionary<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> IEnumerable = new(() => ReflectionCache.GetCachedType(typeof(IEnumerable<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);

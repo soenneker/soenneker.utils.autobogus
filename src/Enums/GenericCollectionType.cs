@@ -12,5 +12,6 @@ public enum GenericCollectionType
     SortedList = 7,
     ReadOnlyDictionary = 8,
     ImmutableDictionary = 9,
-    Dictionary = 10
+    Dictionary = 10,
+    ImmutableList = 11
 }

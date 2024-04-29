@@ -6,7 +6,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        AutoFaker faker = new AutoFaker();
+        var faker = new AutoFaker();
 
         for (var i = 0; i < 10000; i++)
         {

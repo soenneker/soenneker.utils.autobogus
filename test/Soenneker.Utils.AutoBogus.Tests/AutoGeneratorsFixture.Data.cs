@@ -29,7 +29,7 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
-            AutoFaker autoFaker = new AutoFaker();
+            var autoFaker = new AutoFaker();
 
             CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(dataSetType);
 
@@ -195,7 +195,7 @@ partial class AutoGeneratorsFixture
         [MemberData(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
-            AutoFaker autoFaker = new AutoFaker();
+            var autoFaker = new AutoFaker();
 
             CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(dataTableType);
 
