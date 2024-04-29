@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Primitives;
+using Soenneker.Utils.AutoBogus.Tests.Dtos;
 
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
+namespace Soenneker.Utils.AutoBogus.Tests.Extensions;
 
-public static class GenerateExtensions
+public static class ObjectAssertionsExtensions
 {
     public static AndConstraint<object> BeGenerated(this ObjectAssertions assertions)
     {

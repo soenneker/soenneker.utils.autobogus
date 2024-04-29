@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
@@ -35,11 +36,14 @@ internal sealed class GeneratorService
         {typeof(ulong), new Lazy<IAutoFakerGenerator>(() => new ULongGenerator())},
         {typeof(Uri), new Lazy<IAutoFakerGenerator>(() => new UriGenerator())},
         {typeof(ushort), new Lazy<IAutoFakerGenerator>(() => new UShortGenerator())},
+        {typeof(Half), new Lazy<IAutoFakerGenerator>(() => new HalfGenerator())},
+        {typeof(BigInteger), new Lazy<IAutoFakerGenerator>(() => new BigIntegerGenerator())},
         {typeof(DateTimeOffset), new Lazy<IAutoFakerGenerator>(() => new DateTimeOffsetGenerator())},
         {typeof(DateOnly), new Lazy<IAutoFakerGenerator>(() => new DateOnlyGenerator())},
         {typeof(TimeOnly), new Lazy<IAutoFakerGenerator>(() => new TimeOnlyGenerator())},
         {typeof(IPAddress), new Lazy<IAutoFakerGenerator>(() => new IpAddressGenerator())},
         {typeof(MemoryStream), new Lazy<IAutoFakerGenerator>(() => new MemoryStreamGenerator())},
+        {typeof(Exception), new Lazy<IAutoFakerGenerator>(() => new ExceptionGenerator())},
     };
 
     private readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt;

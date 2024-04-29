@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
+using System.Numerics;
 
 namespace Soenneker.Utils.AutoBogus.Tests.TestData;
 
@@ -25,8 +26,14 @@ public class TypeTestData : IEnumerable<object[]>
         yield return [typeof(sbyte?), typeof(sbyte)];
         yield return [typeof(short?), typeof(short)];
         yield return [typeof(uint?), typeof(uint)];
+        yield return [typeof(Int16?), typeof(Int16)];
+        yield return [typeof(Int32?), typeof(Int32)];
         yield return [typeof(ulong?), typeof(ulong)];
         yield return [typeof(Uri), typeof(Uri)];
+        yield return [typeof(Half?), typeof(Half)];
+
+        // ReSharper disable once ConvertNullableToShortForm
+        yield return [typeof(Nullable<int>), typeof(int)];
 
         // Non-nullable types
         yield return [typeof(string), typeof(string)];
@@ -43,10 +50,14 @@ public class TypeTestData : IEnumerable<object[]>
         yield return [typeof(sbyte), typeof(sbyte)];
         yield return [typeof(short), typeof(short)];
         yield return [typeof(uint), typeof(uint)];
+        yield return [typeof(Int16), typeof(Int16)];
+        yield return [typeof(Int32), typeof(Int32)];
         yield return [typeof(ulong), typeof(ulong)];
         yield return [typeof(Uri), typeof(Uri)];
         yield return [typeof(DateTimeOffset), typeof(DateTimeOffset)];
         yield return [typeof(IPAddress), typeof(IPAddress)];
+        yield return [typeof(Half), typeof(Half)];
+        yield return [typeof(TimeSpan), typeof(TimeSpan)];
 
         // Enumerable types
         yield return [typeof(IEnumerable<string>), typeof(List<string>)];

@@ -52,6 +52,50 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_record_struct_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var record = faker.Generate<TestRecordStruct>();
+
+        record.Should().NotBeNull();
+        record.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithNumber_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var testClass = faker.Generate<TestClassWithNumber<int>>();
+
+        testClass.Should().NotBeNull();
+        testClass.Number.Should().NotBe(0);
+    }
+
+    [Fact]
+    public void Generate_BigInteger_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var testClass = faker.Generate<TestClassWithBigInteger>();
+
+        testClass.Should().NotBeNull();
+        testClass.BigInteger.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_Exception_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var testClass = faker.Generate<TestClassWithException>();
+
+        testClass.Should().NotBeNull();
+        testClass.Exception.Should().NotBeNull();
+    }
+
+    [Fact]
     public void Generate_TestRecordWithRecursiveConstructor_should_generate()
     {
         var faker = new AutoFaker();
@@ -67,6 +111,16 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var classObj = faker.Generate<TestClassWithRecursiveConstructor>();
+        classObj.Should().NotBeNull();
+        classObj.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithRecursiveEnumerableConstructor_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var classObj = faker.Generate<TestClassWithRecursiveEnumerableConstructor>();
         classObj.Should().NotBeNull();
         classObj.Name.Should().NotBeNullOrEmpty();
     }
@@ -206,7 +260,7 @@ public class AutoFakerTests
 
         order.NullableDaysOfWeek.Should().NotBeNull();
         order.NullableDaysOfWeek.Should().BeEmpty();
-        
+
         order.Longitude.Should().NotBeNull();
         CustomOrder.Constant.Should().Be("Order2x89ei");
     }
@@ -242,7 +296,7 @@ public class AutoFakerTests
     public void Generate_Video_should_generate()
     {
         var faker = new AutoFaker();
-        
+
         var video = faker.Generate<Video>();
         video.Should().NotBeNull();
         video.MemoryStreamsList.Should().NotBeNullOrEmpty();

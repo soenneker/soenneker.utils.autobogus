@@ -1,6 +1,6 @@
 using System;
 
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
+namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Abstract;
 
 public interface ITimestamp
 {

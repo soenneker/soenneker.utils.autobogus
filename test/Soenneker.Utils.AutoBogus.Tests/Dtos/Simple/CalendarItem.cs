@@ -1,6 +1,6 @@
 ﻿using Soenneker.Utils.AutoBogus.Tests.Enums;
 
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
+namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
 public class CalendarItem
 {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Soenneker.Utils.AutoBogus.Tests.Dtos.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Enums;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos;

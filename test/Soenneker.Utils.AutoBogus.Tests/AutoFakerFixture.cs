@@ -9,6 +9,7 @@ using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+using Soenneker.Utils.AutoBogus.Tests.Extensions;
 using Soenneker.Utils.AutoBogus.Tests.TestData;
 using Xunit;
 

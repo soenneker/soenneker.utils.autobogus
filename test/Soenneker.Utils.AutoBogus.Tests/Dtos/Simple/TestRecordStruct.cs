@@ -1,6 +1,6 @@
 ﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
-internal record TestRecord
+internal record struct TestRecordStruct
 {
     public string? Name { get; set; }
 

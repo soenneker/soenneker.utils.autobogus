@@ -4,10 +4,10 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class EnumGenerator<TType>: IAutoFakerGenerator where TType: struct, Enum
+internal sealed class ExceptionGenerator: IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        return context.Faker.Random.Enum<TType>();
+        return new Exception(context.Faker.Lorem.Sentence());
     }
 }

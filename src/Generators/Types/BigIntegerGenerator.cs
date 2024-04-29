@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Numerics;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class EnumGenerator<TType>: IAutoFakerGenerator where TType: struct, Enum
+internal sealed class BigIntegerGenerator : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        return context.Faker.Random.Enum<TType>();
+        return new BigInteger(context.Faker.Random.Int());
     }
 }

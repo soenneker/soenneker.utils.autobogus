@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
+namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Abstract;
 
 public interface IRepository
 {
