@@ -331,4 +331,24 @@ public class AutoFakerTests
         immutableListDto.List.Should().NotBeNullOrEmpty();
         immutableListDto.IList.Should().NotBeNullOrEmpty();
     }
+
+    [Fact]
+    public void Generate_TestClassWithAbstractClassParameter_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var obj = faker.Generate<TestClassWithAbstractClassParameter>();
+        obj.Should().NotBeNull();
+        obj.TestClass.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithDerivedClassParameter_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var obj = faker.Generate<TestClassWithDerivedClassParameter>();
+        obj.Should().NotBeNull();
+        obj.TestClass.Should().NotBeNull();
+    }
 }

@@ -9,6 +9,7 @@ using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
 using Soenneker.Utils.AutoBogus.Tests.TestData;
 using Xunit;
@@ -96,8 +97,7 @@ public class AutoFakerFixture
         }
     }
 
-    public class Behaviors_Types
-        : AutoFakerFixture
+    public class Behaviors_Types : AutoFakerFixture
     {
         [Fact]
         public void Should_Not_Generate_Interface_Type()

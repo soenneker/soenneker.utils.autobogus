@@ -8,6 +8,7 @@ using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
@@ -42,10 +43,10 @@ public partial class AutoGeneratorsFixture
         [Theory]
         [InlineData(typeof(IReadOnlyDictionary<int, TestEnum>))]
         [InlineData(typeof(IReadOnlyDictionary<int, TestStruct>))]
-        [InlineData(typeof(IReadOnlyDictionary<int, TestClass>))]
+        [InlineData(typeof(IReadOnlyDictionary<int, TestSealedClass>))]
         [InlineData(typeof(IReadOnlyDictionary<int, ITestInterface>))]
         [InlineData(typeof(IReadOnlyDictionary<int, TestAbstractClass>))]
-        [InlineData(typeof(ReadOnlyDictionary<int, TestClass>))]
+        [InlineData(typeof(ReadOnlyDictionary<int, TestSealedClass>))]
         public void GetGenerator_Should_Return_ReadOnlyDictionaryGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
