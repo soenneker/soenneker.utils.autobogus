@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Diagnostics;

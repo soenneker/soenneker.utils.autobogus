@@ -199,10 +199,24 @@ public class AutoFakerTests
         var autoFaker = new AutoFaker(config);
 
         var order = autoFaker.Generate<CustomOrder>();
+
         order.DaysOfWeek.Should().NotBeNull();
+        order.DaysOfWeek.Should().BeEmpty();
+
         order.NullableDaysOfWeek.Should().NotBeNull();
+        order.NullableDaysOfWeek.Should().BeEmpty();
+        
         order.Longitude.Should().NotBeNull();
         CustomOrder.Constant.Should().Be("Order2x89ei");
+    }
+
+    [Fact]
+    public void Generate_CalendarItem_should_generate_no_dayOfWeek()
+    {
+        var autoFaker = new AutoFaker();
+
+        var calendarItem = autoFaker.Generate<CalendarItem>();
+        calendarItem.DayOfWeek.Should().BeNull();
     }
 
     [Fact]

@@ -197,31 +197,29 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (cachedType.IsEnumerable)
             return ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
 
+        CachedConstructor? parameterlessConstructor = null;
+
         for (var i = 0; i < constructors.Length; i++)
         {
             CachedConstructor constructor = constructors[i];
 
-           if (constructor.ConstructorInfo.IsStatic)
+            // Not going to support private constructors right now, and can't invoke a static one neither
+            if (!constructor.IsPublic || constructor.IsStatic)
                 continue;
 
             if (constructor.GetCachedParameters().Length == 0)
             {
                 _constructorsCache.TryAdd(cachedType, constructor);
-
                 return constructor;
             }
+
+            parameterlessConstructor ??= constructor;
         }
 
-        for (var i = 0; i < constructors.Length; i++)
+        if (parameterlessConstructor != null)
         {
-            CachedConstructor constructor = constructors[i];
-
-            if (constructor.ConstructorInfo.IsStatic)
-                continue;
-
-            _constructorsCache.TryAdd(cachedType, constructor);
-
-            return constructor;
+            _constructorsCache.TryAdd(cachedType, parameterlessConstructor);
+            return parameterlessConstructor;
         }
 
         return null;
@@ -287,7 +285,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
                 if (cachedField.FieldInfo.IsConstant())
                     continue;
-//
+                //
                 if (cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
