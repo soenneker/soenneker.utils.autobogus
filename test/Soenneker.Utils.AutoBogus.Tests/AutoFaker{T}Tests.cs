@@ -110,4 +110,22 @@ public class AutoFakerTTests
         CustomOrder order = autoFaker.Generate();
         order.Items.Count().Should().Be(3);
     }
+
+    [Fact]
+    public void Generate_budget_and_budget_entries_should_generate()
+    {
+        Budget? budget = new AutoFaker<Budget>()
+            .RuleFor(c => c.IsActive, true)
+            .Ignore(c => c.BudgetEntries)
+            .Generate();
+
+        budget.Should().NotBeNull();
+
+        List<BudgetEntry>? budgetEntries = new AutoFaker<BudgetEntry>()
+            .RuleFor(c => c.Budget, c => budget)
+            .Ignore(c => c.Currency)
+            .Generate(10);
+
+        budgetEntries.ForEach(c => c.Should().NotBeNull());
+    }
 }

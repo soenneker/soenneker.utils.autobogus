@@ -241,6 +241,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
                 }
             }
 
+            context.RecursiveConstructorStack.Clear();
             context.Binder.PopulateMembers(instance, context, cachedType, finalAutoMembers);
 
             // Ensure the default finish with is invoke
