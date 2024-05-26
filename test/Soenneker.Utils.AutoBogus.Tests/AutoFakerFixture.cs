@@ -111,7 +111,7 @@ public class AutoFakerFixture
         }
     }
 
-    public class Behaviors_Recursive: AutoFakerFixture
+    public class Behaviors_Recursive : AutoFakerFixture
     {
         private readonly TestRecursiveClass _instance;
 

@@ -19,7 +19,7 @@ internal sealed class ImmutableListGenerator<TType> : IAutoFakerGenerator
             ImmutableList<TType> list = ImmutableList.CreateRange(items);
             return list;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null!;
         }

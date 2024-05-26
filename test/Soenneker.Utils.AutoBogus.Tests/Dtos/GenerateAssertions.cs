@@ -230,7 +230,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         return assertion.Invoke(path, genericType, value);
     }
 
-    private string AssertMock(string path, Type type, object value)
+    private static string AssertMock(string path, Type type, object value)
     {
         if (value == null)
         {
@@ -239,7 +239,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
         // Assert via assignment rather than explicit checks (the actual instance could be a sub class)
         Type valueType = value.GetType();
-        return type.IsAssignableFrom(valueType) ? null : GetAssertionMessage(path, type, value);
+        return type.IsAssignableFrom(valueType) ? null : GetAssertionMessage(path, type, value, valueType);
     }
 
     private string AssertArray(string path, Type type, object value)
@@ -346,8 +346,15 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
             .Then;
     }
 
-    private static string GetAssertionMessage(string path, Type type, object value)
+    private static string GetAssertionMessage(string path, Type type, object value, Type? wrongType = null)
     {
+        if (wrongType != null)
+        {
+            return string.IsNullOrWhiteSpace(path)
+                ? $"Excepted a value of type '{type.FullName} (was '{wrongType}')' -> {value ?? "?"}."
+                : $"Excepted a value of type '{type.FullName}' (was '{wrongType}') for '{path}' -> {value ?? "?"}.";
+        }
+
         return string.IsNullOrWhiteSpace(path)
             ? $"Excepted a value of type '{type.FullName}' -> {value ?? "?"}."
             : $"Excepted a value of type '{type.FullName}' for '{path}' -> {value ?? "?"}.";

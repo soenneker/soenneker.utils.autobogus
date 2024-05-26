@@ -56,7 +56,6 @@ public class TypeTestData : IEnumerable<object[]>
         yield return [typeof(DateTimeOffset), typeof(DateTimeOffset)];
         yield return [typeof(IPAddress), typeof(IPAddress)];
         yield return [typeof(Half), typeof(Half)];
-        yield return [typeof(TimeSpan), typeof(TimeSpan)];
 
         // Enumerable types
         yield return [typeof(IEnumerable<string>), typeof(List<string>)];

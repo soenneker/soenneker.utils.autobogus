@@ -18,7 +18,7 @@ internal sealed class ReadOnlyCollectionGenerator<TType> : IAutoFakerGenerator
             var collection = new ReadOnlyCollection<TType>(items);
             return collection;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null!;
         }

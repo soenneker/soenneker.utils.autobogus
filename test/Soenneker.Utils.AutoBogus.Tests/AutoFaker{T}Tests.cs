@@ -5,6 +5,8 @@ using System.Diagnostics;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using System.Linq;
+using Bogus;
+using Soenneker.Facts.Local;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -127,5 +129,18 @@ public class AutoFakerTTests
             .Generate(10);
 
         budgetEntries.ForEach(c => c.Should().NotBeNull());
+    }
+
+
+    [LocalFact]
+    public void TestPrivateReadOnlyWithCtor_Should_Not_Be_Overwritten()
+    {
+        const string key = "someKey";
+
+        Faker<TestPrivateReadOnlyWithCtor>? objectToFake = new AutoFaker<TestPrivateReadOnlyWithCtor>();
+        
+        TestPrivateReadOnlyWithCtor? obj = objectToFake.Generate();
+
+        obj.GetKey().Should().Be(key);
     }
 }

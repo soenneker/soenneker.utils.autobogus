@@ -36,7 +36,7 @@ public partial class AutoGeneratorsFixture
                         _store[item.Key] = item.Value;
                 }
 
-                Dictionary<TKey, TValue> _store = [];
+                readonly Dictionary<TKey, TValue> _store = [];
 
                 public TValue this[TKey key] => _store[key];
                 public IEnumerable<TKey> Keys => _store.Keys;

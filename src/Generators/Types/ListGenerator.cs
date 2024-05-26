@@ -22,7 +22,7 @@ internal sealed class ListGenerator<TType> : IAutoFakerGenerator
             {
                 list = context.CachedType.CreateInstance<List<TType>>();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 list = [];
             }

@@ -137,58 +137,58 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     private void PrepareCreate(AutoFakerContext context)
     {
         // Check a create handler hasn't previously been set or configured externally
-        if (!_createInitialized && CreateActions[currentRuleSet] == null)
+        if (_createInitialized || CreateActions[currentRuleSet] != null)
+            return;
+
+        CreateActions[currentRuleSet] = faker =>
         {
-            CreateActions[currentRuleSet] = faker =>
+            // Only auto create if the 'default' rule set is defined for generation
+            // This is because any specific rule sets are expected to handle the full creation
+            if (context.RuleSets != null && context.RuleSets.Contains(currentRuleSet))
             {
-                // Only auto create if the 'default' rule set is defined for generation
-                // This is because any specific rule sets are expected to handle the full creation
-                if (context.RuleSets != null && context.RuleSets.Contains(currentRuleSet))
+                Type type = typeof(TType);
+
+                CachedType cachedType = context.CacheService.Cache.GetCachedType(type);
+
+                // Set the current type being generated
+                context.ParentType = null;
+                context.CachedType = cachedType;
+                context.GenerateName = null;
+
+                // Get the members that should not be set during construction
+                List<string> memberNames = GetRuleSetsMemberNames(context);
+
+                foreach (string? memberName in TypeProperties.Keys)
                 {
-                    Type type = typeof(TType);
+                    if (!memberNames.Contains(memberName))
+                        continue;
 
-                    CachedType cachedType = context.CacheService.Cache.GetCachedType(type);
+                    var path = $"{type.FullName}.{memberName}";
 
-                    // Set the current type being generated
-                    context.ParentType = null;
-                    context.CachedType = cachedType;
-                    context.GenerateName = null;
-
-                    // Get the members that should not be set during construction
-                    List<string> memberNames = GetRuleSetsMemberNames(context);
-
-                    foreach (string? memberName in TypeProperties.Keys)
+                    if (context.Config.SkipPaths == null)
                     {
-                        if (!memberNames.Contains(memberName))
-                            continue;
-
-                        var path = $"{type.FullName}.{memberName}";
-
-                        if (context.Config.SkipPaths == null)
-                        {
-                            context.Config.SkipPaths = [path];
-                            continue;
-                        }
-
-                        bool existing = context.Config.SkipPaths.Any(s => s == path);
-
-                        if (!existing)
-                        {
-                            context.Config.SkipPaths.Add(path);
-                        }
+                        context.Config.SkipPaths = [path];
+                        continue;
                     }
 
-                    // Create a blank instance. It will be populated in the FinalizeAction registered
-                    // by PrepareFinish (context.Binder.PopulateInstance<TType>).
-                    var instance = context.Binder.CreateInstance<TType>(context, cachedType);
-                    return instance;
+                    bool existing = context.Config.SkipPaths.Any(s => s == path);
+
+                    if (!existing)
+                    {
+                        context.Config.SkipPaths.Add(path);
+                    }
                 }
 
-                return _defaultCreateAction.Invoke(faker);
-            };
+                // Create a blank instance. It will be populated in the FinalizeAction registered
+                // by PrepareFinish (context.Binder.PopulateInstance<TType>).
+                var instance = context.Binder.CreateInstance<TType>(context, cachedType);
+                return instance;
+            }
 
-            _createInitialized = true;
-        }
+            return _defaultCreateAction.Invoke(faker);
+        };
+
+        _createInitialized = true;
     }
 
     private void PrepareFinish(AutoFakerContext context)
@@ -200,32 +200,25 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
         FinishWith((faker, instance) =>
         {
-            CachedType cachedType;
-
-            if (instance is not null)
-            {
-                cachedType = context.CacheService.Cache.GetCachedType(instance.GetType());
-
-                if (cachedType.IsExpandoObject)
-                {
-                    context.ParentType = null;
-                    context.CachedType = cachedType;
-
-                    context.GenerateName = null;
-                    context.Instance = instance;
-
-                    IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
-                    generator.Generate(context);
-
-                    context.Instance = null;
-                    return;
-                }
-            }
-
             if (instance == null)
                 return;
 
-            cachedType = context.CacheService.Cache.GetCachedType(instance.GetType());
+            CachedType cachedType = context.CacheService.Cache.GetCachedType(instance.GetType());
+
+            if (cachedType.IsExpandoObject)
+            {
+                context.ParentType = null;
+                context.CachedType = cachedType;
+
+                context.GenerateName = null;
+                context.Instance = instance;
+
+                IAutoFakerGenerator generator = AutoFakerGeneratorFactory.GetGenerator(context);
+                generator.Generate(context);
+
+                context.Instance = null;
+                return;
+            }
 
             List<AutoMember> autoMembers = context.Binder.GetMembersToPopulate(cachedType);
             var finalAutoMembers = new List<AutoMember>();
@@ -263,7 +256,9 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
             string ruleSetName = context.RuleSets[i];
 
             if (!Actions.TryGetValue(ruleSetName, out Dictionary<string, PopulateAction<TType>>? ruleSet))
+            {
                 continue;
+            }
 
             foreach (KeyValuePair<string, PopulateAction<TType>> keyValuePair in ruleSet)
             {

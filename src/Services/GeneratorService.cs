@@ -41,6 +41,7 @@ internal sealed class GeneratorService
         {typeof(DateTimeOffset), new Lazy<IAutoFakerGenerator>(() => new DateTimeOffsetGenerator())},
         {typeof(DateOnly), new Lazy<IAutoFakerGenerator>(() => new DateOnlyGenerator())},
         {typeof(TimeOnly), new Lazy<IAutoFakerGenerator>(() => new TimeOnlyGenerator())},
+        {typeof(TimeSpan), new Lazy<IAutoFakerGenerator>(() => new TimeSpanGenerator())},
         {typeof(IPAddress), new Lazy<IAutoFakerGenerator>(() => new IpAddressGenerator())},
         {typeof(MemoryStream), new Lazy<IAutoFakerGenerator>(() => new MemoryStreamGenerator())},
         {typeof(Exception), new Lazy<IAutoFakerGenerator>(() => new ExceptionGenerator())},
