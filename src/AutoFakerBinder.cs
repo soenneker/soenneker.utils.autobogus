@@ -197,7 +197,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (cachedType.IsEnumerable)
             return ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
 
-        CachedConstructor? parameterlessConstructor = null;
+        CachedConstructor? constructorWithParameters = null;
 
         for (var i = 0; i < constructors.Length; i++)
         {
@@ -207,19 +207,37 @@ public class AutoFakerBinder : IAutoFakerBinder
             if (!constructor.IsPublic || constructor.IsStatic)
                 continue;
 
-            if (constructor.GetCachedParameters().Length == 0)
+            CachedParameter[] parameters = constructor.GetCachedParameters();
+
+            if (parameters.Length == 0)
             {
                 _constructorsCache.TryAdd(cachedType, constructor);
                 return constructor;
             }
 
-            parameterlessConstructor ??= constructor;
+            var constructorIsViable = true;
+
+            for (var j = 0; j < parameters.Length; j++)
+            {
+                CachedParameter parameter = parameters[j];
+
+                if (parameter.CachedParameterType.IsFunc)
+                {
+                    constructorIsViable = false;
+                    break;
+                }
+            }
+
+            if (!constructorIsViable)
+                continue;
+
+            constructorWithParameters ??= constructor;
         }
 
-        if (parameterlessConstructor != null)
+        if (constructorWithParameters != null)
         {
-            _constructorsCache.TryAdd(cachedType, parameterlessConstructor);
-            return parameterlessConstructor;
+            _constructorsCache.TryAdd(cachedType, constructorWithParameters);
+            return constructorWithParameters;
         }
 
         return null;

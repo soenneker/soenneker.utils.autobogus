@@ -352,4 +352,12 @@ public class AutoFakerTests
         obj.Should().NotBeNull();
         obj.TestClass.Should().NotBeNull();
     }
+
+    [Fact]
+    public void TestClassWithFuncCtor_should_be_null()
+    {
+        var autoFaker = new AutoFaker();
+        var obj = autoFaker.Generate<TestClassWithFuncCtor<int>>();
+        obj.Should().BeNull();
+    }
 }

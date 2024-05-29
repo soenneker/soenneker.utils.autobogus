@@ -7,6 +7,8 @@ using Xunit;
 using System.Linq;
 using Bogus;
 using Soenneker.Facts.Local;
+using Soenneker.Utils.AutoBogus.Tests.Dtos;
+using Google.Protobuf;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -16,7 +18,7 @@ public class AutoFakerTTests
     public void Generate_order_should_generate()
     {
         var autoFaker = new AutoFaker<Order>();
-        autoFaker.RuleFor(x => x.Id, () => 1 );
+        autoFaker.RuleFor(x => x.Id, () => 1);
 
         Order order = autoFaker.Generate();
         order.Should().NotBeNull();
@@ -138,9 +140,17 @@ public class AutoFakerTTests
         const string key = "someKey";
 
         Faker<TestPrivateReadOnlyWithCtor>? objectToFake = new AutoFaker<TestPrivateReadOnlyWithCtor>();
-        
+
         TestPrivateReadOnlyWithCtor? obj = objectToFake.Generate();
 
         obj.GetKey().Should().Be(key);
+    }
+
+    [Fact]
+    public void TestClassWithFuncCtor_should_be_null()
+    {
+        var autoFaker = new AutoFaker<TestClassWithFuncCtor<int>>();
+        TestClassWithFuncCtor<int> obj = autoFaker.Generate();
+        obj.Should().BeNull();
     }
 }
