@@ -7,7 +7,6 @@ using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Overrides;
 using System.Linq;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 

@@ -7,8 +7,6 @@ using Xunit;
 using System.Linq;
 using Bogus;
 using Soenneker.Facts.Local;
-using Soenneker.Utils.AutoBogus.Tests.Dtos;
-using Google.Protobuf;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
