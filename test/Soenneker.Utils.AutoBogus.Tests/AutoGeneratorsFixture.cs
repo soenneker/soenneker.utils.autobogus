@@ -86,6 +86,7 @@ public partial class AutoGeneratorsFixture
             {
                 // Arrange
                 var autoFaker = new AutoFaker();
+                autoFaker.Initialize();
 
                 var context = new AutoFakerContext(autoFaker, autoFaker.CacheService.Cache.GetCachedType(readOnlyDictionaryType));
 
@@ -131,6 +132,7 @@ public partial class AutoGeneratorsFixture
             {
                 // Arrange
                 var autoFaker = new AutoFaker();
+                autoFaker.Initialize();
 
                 var context = new AutoFakerContext(autoFaker, autoFaker.CacheService.Cache.GetCachedType(dictionaryType));
 
@@ -171,6 +173,7 @@ public partial class AutoGeneratorsFixture
             public void Should_Handle_Subclasses(Type setType)
             {
                 var autoFaker = new AutoFaker();
+                autoFaker.Initialize();
 
                 // Arrange
                 var context = new AutoFakerContext(autoFaker);
@@ -215,6 +218,7 @@ public partial class AutoGeneratorsFixture
             {
                 // Arrange
                 var autoFaker = new AutoFaker();
+                autoFaker.Initialize();
 
                 var context = new AutoFakerContext(autoFaker);
 
@@ -264,8 +268,9 @@ public partial class AutoGeneratorsFixture
         public void Generate_Should_Return_Value(Type type)
         {
             var autoFaker = new AutoFaker();
+            autoFaker.Initialize();
 
-            CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(type);
+            CachedType cachedType = autoFaker.CacheService!.Cache.GetCachedType(type);
             var binder = new AutoFakerBinder(new AutoFakerConfig());
 
             IAutoFakerGenerator generator = binder.GeneratorService.GetFundamentalGenerator(cachedType)!;
@@ -278,7 +283,9 @@ public partial class AutoGeneratorsFixture
         public void GetGenerator_Should_Return_Generator(Type type)
         {
             var autoFaker = new AutoFaker();
-            CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(type);
+            autoFaker.Initialize();
+
+            CachedType cachedType = autoFaker.CacheService!.Cache.GetCachedType(type);
             AutoFakerContext context = CreateContext(type);
             IAutoFakerGenerator generator = context.Binder.GeneratorService.GetFundamentalGenerator(cachedType)!;
 
@@ -782,6 +789,7 @@ public partial class AutoGeneratorsFixture
     private static AutoFakerContext CreateContext(Type type, List<AutoFakerGeneratorOverride>? generatorOverrides = null, int? dataTableRowCountFunctor = null)
     {
         var autoFaker = new AutoFaker();
+        autoFaker.Initialize();
 
         if (generatorOverrides != null)
         {
@@ -793,6 +801,6 @@ public partial class AutoGeneratorsFixture
             autoFaker.Config.DataTableRowCount = dataTableRowCountFunctor.Value;
         }
 
-        return new AutoFakerContext(autoFaker, autoFaker.CacheService.Cache.GetCachedType(type));
+        return new AutoFakerContext(autoFaker, autoFaker.CacheService!.Cache.GetCachedType(type));
     }
 }

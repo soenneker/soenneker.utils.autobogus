@@ -36,9 +36,14 @@ public class AutoFakerBinder : IAutoFakerBinder
         _autoFakerConfig = autoFakerConfig;
 
         if (cacheService != null)
+        {
             _cacheService = cacheService;
+        }
         else
-            _cacheService = new CacheService();
+        {
+            // This should only happen in tests
+            _cacheService = new CacheService(autoFakerConfig.ReflectionCacheOptions);
+        }
 
         GeneratorService = new GeneratorService();
     }
@@ -56,7 +61,6 @@ public class AutoFakerBinder : IAutoFakerBinder
             return default;
 
         CachedConstructor? constructor = GetConstructor(context.CachedType);
-
 
         if (context.RecursiveConstructorStack.Count(c => c == context.CachedType.CacheKey) >= _autoFakerConfig.RecursiveDepth)
         {

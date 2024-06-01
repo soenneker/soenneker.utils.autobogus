@@ -24,7 +24,7 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         return table;
     }
 
-    public static bool IsTypedDataTableType(CachedType cachedType, out Type rowType)
+    public static bool IsTypedDataTableType(AutoFakerContext context, CachedType cachedType, out Type rowType)
     {
         rowType = default;
 
@@ -39,19 +39,19 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
             if (cachedType.Type.BaseType == null)
                 break;
 
-            cachedType = StaticCacheService.Cache.GetCachedType(cachedType.Type.BaseType);
+            cachedType = context.CacheService.Cache.GetCachedType(cachedType.Type.BaseType);
         }
 
         return false;
     }
 
-    public static bool TryCreateGenerator(CachedType tableType, out BaseDataTableGenerator generator)
+    public static bool TryCreateGenerator(AutoFakerContext context, CachedType tableType, out BaseDataTableGenerator generator)
     {
         generator = default;
 
         if (tableType.Type == typeof(DataTable))
             generator = new UntypedDataTableGenerator();
-        else if (IsTypedDataTableType(tableType, out Type? rowType))
+        else if (IsTypedDataTableType(context, tableType, out Type? rowType))
         {
             Type generatorType = typeof(TypedDataTableGenerator<,>).MakeGenericType(tableType.Type, rowType);
 

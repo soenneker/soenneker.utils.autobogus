@@ -7,6 +7,9 @@ using Xunit;
 using System.Linq;
 using Bogus;
 using Soenneker.Facts.Local;
+using Soenneker.Utils.AutoBogus.Config;
+using System.Reflection;
+using Soenneker.Reflection.Cache.Options;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -133,15 +136,39 @@ public class AutoFakerTTests
 
 
     [LocalFact]
-    public void TestPrivateReadOnlyWithCtor_Should_Not_Be_Overwritten()
+    public void TestPrivateReadOnlyFieldWithCtor_Should_Be_Set_via_AutoFaker()
     {
-        const string key = "someKey";
+        var config = new AutoFakerConfig
+        {
+            ReflectionCacheOptions = new ReflectionCacheOptions
+            {
+                FieldFlags = BindingFlags.Public
+            }
+        };
 
-        Faker<TestPrivateReadOnlyWithCtor>? objectToFake = new AutoFaker<TestPrivateReadOnlyWithCtor>();
+        Faker<TestClassPrivateReadOnlyFieldWithCtor> objectToFake = new AutoFaker<TestClassPrivateReadOnlyFieldWithCtor>(config);
 
-        TestPrivateReadOnlyWithCtor? obj = objectToFake.Generate();
+        TestClassPrivateReadOnlyFieldWithCtor? obj = objectToFake.Generate();
 
-        obj.GetKey().Should().Be(key);
+        obj.GetKey().Should().NotBeNull();
+    }
+
+    [LocalFact]
+    public void TestPrivateReadOnlyField_Should_Not_be_set_by_AutoFaker()
+    {
+        var config = new AutoFakerConfig
+        {
+            ReflectionCacheOptions = new ReflectionCacheOptions
+            {
+                FieldFlags = BindingFlags.Public
+            }
+        };
+
+        Faker<TestClassPrivateReadOnlyField> objectToFake = new AutoFaker<TestClassPrivateReadOnlyField>(config);
+
+        TestClassPrivateReadOnlyField? obj = objectToFake.Generate();
+
+        obj.GetKey().Should().BeNull();
     }
 
     [Fact]

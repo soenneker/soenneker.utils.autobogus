@@ -1,12 +1,11 @@
 ﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
-public class TestPrivateReadOnlyWithCtor
+public class TestClassPrivateReadOnlyField
 {
     private readonly string _key;
 
-    public TestPrivateReadOnlyWithCtor(string key)
+    public TestClassPrivateReadOnlyField()
     {
-        _key = key;
     }
 
     public string GetKey()

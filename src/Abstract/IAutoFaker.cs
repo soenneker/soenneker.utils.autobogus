@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bogus;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
+using Soenneker.Utils.AutoBogus.Services;
 
 namespace Soenneker.Utils.AutoBogus.Abstract;
 
@@ -11,11 +12,17 @@ namespace Soenneker.Utils.AutoBogus.Abstract;
 /// </summary>
 public interface IAutoFaker
 {
-    AutoFakerConfig Config { get; set; }
+    AutoFakerConfig Config { get; }
 
-    AutoFakerBinder Binder { get; set; }
+    AutoFakerBinder? Binder { get; set; }
 
     Faker Faker { get; set; }
+
+    /// <summary>
+    /// This forces the final initialization that happens right before <see cref="Generate(Type)"/>. It typically does not need to be called!<para/>
+    /// It's available however when the underlying <see cref="AutoFakerBinder"/> or <see cref="CacheService"/> needs accessing.
+    /// </summary>
+    void Initialize();
 
     /// <summary>
     /// Generates an instance of type <typeparamref name="TType"/>.

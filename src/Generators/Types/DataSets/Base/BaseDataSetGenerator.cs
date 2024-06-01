@@ -8,11 +8,11 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 
 internal abstract class BaseDataSetGenerator : IAutoFakerGenerator
 {
-    public static bool TryCreateGenerator(CachedType dataSetType, out BaseDataSetGenerator? generator)
+    public static bool TryCreateGenerator(AutoFakerContext? context, CachedType dataSetType, out BaseDataSetGenerator? generator)
     {
         generator = default;
         
-        CachedType cachedDataSetType = StaticCacheService.Cache.GetCachedType(typeof(DataSet));
+        CachedType cachedDataSetType = context.CacheService.Cache.GetCachedType(typeof(DataSet));
 
         if (dataSetType.Type == cachedDataSetType.Type)
             generator = new UntypedDataSetGenerator();

@@ -42,7 +42,7 @@ internal class TypedDataSetGenerator : BaseDataSetGenerator
 
                 CachedType cachedType = context.CacheService.Cache.GetCachedType(table.GetType());
 
-                if (!BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? tableGenerator))
+                if (!BaseDataTableGenerator.TryCreateGenerator(context,cachedType, out BaseDataTableGenerator? tableGenerator))
                     throw new Exception($"Couldn't create generator for typed table type {table.GetType()}");
 
                 populatedTables.Add(table);

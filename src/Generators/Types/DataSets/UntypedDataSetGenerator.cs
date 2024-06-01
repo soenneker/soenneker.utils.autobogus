@@ -15,7 +15,7 @@ internal class UntypedDataSetGenerator : BaseDataSetGenerator
 
         CachedType cachedDataTableType = context.CacheService.Cache.GetCachedType(typeof(DataTable));
 
-        if (!BaseDataTableGenerator.TryCreateGenerator(cachedDataTableType, out BaseDataTableGenerator? tableGenerator))
+        if (!BaseDataTableGenerator.TryCreateGenerator(context, cachedDataTableType, out BaseDataTableGenerator? tableGenerator))
             throw new Exception("Internal error: Couldn't create generator for DataTable");
 
         for (int tableCount = context.Faker.Random.Int(2, 6); tableCount > 0; tableCount--)

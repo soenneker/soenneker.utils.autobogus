@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Soenneker.Reflection.Cache.Options;
 using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Config;
@@ -30,6 +31,8 @@ public sealed class AutoFakerConfig
 
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public DateTimeKind DateTimeKind;
+
+    public ReflectionCacheOptions? ReflectionCacheOptions;
 
     public AutoFakerConfig()
     {

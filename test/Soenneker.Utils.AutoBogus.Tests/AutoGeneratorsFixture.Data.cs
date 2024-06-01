@@ -30,11 +30,13 @@ partial class AutoGeneratorsFixture
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
             var autoFaker = new AutoFaker();
+            autoFaker.Initialize();
 
+            AutoFakerContext context = CreateContext(dataSetType);
             CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(dataSetType);
 
             // Act
-            bool success = BaseDataSetGenerator.TryCreateGenerator(cachedType, out BaseDataSetGenerator? generator);
+            bool success = BaseDataSetGenerator.TryCreateGenerator(context, cachedType, out BaseDataSetGenerator? generator);
 
             // Assert
             if (shouldSucceed)
@@ -63,7 +65,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = BaseDataSetGenerator.TryCreateGenerator(cachedType, out BaseDataSetGenerator? generator);
+            bool success = BaseDataSetGenerator.TryCreateGenerator(context, cachedType, out BaseDataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -116,7 +118,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = BaseDataSetGenerator.TryCreateGenerator(cachedType, out BaseDataSetGenerator? generator);
+            bool success = BaseDataSetGenerator.TryCreateGenerator(context, cachedType, out BaseDataSetGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
@@ -196,11 +198,13 @@ partial class AutoGeneratorsFixture
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
             var autoFaker = new AutoFaker();
+            autoFaker.Initialize();
 
             CachedType cachedType = autoFaker.CacheService.Cache.GetCachedType(dataTableType);
 
+            AutoFakerContext context = CreateContext(dataTableType);
             // Act
-            bool success = BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? generator);
+            bool success = BaseDataTableGenerator.TryCreateGenerator(context, cachedType, out BaseDataTableGenerator? generator);
 
             // Assert
             if (shouldSucceed)
@@ -228,7 +232,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? generator);
+            bool success = BaseDataTableGenerator.TryCreateGenerator(context, cachedType, out BaseDataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
@@ -256,7 +260,7 @@ partial class AutoGeneratorsFixture
 
             CachedType cachedType = context.CachedType;
 
-            bool success = BaseDataTableGenerator.TryCreateGenerator(cachedType, out BaseDataTableGenerator? generator);
+            bool success = BaseDataTableGenerator.TryCreateGenerator(context, cachedType, out BaseDataTableGenerator? generator);
 
             Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 

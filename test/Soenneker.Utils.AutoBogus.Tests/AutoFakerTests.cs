@@ -7,6 +7,8 @@ using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Overrides;
 using System.Linq;
+using System.Reflection;
+using Soenneker.Reflection.Cache.Options;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 
@@ -231,8 +233,13 @@ public class AutoFakerTests
     [Fact]
     public void Generate_with_set_RepeatCount_should_generate_correct_count()
     {
-        var autoFaker = new AutoFaker();
-        autoFaker.Config.RepeatCount = 3;
+        var autoFaker = new AutoFaker
+        {
+            Config =
+            {
+                RepeatCount = 3
+            }
+        };
 
         var order = autoFaker.Generate<CustomOrder>();
         order.Items.Count().Should().Be(3);
@@ -358,5 +365,23 @@ public class AutoFakerTests
         var autoFaker = new AutoFaker();
         var obj = autoFaker.Generate<TestClassWithFuncCtor<int>>();
         obj.Should().BeNull();
+    }
+
+    [Fact]
+    public void TestClassWithPrivateProperty_should_be_null()
+    {
+        var autoFaker = new AutoFaker
+        {
+            Config =
+            {
+                ReflectionCacheOptions = new ReflectionCacheOptions
+                {
+                    FieldFlags = BindingFlags.Public
+                }
+            }
+        };
+
+        var obj = autoFaker.Generate<TestClassWithPrivateField>();
+        obj.GetValue().Should().BeNull();
     }
 }

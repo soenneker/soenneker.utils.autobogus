@@ -155,12 +155,12 @@ public static class AutoFakerGeneratorFactory
             }
         }
 
-        if (BaseDataTableGenerator.TryCreateGenerator(context.CachedType, out BaseDataTableGenerator dataTableGenerator))
+        if (BaseDataTableGenerator.TryCreateGenerator(context, context.CachedType, out BaseDataTableGenerator dataTableGenerator))
         {
             return dataTableGenerator;
         }
 
-        if (BaseDataSetGenerator.TryCreateGenerator(context.CachedType, out BaseDataSetGenerator dataSetGenerator))
+        if (BaseDataSetGenerator.TryCreateGenerator(context, context.CachedType, out BaseDataSetGenerator dataSetGenerator))
         {
             return dataSetGenerator;
         }

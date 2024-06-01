@@ -17,12 +17,12 @@ namespace Soenneker.Utils.AutoBogus;
 /// <typeparam name="TType">The type of instance to generate.</typeparam>
 public class AutoFaker<TType> : Faker<TType> where TType : class
 {
-    public AutoFakerConfig? Config { get; set; }
+    public AutoFakerConfig Config { get; set; }
 
     /// <summary>
     /// The <see cref="AutoFakerBinder"/> instance to use for the generation request.
     /// </summary>
-    public AutoFakerBinder Binder { get; set; }
+    public AutoFakerBinder? Binder { get; set; }
 
     private bool _createInitialized;
 
@@ -30,7 +30,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
     private readonly Func<Faker, TType> _defaultCreateAction;
 
-    private readonly CacheService _cacheService;
+    private CacheService? _cacheService;
 
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
     {
@@ -38,9 +38,6 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
             Config = new AutoFakerConfig();
         else
             Config = autoFakerConfig;
-
-        Binder = new AutoFakerBinder(Config);
-        _cacheService = new CacheService();
 
         Locale = Config.Locale;
         binder = new Binder();
@@ -51,6 +48,12 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
         CreateActions[currentRuleSet] = null;
     }
 
+    public void Initialize()
+    {
+        _cacheService ??= new CacheService(Config.ReflectionCacheOptions);
+        Binder ??= new AutoFakerBinder(Config, _cacheService);
+    }
+
     /// <summary>
     /// Generates an instance of type <typeparamref name="TType"/>.
     /// </summary>
@@ -58,6 +61,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     /// <returns>The generated instance of type <typeparamref name="TType"/>.</returns>
     public override TType Generate(string? ruleSets = null)
     {
+        Initialize();
+
         AutoFakerContext context = CreateContext(ruleSets);
 
         PrepareCreate(context);
@@ -74,6 +79,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     /// <returns>The collection of generated instances of type <typeparamref name="TType"/>.</returns>
     public override List<TType> Generate(int count, string? ruleSets = null)
     {
+        Initialize();
+
         AutoFakerContext context = CreateContext(ruleSets);
 
         PrepareCreate(context);
