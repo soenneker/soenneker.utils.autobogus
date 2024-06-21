@@ -84,7 +84,7 @@ autoFaker.Config.Overrides.Add(new OrderOverride());
 This inherits from `Bogus.Faker`, and can be used to designate rules specific to the `AutoFaker` instance.
 
 ```csharp
-var autoFaker = new AutoFaker<Order>());
+var autoFaker = new AutoFaker<Order>();
 autoFaker.RuleFor(x => x.Id, f => f.Random.Number());
 var order = autoFaker.Generate();
 ```
