@@ -20,7 +20,7 @@
         <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="2.1.283" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="2.1.284" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="2.1.112" />
         <PackageReference Include="xunit" Version="2.9.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
