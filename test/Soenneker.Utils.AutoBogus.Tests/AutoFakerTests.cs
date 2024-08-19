@@ -368,6 +368,14 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_TestClassWithReadOnlyStringField_should_be_null()
+    {
+        var autoFaker = new AutoFaker();
+        var obj = autoFaker.Generate<TestClassWithReadOnlyStringField>();
+        obj._string.Should().BeNull();
+    }
+
+    [Fact]
     public void TestClassWithPrivateProperty_should_be_null()
     {
         var autoFaker = new AutoFaker
