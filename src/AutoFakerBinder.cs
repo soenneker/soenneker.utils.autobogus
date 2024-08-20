@@ -326,6 +326,10 @@ public class AutoFakerBinder : IAutoFakerBinder
             return;
 
         object? instance = member.Getter(parent);
+
+        if (instance is IDictionary { IsReadOnly: true })
+            return;
+        
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
@@ -345,7 +349,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         object? instance = member.Getter(parent);
 
-        if (instance is IList { IsReadOnly: true } or IDictionary { IsReadOnly: true })
+        if (instance is IList { IsReadOnly: true })
             return;
 
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
