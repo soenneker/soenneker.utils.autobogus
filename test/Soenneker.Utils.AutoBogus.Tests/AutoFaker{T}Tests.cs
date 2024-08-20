@@ -186,12 +186,20 @@ public class AutoFakerTTests
 
         var objectToFake = new AutoFaker<TestClassICollectionPropertyWrappedWithReadOnly>(config);
 
-        using var writer = new StringWriter();
-        Console.SetOut(writer);
-        TestClassICollectionPropertyWrappedWithReadOnly obj = objectToFake.Generate();
-        
-        writer.ToString().Should().BeEmpty();
-        obj.Collection.Should().BeEmpty();
+        TextWriter originalOut = Console.Out;
+        try
+        {
+            using var writer = new StringWriter();
+            Console.SetOut(writer);
+            TestClassICollectionPropertyWrappedWithReadOnly obj = objectToFake.Generate();
+
+            writer.ToString().Should().BeEmpty();
+            obj.Collection.Should().BeEmpty();
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
     }
 
     [Fact]
@@ -207,12 +215,20 @@ public class AutoFakerTTests
 
         var objectToFake = new AutoFaker<TestClassIDictionaryPropertyWrappedWithReadOnly>(config);
 
-        using var writer = new StringWriter();
-        Console.SetOut(writer);
-        TestClassIDictionaryPropertyWrappedWithReadOnly obj = objectToFake.Generate();
+        TextWriter originalOut = Console.Out;
+        try
+        {
+            using var writer = new StringWriter();
+            Console.SetOut(writer);
+            TestClassIDictionaryPropertyWrappedWithReadOnly obj = objectToFake.Generate();
 
-        writer.ToString().Should().BeEmpty();
-        obj.Dictionary.Should().BeEmpty();
+            writer.ToString().Should().BeEmpty();
+            obj.Dictionary.Should().BeEmpty();
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
     }
 
     [Fact]
