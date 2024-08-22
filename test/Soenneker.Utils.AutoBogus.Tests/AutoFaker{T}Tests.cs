@@ -194,7 +194,8 @@ public class AutoFakerTTests
             TestClassICollectionPropertyWrappedWithReadOnly obj = objectToFake.Generate();
 
             writer.ToString().Should().BeEmpty();
-            obj.Collection.Should().BeEmpty();
+            obj.Collection.Should().NotBeEmpty();
+            obj.WrappedCollection.Should().BeEmpty();
         }
         finally
         {
@@ -223,7 +224,8 @@ public class AutoFakerTTests
             TestClassIDictionaryPropertyWrappedWithReadOnly obj = objectToFake.Generate();
 
             writer.ToString().Should().BeEmpty();
-            obj.Dictionary.Should().BeEmpty();
+            obj.Dictionary.Should().NotBeEmpty();
+            obj.WrappedDictionary.Should().BeEmpty();
         }
         finally
         {
