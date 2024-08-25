@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Diagnostics;
+using System.IO;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using System.Linq;
@@ -169,6 +171,66 @@ public class AutoFakerTTests
         TestClassPrivateReadOnlyField? obj = objectToFake.Generate();
 
         obj.GetKey().Should().BeNull();
+    }
+
+    [Fact]
+    public void TestWrappedReadOnlyCollectionProperty_Should_not_be_set_by_AutoFaker()
+    {
+        var config = new AutoFakerConfig
+        {
+            ReflectionCacheOptions = new ReflectionCacheOptions
+            {
+                FieldFlags = BindingFlags.Public
+            }
+        };
+
+        var objectToFake = new AutoFaker<TestClassICollectionPropertyWrappedWithReadOnly>(config);
+
+        TextWriter originalOut = Console.Out;
+        try
+        {
+            using var writer = new StringWriter();
+            Console.SetOut(writer);
+            TestClassICollectionPropertyWrappedWithReadOnly obj = objectToFake.Generate();
+
+            writer.ToString().Should().BeEmpty();
+            obj.Collection.Should().NotBeEmpty();
+            obj.WrappedCollection.Should().BeEmpty();
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
+    }
+
+    [Fact]
+    public void TestWrappedReadOnlyDictionaryProperty_Should_not_be_set_by_AutoFaker()
+    {
+        var config = new AutoFakerConfig
+        {
+            ReflectionCacheOptions = new ReflectionCacheOptions
+            {
+                FieldFlags = BindingFlags.Public
+            }
+        };
+
+        var objectToFake = new AutoFaker<TestClassIDictionaryPropertyWrappedWithReadOnly>(config);
+
+        TextWriter originalOut = Console.Out;
+        try
+        {
+            using var writer = new StringWriter();
+            Console.SetOut(writer);
+            TestClassIDictionaryPropertyWrappedWithReadOnly obj = objectToFake.Generate();
+
+            writer.ToString().Should().BeEmpty();
+            obj.Dictionary.Should().NotBeEmpty();
+            obj.WrappedDictionary.Should().BeEmpty();
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
     }
 
     [Fact]
