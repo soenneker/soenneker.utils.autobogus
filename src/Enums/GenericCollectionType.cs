@@ -13,5 +13,6 @@ public enum GenericCollectionType
     ReadOnlyDictionary = 8,
     ImmutableDictionary = 9,
     Dictionary = 10,
-    ImmutableList = 11
+    ImmutableList = 11,
+    ImmutableArray = 12
 }

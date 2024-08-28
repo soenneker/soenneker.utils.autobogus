@@ -18,6 +18,8 @@ internal static class TypeArrayExtension
 
             switch (cachedType.Type.Name)
             {
+                case "ImmutableArray`1":
+                    return (cachedType, GenericCollectionType.ImmutableArray);
                 case "IImmutableList`1":
                 case "ImmutableList`1":
                     return (cachedType, GenericCollectionType.ImmutableList);

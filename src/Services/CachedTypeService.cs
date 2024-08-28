@@ -20,6 +20,7 @@ internal static class CachedTypeService
     internal static readonly Lazy<CachedType> CollectionGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(CollectionGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> ReadOnlyCollectionGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ReadOnlyCollectionGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> ImmutableListGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ImmutableListGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    internal static readonly Lazy<CachedType> ImmutableArrayGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ImmutableArrayGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     internal static readonly Lazy<CachedType> IDictionary = new(() => StaticCacheService.Cache.GetCachedType(typeof(IDictionary<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> IEnumerable = new(() => StaticCacheService.Cache.GetCachedType(typeof(IEnumerable<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);

@@ -103,6 +103,11 @@ public static class AutoFakerGeneratorFactory
                     CachedType elementType = generics[0];
                     return CreateGenericGenerator(CachedTypeService.ImmutableListGenerator.Value, elementType);
                 }
+                case GenericCollectionType.ImmutableArray:
+                {
+                    CachedType elementType = generics[0];
+                    return CreateGenericGenerator(CachedTypeService.ImmutableArrayGenerator.Value, elementType);
+                }
                 case GenericCollectionType.ReadOnlyDictionary:
                 {
                     CachedType keyType = generics[0];
