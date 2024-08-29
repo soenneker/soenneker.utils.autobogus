@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +11,9 @@ using System.Linq;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Options;
 using Soenneker.Utils.AutoBogus.Config;
+using Soenneker.Utils.AutoBogus.Context;
+using Soenneker.Utils.AutoBogus.Generators;
+using Soenneker.Utils.AutoBogus.Override;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
@@ -349,6 +353,65 @@ public class AutoFakerTests
         immutableListDto.Array.Should().NotBeNullOrEmpty();
     }
 
+    
+    public sealed class ExampleClass
+    {
+        public string? Value { get; init; }
+        public string AlwaysSet { get; init; }
+    }
+
+    [Fact]
+    public void Generate_RulesSet_Should_Generate_Wtih_Ruleset_And_Oeverride()
+    {
+        var faker = new ExampleClassFaker();
+        
+        var withSetNull = faker.Generate("setnull,default");
+        
+        withSetNull.AlwaysSet.Should().NotBeEmpty();
+        withSetNull.Value.Should().BeNull();
+    }
+    
+    [Fact]
+    public void Generate_RulesSet_Should_Generate_With_Custom_Faker()
+    {
+        var faker = new ExampleClassFaker();
+        
+        var noRuleSets = faker.Generate();
+        var setNull = faker.Generate("setnull");
+        var setNullAndDefault = faker.Generate("setnull,default");
+
+        noRuleSets.AlwaysSet.Should().NotBeEmpty();
+        noRuleSets.Value.Should().NotBeEmpty();
+        
+        setNull.AlwaysSet.Should().BeNull(); // <-- this is why I use both the default and set null ruleset
+        setNull.Value.Should().BeNull();
+        
+        setNullAndDefault.AlwaysSet.Should().NotBeEmpty();
+        setNullAndDefault.Value.Should().BeNull();
+    }
+    
+    public class StringOverride : AutoFakerOverride<string>
+    {
+        public override void Generate(AutoFakerOverrideContext context)
+        {
+            context.Instance = BuildStringWithPrefix(context.GenerateName);
+        }
+
+        public static string BuildStringWithPrefix(string prefix) =>
+            $"{prefix}-{Guid.NewGuid().ToString()}";
+    }
+    
+    public sealed class ExampleClassFaker : AutoFaker<ExampleClass>
+    {
+        public ExampleClassFaker()
+        {
+            Config.Overrides ??= new List<AutoFakerGeneratorOverride>();
+            Config.Overrides.Add(new StringOverride());
+            
+            RuleSet("setnull", set => set.RuleFor(property => property.Value, () => null));
+        }
+    }
+    
     [Fact]
     public void Generate_TestClassWithAbstractClassParameter_should_generate()
     {
