@@ -338,6 +338,16 @@ public class AutoFakerTests
         immutableListDto.List.Should().NotBeNullOrEmpty();
         immutableListDto.IList.Should().NotBeNullOrEmpty();
     }
+    
+    [Fact]
+    public void Generate_ImmutableArray_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var immutableListDto = faker.Generate<ImmutableArrayDto>();
+        immutableListDto.Should().NotBeNull();
+        immutableListDto.Array.Should().NotBeNullOrEmpty();
+    }
 
     [Fact]
     public void Generate_TestClassWithAbstractClassParameter_should_generate()
