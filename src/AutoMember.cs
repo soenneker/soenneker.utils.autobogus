@@ -25,7 +25,7 @@ internal sealed class AutoMember
 
     internal readonly bool IsCollection;
 
-    internal AutoMember( CachedField cachedField, CacheService cacheService, AutoFakerConfig config)
+    internal AutoMember(CachedField cachedField, CacheService cacheService, AutoFakerConfig config)
     {
         Name = cachedField.FieldInfo.Name;
 

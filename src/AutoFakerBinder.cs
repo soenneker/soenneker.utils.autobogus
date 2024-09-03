@@ -296,6 +296,10 @@ public class AutoFakerBinder : IAutoFakerBinder
         for (var i = 0; i < cachedProperties.Length; i++)
         {
             CachedProperty cachedProperty = cachedProperties[i];
+
+            if (cachedProperty.IsDelegate)
+                continue;
+
             autoMembers.Add(new AutoMember(cachedProperty, _cacheService, _autoFakerConfig));
         }
 
@@ -307,7 +311,10 @@ public class AutoFakerBinder : IAutoFakerBinder
 
                 if (cachedField.FieldInfo.IsConstant())
                     continue;
-                //
+
+                if (cachedField.IsDelegate)
+                    continue;
+
                 if (cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
