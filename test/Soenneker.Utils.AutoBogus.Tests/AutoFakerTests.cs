@@ -419,4 +419,94 @@ public class AutoFakerTests
         var obj = autoFaker.Generate<TestClassWithPrivateField>();
         obj.GetValue().Should().BeNull();
     }
+
+    [Fact]
+    public void Generate_with_recursive_depth_0_should_generate()
+    {
+        var faker = new AutoFaker
+        {
+            Config =
+            {
+                RecursiveDepth = 0
+            }
+        };
+
+        var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
+        testClass.Name.Should().NotBeNull();
+        testClass.Child.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_with_recursive_depth_1_should_generate()
+    {
+        var faker = new AutoFaker
+        {
+            Config =
+            {
+                RecursiveDepth = 1
+            }
+        };
+
+        var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
+        testClass.Name.Should().NotBeNull();
+        testClass.Child.Should().NotBeNull();
+        testClass.Child.Child.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_with_recursive_depth_2_should_generate()
+    {
+        var faker = new AutoFaker
+        {
+            Config =
+            {
+                RecursiveDepth = 2
+            }
+        };
+
+        var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
+        testClass.Name.Should().NotBeNull();
+        testClass.Child.Should().NotBeNull();
+        testClass.Child.Child.Should().NotBeNull();
+        testClass.Child.Child.Child.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_with_recursive_depth_3_should_generate()
+    {
+        var faker = new AutoFaker
+        {
+            Config =
+            {
+                RecursiveDepth = 3
+            }
+        };
+
+        var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
+        testClass.Name.Should().NotBeNull();
+        testClass.Child.Should().NotBeNull();
+        testClass.Child.Child.Should().NotBeNull();
+        testClass.Child.Child.Child.Should().NotBeNull();
+        testClass.Child.Child.Child.Child.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_with_recursive_depth_4_should_generate()
+    {
+        var faker = new AutoFaker
+        {
+            Config =
+            {
+                RecursiveDepth = 4
+            }
+        };
+
+        var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
+        testClass.Name.Should().NotBeNull();
+        testClass.Child.Should().NotBeNull();
+        testClass.Child.Child.Should().NotBeNull();
+        testClass.Child.Child.Child.Should().NotBeNull();
+        testClass.Child.Child.Child.Child.Should().NotBeNull();
+        testClass.Child.Child.Child.Child.Child.Should().BeNull();
+    }
 }

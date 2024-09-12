@@ -62,9 +62,12 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         CachedConstructor? constructor = GetConstructor(context.CachedType);
 
-        if (context.RecursiveConstructorStack.Count(c => c == context.CachedType.CacheKey) >= _autoFakerConfig.RecursiveDepth)
+        int stackCount = context.RecursiveConstructorStack.Count(c => c == context.CachedType.CacheKey);
+
+        if (stackCount >= 1)
         {
             context.RecursiveConstructorStack.Pop();
+
             return default;
         }
 
@@ -334,9 +337,9 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         object? instance = member.Getter(parent);
 
-        if (instance is IDictionary { IsReadOnly: true })
+        if (instance is IDictionary {IsReadOnly: true})
             return;
-        
+
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
@@ -356,7 +359,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         object? instance = member.Getter(parent);
 
-        if (instance is IList { IsReadOnly: true })
+        if (instance is IList {IsReadOnly: true})
             return;
 
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
