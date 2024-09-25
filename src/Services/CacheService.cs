@@ -6,7 +6,7 @@ namespace Soenneker.Utils.AutoBogus.Services;
 
 public sealed class CacheService
 {
-    internal ReflectionCache Cache => _cacheLazy.Value;
+    public ReflectionCache Cache => _cacheLazy.Value;
 
     private Lazy<ReflectionCache> _cacheLazy;
 
