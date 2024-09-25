@@ -13,7 +13,7 @@ internal sealed class TypeGenerator<TType> : IAutoFakerGenerator
         // This means the changes are applied to a different instance to the one created here
         CachedType cachedType = context.CacheService.Cache.GetCachedType(typeof(TType));
 
-        object? instance = context.Binder.CreateInstance<TType>(context, cachedType);
+        object? instance = context.Binder.CreateInstanceWithRecursionGuard<TType>(context, cachedType);
 
         if (instance == null)
             return null;

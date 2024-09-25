@@ -59,7 +59,7 @@ public sealed class AutoFaker : IAutoFaker
     public void Initialize()
     {
         CacheService ??= new CacheService(Config.ReflectionCacheOptions);
-        Binder ??= new AutoFakerBinder(Config, CacheService);
+        Binder ??= new AutoFakerBinder();
     }
 
     public TType Generate<TType>()

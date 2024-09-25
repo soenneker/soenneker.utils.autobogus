@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using Soenneker.Reflection.Cache.Types;
-using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
@@ -271,7 +270,7 @@ public partial class AutoGeneratorsFixture
             autoFaker.Initialize();
 
             CachedType cachedType = autoFaker.CacheService!.Cache.GetCachedType(type);
-            var binder = new AutoFakerBinder(new AutoFakerConfig());
+            var binder = new AutoFakerBinder();
 
             IAutoFakerGenerator generator = binder.GeneratorService.GetFundamentalGenerator(cachedType)!;
 
@@ -371,7 +370,7 @@ public partial class AutoGeneratorsFixture
         public void Generate_Should_Return_Array(Type type)
         {
             Type? itemType = type.GetElementType();
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(ArrayGenerator<>), itemType);
             var array = InvokeGenerator(type, generator) as Array;
 
@@ -432,7 +431,7 @@ public partial class AutoGeneratorsFixture
             Type[] genericTypes = type.GetGenericArguments();
             Type keyType = genericTypes.ElementAt(0);
             Type valueType = genericTypes.ElementAt(1);
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(DictionaryGenerator<,>), keyType, valueType);
             var dictionary = InvokeGenerator(type, generator) as IDictionary;
 
@@ -484,7 +483,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(ListGenerator<>), itemType);
             var list = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -506,7 +505,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(CollectionGenerator<>), itemType);
             var collection = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -570,7 +569,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(SetGenerator<>), itemType);
             var set = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -590,7 +589,7 @@ public partial class AutoGeneratorsFixture
             AutoFakerContext context = CreateContext(type);
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             Type generatorType = GetGeneratorType(typeof(SetGenerator<>), itemType);
 
 
@@ -611,7 +610,7 @@ public partial class AutoGeneratorsFixture
         {
             Type[] genericTypes = type.GetGenericArguments();
             Type itemType = genericTypes.ElementAt(0);
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(EnumerableGenerator<>), itemType);
             var enumerable = InvokeGenerator(type, generator) as IEnumerable;
 
@@ -667,7 +666,7 @@ public partial class AutoGeneratorsFixture
         [InlineData(typeof(TestAbstractClass))]
         public void Generate_Should_Return_Value(Type type)
         {
-            AutoFakerBinderService.SetBinder(new AutoFakerBinder(new AutoFakerConfig()));
+            AutoFakerBinderService.SetBinder(new AutoFakerBinder());
             IAutoFakerGenerator generator = CreateGenerator(typeof(TypeGenerator<>), type);
 
             if (type.IsInterface() || type.IsAbstract())

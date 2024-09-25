@@ -51,7 +51,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     public void Initialize()
     {
         _cacheService ??= new CacheService(Config.ReflectionCacheOptions);
-        Binder ??= new AutoFakerBinder(Config, _cacheService);
+        Binder ??= new AutoFakerBinder();
     }
 
     /// <summary>
@@ -188,7 +188,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
                 // Create a blank instance. It will be populated in the FinalizeAction registered
                 // by PrepareFinish (context.Binder.PopulateInstance<TType>).
-                var instance = context.Binder.CreateInstance<TType>(context, cachedType);
+
+                var instance = context.Binder.CreateInstanceWithRecursionGuard<TType>(context, cachedType);
                 return instance;
             }
 
@@ -227,7 +228,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
                 return;
             }
 
-            List<AutoMember> autoMembers = context.Binder.GetMembersToPopulate(cachedType);
+            List<AutoMember> autoMembers = context.Binder.GetMembersToPopulate(cachedType, _cacheService, Config);
             var finalAutoMembers = new List<AutoMember>();
 
             List<string> memberNames = GetRuleSetsMemberNames(context);
@@ -242,7 +243,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
             }
 
             context.RecursiveConstructorStack.Clear();
-            context.Binder.PopulateMembers(instance, context, cachedType, finalAutoMembers);
+            AutoFakerBinder.PopulateMembers(instance, context, cachedType, finalAutoMembers);
 
             // Ensure the default finish with is invoke
             finishWith?.Action(faker, instance);

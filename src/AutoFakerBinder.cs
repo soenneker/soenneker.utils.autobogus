@@ -17,35 +17,33 @@ using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Services;
+using Soenneker.Utils.AutoBogus.Utils;
 
 namespace Soenneker.Utils.AutoBogus;
 
 ///<inheritdoc cref="IAutoFakerBinder"/>
 public class AutoFakerBinder : IAutoFakerBinder
 {
-    private readonly AutoFakerConfig _autoFakerConfig;
-    private readonly CacheService _cacheService;
-
     internal readonly GeneratorService GeneratorService;
 
     private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
     private readonly Dictionary<CachedType, CachedConstructor> _constructorsCache = [];
 
-    public AutoFakerBinder(AutoFakerConfig autoFakerConfig, CacheService? cacheService = null)
+    public AutoFakerBinder()
     {
-        _autoFakerConfig = autoFakerConfig;
-
-        if (cacheService != null)
-        {
-            _cacheService = cacheService;
-        }
-        else
-        {
-            // This should only happen in tests
-            _cacheService = new CacheService(autoFakerConfig.ReflectionCacheOptions);
-        }
-
         GeneratorService = new GeneratorService();
+    }
+
+    public TType? CreateInstanceWithRecursionGuard<TType>(AutoFakerContext context, CachedType cachedType)
+    {
+        var recursionGuard = new RecursionGuard(context, cachedType.CacheKey.Value);
+
+        if (recursionGuard.IsRecursive)
+        {
+            return default;
+        }
+
+        return CreateInstance<TType>(context, cachedType);
     }
 
     /// <summary>
@@ -55,23 +53,12 @@ public class AutoFakerBinder : IAutoFakerBinder
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
     /// <param name="cachedType"></param>
     /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
-    public TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
+    public virtual TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
     {
-        if (cachedType.IsAbstract)
+        if (cachedType.IsAbstract || cachedType.IsInterface)
             return default;
 
         CachedConstructor? constructor = GetConstructor(context.CachedType);
-
-        int stackCount = context.RecursiveConstructorStack.Count(c => c == context.CachedType.CacheKey);
-
-        if (stackCount >= 1)
-        {
-            context.RecursiveConstructorStack.Pop();
-
-            return default;
-        }
-
-        context.RecursiveConstructorStack.Push(context.CachedType.CacheKey.Value);
 
         if (constructor == null)
             return default;
@@ -107,13 +94,13 @@ public class AutoFakerBinder : IAutoFakerBinder
     public void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType)
     {
         // Iterate the members and bind a generated value
-        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType);
+        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType, context.CacheService, context.Config);
         context.RecursiveConstructorStack.Clear();
 
         PopulateMembers(instance, context, cachedType, autoMembers);
     }
 
-    internal void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember> autoMembers)
+    internal static void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember> autoMembers)
     {
         // Iterate the members and bind a generated value
         for (var i = 0; i < autoMembers.Count; i++)
@@ -164,25 +151,25 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
-    private bool ShouldSkip(AutoMember autoMember, AutoFakerContext context)
+    private static bool ShouldSkip(AutoMember autoMember, AutoFakerContext context)
     {
         if (autoMember.ShouldSkip)
             return true;
 
         //check if tree depth is reached
-        if (_autoFakerConfig.TreeDepth != null)
+        if (context.Config.TreeDepth != null)
         {
-            if (context.TypesStack.Count >= _autoFakerConfig.TreeDepth)
+            if (context.TypesStack.Count >= context.Config.TreeDepth)
                 return true;
         }
 
-        if (context.TypesStack.Count < _autoFakerConfig.RecursiveDepth)
+        if (context.TypesStack.Count < context.Config.RecursiveDepth)
             return false;
 
         // Finally check if the recursive depth has been reached
         int typeCount = context.TypesStack.Count(c => c == autoMember.CachedType.CacheKey);
 
-        if (typeCount >= _autoFakerConfig.RecursiveDepth)
+        if (typeCount >= context.Config.RecursiveDepth)
             return true;
 
         return false;
@@ -285,7 +272,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
-    internal List<AutoMember> GetMembersToPopulate(CachedType cachedType)
+    internal List<AutoMember> GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
     {
         if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? members))
             return members;
@@ -303,7 +290,7 @@ public class AutoFakerBinder : IAutoFakerBinder
             if (cachedProperty.IsDelegate)
                 continue;
 
-            autoMembers.Add(new AutoMember(cachedProperty, _cacheService, _autoFakerConfig));
+            autoMembers.Add(new AutoMember(cachedProperty, cacheService, autoFakerConfig));
         }
 
         if (cachedFields != null)
@@ -321,7 +308,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 if (cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
-                autoMembers.Add(new AutoMember(cachedField, _cacheService, _autoFakerConfig));
+                autoMembers.Add(new AutoMember(cachedField, cacheService, autoFakerConfig));
             }
         }
 

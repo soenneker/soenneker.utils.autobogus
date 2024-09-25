@@ -33,7 +33,7 @@ public static class AutoGenerateContextExtension
         if (generatedInstance == null)
             return default;
 
-        return (TType?) generatedInstance;
+        return (TType?)generatedInstance;
     }
 
     /// <summary>
@@ -70,50 +70,41 @@ public static class AutoGenerateContextExtension
 
     internal static List<TType> GenerateMany<TType>(AutoFakerContext context, int count, bool unique, int maxAttempts = 1, Func<TType?>? generate = null)
     {
-        var items = new List<TType>();
-
         generate ??= context.Generate<TType>;
 
-        // Generate a list of items
-        int? required = count - items.Count;
+        if (count <= 0)
+            return new List<TType>();
 
-        for (var i = 0; i < required; i++)
+        if (!unique)
         {
-            TType? item = generate.Invoke();
+            var items = new List<TType>(count);
 
-            // Ensure the generated value is not null (which means the type couldn't be generated)
-            if (item != null)
-                items.Add(item);
-        }
+            for (int i = 0; i < count; i++)
+            {
+                TType? item = generate.Invoke();
 
-        if (items.Count == count && !unique)
+                if (item != null)
+                    items.Add(item);
+            }
+
             return items;
-
-        var hashSet = new HashSet<TType>();
-
-        for (var i = 0; i < items.Count; i++)
-        {
-            TType item = items[i];
-            hashSet.Add(item);
         }
-
-        if (hashSet.Count == items.Count)
-            return items;
-
-        for (var i = 0; i < maxAttempts - 1; i++)
+        else
         {
-            TType? item = generate.Invoke();
+            var hashSet = new HashSet<TType>();
+            int attempts = 0;
+            int totalAttempts = count + maxAttempts - 1;
 
-            // Ensure the generated value is not null (which means the type couldn't be generated)
-            if (item == null)
-                continue;
+            while (hashSet.Count < count && attempts < totalAttempts)
+            {
+                TType? item = generate.Invoke();
 
-            hashSet.Add(item);
+                if (item != null)
+                    hashSet.Add(item);
 
-            if (hashSet.Count == count)
-                break;
+                attempts++;
+            }
+            return hashSet.ToList();
         }
-
-        return hashSet.ToList();
     }
 }

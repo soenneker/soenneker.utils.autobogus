@@ -18,6 +18,15 @@ public interface IAutoFakerBinder
     TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType);
 
     /// <summary>
+    /// Creates an instance of <typeparamref name="TType"/> with recursion protection.
+    /// </summary>
+    /// <typeparam name="TType">The type of instance to create.</typeparam>
+    /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
+    /// <param name="cachedType"></param>
+    /// <returns>The created instance.</returns>
+    TType? CreateInstanceWithRecursionGuard<TType>(AutoFakerContext context, CachedType cachedType);
+
+    /// <summary>
     /// Populates the provided instance with generated values.
     /// </summary>
     /// <typeparam name="TType">The type of instance to populate.</typeparam>
