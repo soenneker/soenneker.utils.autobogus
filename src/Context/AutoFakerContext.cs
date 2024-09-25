@@ -44,7 +44,7 @@ public sealed class AutoFakerContext
 
     public readonly AutoFaker? AutoFaker;
 
-    internal readonly CacheService CacheService;
+    public readonly CacheService CacheService;
 
     /// <summary>
     /// The requested rule sets provided for the generate request.
