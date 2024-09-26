@@ -125,4 +125,14 @@ public sealed class AutoFaker : IAutoFaker
         var faker = new AutoFaker(configure);
         return faker.Generate<TType>(count);
     }
+
+    public void UseSeed(int seed)
+    {
+        Faker.Random = new Randomizer(seed);
+    }
+
+    public void UseDateTimeReference(DateTime? refDate)
+    {
+        Faker.DateTimeReference = refDate;
+    }
 }

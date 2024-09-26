@@ -339,7 +339,7 @@ public class AutoFakerTests
         immutableListDto.List.Should().NotBeNullOrEmpty();
         immutableListDto.IList.Should().NotBeNullOrEmpty();
     }
-    
+
     [Fact]
     public void Generate_ImmutableArray_should_generate()
     {
@@ -418,6 +418,20 @@ public class AutoFakerTests
 
         var obj = autoFaker.Generate<TestClassWithPrivateField>();
         obj.GetValue().Should().BeNull();
+    }
+
+    [Fact]
+    public void UseSeed_should_generate_same_value()
+    {
+        var faker1 = new AutoFaker();
+        faker1.UseSeed(1);
+        var value1 = faker1.Generate<int>();
+
+        var faker2 = new AutoFaker();
+        faker2.UseSeed(1);
+        var value2 = faker2.Generate<int>();
+
+        value1.Should().Be(value2);
     }
 
     [Fact]

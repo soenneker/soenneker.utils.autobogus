@@ -46,4 +46,19 @@ public interface IAutoFaker
 
 
     void Configure(Action<IAutoFakerDefaultConfigBuilder> configure);
+
+    /// <summary>
+    /// Creates a seed locally scoped within the <seealso cref="Faker{T}"/> ignoring the globally scoped <seealso cref="Randomizer.Seed"/>.
+    /// If this method is never called the global <seealso cref="Randomizer.Seed"/> is used.
+    /// </summary>
+    /// <param name="seed">The seed value to use within the <seealso cref="Faker{T}"/> instance.</param>
+    void UseSeed(int seed);
+
+    /// <summary>
+    /// Sets a local time reference for all DateTime calculations used by
+    /// the <seealso cref="Faker{T}"/> instance; unless refDate parameters are specified 
+    /// with the corresponding Date.Methods().
+    /// </summary>
+    /// <param name="refDate">The anchored DateTime reference to use.</param>
+    void UseDateTimeReference(DateTime? refDate);
 }

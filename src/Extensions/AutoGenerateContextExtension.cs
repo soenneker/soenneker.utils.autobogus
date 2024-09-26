@@ -79,7 +79,7 @@ public static class AutoGenerateContextExtension
         {
             var items = new List<TType>(count);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 TType? item = generate.Invoke();
 
@@ -92,7 +92,7 @@ public static class AutoGenerateContextExtension
         else
         {
             var hashSet = new HashSet<TType>();
-            int attempts = 0;
+            var attempts = 0;
             int totalAttempts = count + maxAttempts - 1;
 
             while (hashSet.Count < count && attempts < totalAttempts)
