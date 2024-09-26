@@ -89,6 +89,14 @@ autoFaker.RuleFor(x => x.Id, f => f.Random.Number());
 var order = autoFaker.Generate();
 ```
 
+## Interfaces/Abstracts
+
+The base library does not generate interfaces or abstract objects, but these enable you to generate mocks of them:
+
+- [soenneker.utils.autobogus.moq](https://github.com/soenneker/soenneker.utils.autobogus.moq)
+- [soenneker.utils.autobogus.nsubstitute](https://github.com/soenneker/soenneker.utils.autobogus.nsubstitute)
+- [soenneker.utils.autobogus.fakeiteasy](https://github.com/soenneker/soenneker.utils.autobogus.fakeiteasy)
+
 ## Tips
 - ⚠️ Instantiating an `AutoFaker` takes a non-trivial amount of time because of Bogus `Faker` initialization (almost 1ms). It's recommended that a single instance be used if possible.
 - `AutoFaker.GenerateStatic<T>()` is also available, but should be avoided (as it creates a new `AutoFaker`/`Faker` on each call).
