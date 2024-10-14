@@ -14,13 +14,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Ardalis.SmartEnum" Version="8.0.0" />
-        <PackageReference Include="Ardalis.SmartEnum.JsonNet" Version="8.0.0" />
-        <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.0.0" />
+        <PackageReference Include="Ardalis.SmartEnum" Version="8.1.0" />
+        <PackageReference Include="Ardalis.SmartEnum.JsonNet" Version="8.1.0" />
+        <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
         <PackageReference Include="FluentAssertions" Version="6.12.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="2.1.317" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="2.1.318" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="2.1.117" />
         <PackageReference Include="xunit" Version="2.9.2" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
