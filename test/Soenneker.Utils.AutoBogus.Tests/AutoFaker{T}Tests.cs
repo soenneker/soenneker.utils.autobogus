@@ -240,4 +240,27 @@ public class AutoFakerTTests
         TestClassWithFuncCtor<int> obj = autoFaker.Generate();
         obj.Should().BeNull();
     }
+
+    [Fact]
+    public void TestClass_with_rule_should_be_empty()
+    {
+        var autoFaker = new AutoFaker<TestClassWithListString>().RuleFor(c => c.Value, new List<string>());
+        var result = autoFaker.Generate();
+
+        result.Value.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void TestClassWithCollectionBackedByReadOnlyCollection_with_rule_should_be_empty()
+    {
+        var config = new AutoFakerConfig
+        {
+            RecursiveDepth = 0
+        };
+
+        var autoFaker = new AutoFaker<TestClassWithCollectionBackedByReadOnlyCollection<string>>(config).RuleFor(c => c.PublicList, new List<string>());
+        var result = autoFaker.Generate();
+
+        result.PublicList.Should().BeEmpty();
+    }
 }

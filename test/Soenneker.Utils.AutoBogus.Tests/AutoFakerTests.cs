@@ -421,6 +421,25 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void TestClassWithTupleStringString_should_not_be_null()
+    {
+        var autoFaker = new AutoFaker();
+
+        var obj = autoFaker.Generate<TestClassWithTupleStringString>();
+        obj.Value.Item1.Should().NotBeNull();
+        obj.Value.Item2.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void TestClassWithNullableInt_should_not_be_null()
+    {
+        var autoFaker = new AutoFaker();
+
+        var obj = autoFaker.Generate<TestClassWithNullableInt>();
+        obj.Value.Should().NotBeNull();
+    }
+
+    [Fact]
     public void UseSeed_should_generate_same_value()
     {
         var faker1 = new AutoFaker();
