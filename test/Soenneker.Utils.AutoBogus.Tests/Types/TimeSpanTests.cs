@@ -11,7 +11,7 @@ public class TimeSpanTests
     {
         var faker = new AutoFaker();
         var obj = faker.Generate<TimeSpan>();
-        obj.Seconds.Should().BeGreaterThan(1);
+        obj.TotalSeconds.Should().BeGreaterThan(1);
         obj.GetType().Should().Be(typeof(TimeSpan));
     }
 }

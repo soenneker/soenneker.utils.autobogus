@@ -5,8 +5,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class ArrayGenerator<TType>
-    : IAutoFakerGenerator
+internal sealed class ArrayGenerator<TType> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
