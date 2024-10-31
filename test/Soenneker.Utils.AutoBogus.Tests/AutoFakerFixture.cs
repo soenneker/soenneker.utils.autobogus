@@ -19,8 +19,7 @@ public class AutoFakerFixture
 {
     private static readonly Type _type = typeof(AutoFaker);
 
-    public class Configure
-        : AutoFakerFixture
+    public class Configure : AutoFakerFixture
     {
         [Fact]
         public void Should_Configure_Default_Config()

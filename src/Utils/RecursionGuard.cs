@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Soenneker.Utils.AutoBogus.Context;
+﻿using Soenneker.Utils.AutoBogus.Context;
 
 namespace Soenneker.Utils.AutoBogus.Utils;
 
@@ -9,18 +8,17 @@ public class RecursionGuard
 
     public RecursionGuard(AutoFakerContext context, int cacheKey)
     {
-        int stackCount = context.RecursiveConstructorStack.Count(c => c == cacheKey);
+        foreach (int item in context.RecursiveConstructorStack)
+        {
+            if (item == cacheKey)
+            {
+                IsRecursive = true;
+                return;
+            }
+        }
 
-        if (stackCount >= 1)
-        {
-            // Recursion detected
-            IsRecursive = true;
-        }
-        else
-        {
-            // No recursion; push the cache key onto the stack
-            context.RecursiveConstructorStack.Push(cacheKey);
-            IsRecursive = false;
-        }
+        // No recursion; push the cache key onto the stack
+        context.RecursiveConstructorStack.Push(cacheKey);
+        IsRecursive = false;
     }
 }

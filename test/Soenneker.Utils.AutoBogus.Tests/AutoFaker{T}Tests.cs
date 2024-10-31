@@ -244,8 +244,8 @@ public class AutoFakerTTests
     [Fact]
     public void TestClass_with_rule_should_be_empty()
     {
-        var autoFaker = new AutoFaker<TestClassWithListString>().RuleFor(c => c.Value, new List<string>());
-        var result = autoFaker.Generate();
+        Faker<TestClassWithListString>? autoFaker = new AutoFaker<TestClassWithListString>().RuleFor(c => c.Value, new List<string>());
+        TestClassWithListString? result = autoFaker.Generate();
 
         result.Value.Should().BeEmpty();
     }
@@ -258,8 +258,8 @@ public class AutoFakerTTests
             RecursiveDepth = 0
         };
 
-        var autoFaker = new AutoFaker<TestClassWithCollectionBackedByReadOnlyCollection<string>>(config).RuleFor(c => c.PublicList, new List<string>());
-        var result = autoFaker.Generate();
+        Faker<TestClassWithCollectionBackedByReadOnlyCollection<string>>? autoFaker = new AutoFaker<TestClassWithCollectionBackedByReadOnlyCollection<string>>(config).RuleFor(c => c.PublicList, new List<string>());
+        TestClassWithCollectionBackedByReadOnlyCollection<string>? result = autoFaker.Generate();
 
         result.PublicList.Should().BeEmpty();
     }

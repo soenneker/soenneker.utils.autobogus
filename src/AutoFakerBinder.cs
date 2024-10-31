@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.InteropServices;
 using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
@@ -167,12 +167,27 @@ public class AutoFakerBinder : IAutoFakerBinder
             return false;
 
         // Finally check if the recursive depth has been reached
-        int typeCount = context.TypesStack.Count(c => c == autoMember.CachedType.CacheKey);
+        int typeCount = CountMatchingType(context.TypesStack, autoMember.CachedType.CacheKey);
 
         if (typeCount >= context.Config.RecursiveDepth)
             return true;
 
         return false;
+    }
+
+    private static int CountMatchingType(Stack<int> typesStack, int? cacheKey)
+    {
+        var typeCount = 0;
+
+        foreach (int item in typesStack)
+        {
+            if (item == cacheKey)
+            {
+                typeCount++;
+            }
+        }
+
+        return typeCount;
     }
 
     private CachedConstructor? GetConstructor(CachedType cachedType)
@@ -288,6 +303,9 @@ public class AutoFakerBinder : IAutoFakerBinder
             CachedProperty cachedProperty = cachedProperties[i];
 
             if (cachedProperty.IsDelegate)
+                continue;
+
+            if (cachedProperty.IsEqualityContract)
                 continue;
 
             autoMembers.Add(new AutoMember(cachedProperty, cacheService, autoFakerConfig));

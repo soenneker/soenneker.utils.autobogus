@@ -73,7 +73,7 @@ public static class AutoGenerateContextExtension
         generate ??= context.Generate<TType>;
 
         if (count <= 0)
-            return new List<TType>();
+            return [];
 
         if (!unique)
         {
@@ -104,6 +104,7 @@ public static class AutoGenerateContextExtension
 
                 attempts++;
             }
+
             return hashSet.ToList();
         }
     }

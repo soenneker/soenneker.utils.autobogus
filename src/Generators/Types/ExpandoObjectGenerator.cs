@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
@@ -16,7 +15,16 @@ internal sealed class ExpandoObjectGenerator : IAutoFakerGenerator
         // Need to copy the target dictionary to avoid mutations during population
         var target = instance as IDictionary<string, object>;
         var source = new Dictionary<string, object>(target);
-        IEnumerable<KeyValuePair<string, object>> properties = source.Where(pair => pair.Value != null);
+
+        List<KeyValuePair<string, object>> properties = [];
+
+        foreach (KeyValuePair<string, object> pair in source)
+        {
+            if (pair.Value != null)
+            {
+                properties.Add(pair);
+            }
+        }
 
         foreach (KeyValuePair<string, object> property in properties)
         {

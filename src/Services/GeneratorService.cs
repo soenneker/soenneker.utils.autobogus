@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Numerics;
 
@@ -55,13 +54,17 @@ internal sealed class GeneratorService
     {
         _cachedFundamentalGeneratorsByInt = new Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>>(() =>
         {
-            Dictionary<int, Lazy<IAutoFakerGenerator>> hashCodesMap = _cachedFundamentalGenerators.ToDictionary(
-                kvp => kvp.Key.GetHashCode(),
-                kvp => kvp.Value
-            );
+            var hashCodesMap = new Dictionary<int, Lazy<IAutoFakerGenerator>>();
+
+            foreach (KeyValuePair<Type, Lazy<IAutoFakerGenerator>> kvp in _cachedFundamentalGenerators)
+            {
+                int keyHashCode = kvp.Key.GetHashCode();
+                hashCodesMap[keyHashCode] = kvp.Value;
+            }
 
             return hashCodesMap;
         });
+
     }
 
     public IAutoFakerGenerator? GetFundamentalGenerator(CachedType cachedType)
@@ -87,7 +90,14 @@ internal sealed class GeneratorService
     /// <returns></returns>
     public static List<Type> GetSupportedFundamentalTypes()
     {
-        return _cachedFundamentalGenerators.Select(c => c.Key).ToList();
+        var supportedTypes = new List<Type>();
+
+        foreach (KeyValuePair<Type, Lazy<IAutoFakerGenerator>> kvp in _cachedFundamentalGenerators)
+        {
+            supportedTypes.Add(kvp.Key);
+        }
+
+        return supportedTypes;
     }
 
     public void Clear()

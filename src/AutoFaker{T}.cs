@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Config;
@@ -178,7 +177,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
                         continue;
                     }
 
-                    bool existing = context.Config.SkipPaths.Any(s => s == path);
+                    bool existing = context.Config.SkipPaths.Contains(path);
 
                     if (!existing)
                     {
