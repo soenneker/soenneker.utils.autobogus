@@ -20,12 +20,12 @@ jobs:
       - name: Setting up build version
         run: |
           version=$(($GITHUB_RUN_NUMBER))
-          echo "BUILD_VERSION=2.1.$version" >> ${GITHUB_ENV}
+          echo "BUILD_VERSION=3.0.$version" >> ${GITHUB_ENV}
 
       - name: Setup .NET Core 8.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Install dependencies with retry
         run: |
