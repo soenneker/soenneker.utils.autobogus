@@ -19,7 +19,7 @@
         <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
         <PackageReference Include="FluentAssertions" Version="6.12.2" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
         <PackageReference Include="Soenneker.Facts.Local" Version="3.0.327" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.119" />
         <PackageReference Include="xunit" Version="2.9.2" />
