@@ -12,6 +12,7 @@ using Soenneker.Reflection.Cache.Options;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Delegates;
+using System;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -376,6 +377,40 @@ public class AutoFakerTests
         var autoFaker = new AutoFaker();
         var obj = autoFaker.Generate<TestClassWithFuncCtor<int>>();
         obj.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_Action_should_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<Action>();
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_Func_should_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<Func<string, string>>();
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithAutoPropertyAction_should_not_be_null_but_property_should_be()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<TestClassWithAutoPropertyAction>();
+        result.Should().NotBeNull();
+        result.Action.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithAutoPropertyFunc_should_not_be_null_but_property_should_be()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<TestClassWithAutoPropertyFunc>();
+        result.Should().NotBeNull();
+        result.Func.Should().BeNull();
     }
 
     [Fact]
