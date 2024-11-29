@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
@@ -26,8 +26,8 @@ public class AutoFakerBinder : IAutoFakerBinder
 {
     internal readonly GeneratorService GeneratorService;
 
-    private readonly Dictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
-    private readonly Dictionary<CachedType, CachedConstructor> _constructorsCache = [];
+    private readonly ConcurrentDictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
+    private readonly ConcurrentDictionary<CachedType, CachedConstructor> _constructorsCache = [];
 
     public AutoFakerBinder()
     {
