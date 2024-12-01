@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 
@@ -26,10 +27,10 @@ public class AutoFakerParallelTests
         });
 
         // Assert
-        Assert.Equal(numberOfTasks, results.Count);
+        results.Count.Should().Be(numberOfTasks);
 
         List<int> ids = results.Select(x => x.Id).ToList();
-        Assert.Equal(ids.Count, ids.Distinct().Count()); // Ensure IDs are unique
+        ids.Should().OnlyHaveUniqueItems();
     }
 
     [Fact]
@@ -48,9 +49,9 @@ public class AutoFakerParallelTests
         TestClassWithSimpleProperties[] results = await Task.WhenAll(tasks);
 
         // Assert
-        Assert.Equal(numberOfTasks, results.Length);
+        results.Length.Should().Be(numberOfTasks);
 
         List<int> ids = results.Select(x => x.Id).ToList();
-        Assert.Equal(ids.Count, ids.Distinct().Count()); // Ensure IDs are unique
+        ids.Should().OnlyHaveUniqueItems();
     }
 }
