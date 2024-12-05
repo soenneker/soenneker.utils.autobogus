@@ -13,7 +13,7 @@ The goals:
 
 It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache). Bogus updates are automatically integrated.
 
-.NET 6+ is supported.
+.NET 8+ is supported.
 
 ## Installation
 
