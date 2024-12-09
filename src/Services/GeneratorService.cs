@@ -44,6 +44,7 @@ internal sealed class GeneratorService
         {typeof(IPAddress), new Lazy<IAutoFakerGenerator>(() => new IpAddressGenerator())},
         {typeof(MemoryStream), new Lazy<IAutoFakerGenerator>(() => new MemoryStreamGenerator())},
         {typeof(Exception), new Lazy<IAutoFakerGenerator>(() => new ExceptionGenerator())},
+        {typeof(WeakReference), new Lazy<IAutoFakerGenerator>(() => new WeakReferenceGenerator())},
     };
 
     private readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt;

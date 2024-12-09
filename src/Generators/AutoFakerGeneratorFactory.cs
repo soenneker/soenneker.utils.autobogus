@@ -89,6 +89,12 @@ public static class AutoFakerGeneratorFactory
             return new ExpandoObjectGenerator();
         }
 
+        if (context.CachedType.IsWeakReference)
+        {
+            cachedType = context.CachedType.GetCachedGenericArguments()![0];
+            return CreateGenericGenerator(CachedTypeService.WeakReferenceGenerator.Value, cachedType);
+        }
+
         (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(context.CachedType);
 
         if (collectionType != null)
