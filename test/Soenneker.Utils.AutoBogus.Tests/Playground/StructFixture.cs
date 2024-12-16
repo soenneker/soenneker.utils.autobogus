@@ -3,7 +3,6 @@ using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 

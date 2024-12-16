@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
-using Soenneker.Utils.AutoBogus.Tests.Facts;
+using Soenneker.Facts.Local;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 

@@ -388,6 +388,14 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_ActionString_should_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<Action<string>>();
+        result.Should().BeNull();
+    }
+
+    [Fact]
     public void Generate_Func_should_be_null()
     {
         AutoFaker generator = new();

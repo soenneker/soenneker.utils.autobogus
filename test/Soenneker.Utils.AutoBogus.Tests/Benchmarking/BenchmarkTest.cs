@@ -2,11 +2,11 @@
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Reports;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking;
 
-public abstract class BenchmarkTest 
+public abstract class BenchmarkTest
 {
     protected ManualConfig DefaultConf { get; }
 

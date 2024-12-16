@@ -56,7 +56,7 @@ partial class AutoGeneratorsFixture
             yield return [typeof(TypedDataSetWithSelfReferencingTable)];
         }
 
-        [SkippableTheory]
+        [Theory]
         [MemberData(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataSet(Type dataSetType)
         {
@@ -67,7 +67,7 @@ partial class AutoGeneratorsFixture
 
             bool success = BaseDataSetGenerator.TryCreateGenerator(context, cachedType, out BaseDataSetGenerator? generator);
 
-            Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
+           // Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
             // Act
             object result = generator.Generate(context);
@@ -86,7 +86,7 @@ partial class AutoGeneratorsFixture
             }
         }
 
-        [SkippableTheory]
+        [Theory]
         [MemberData(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataSet_With_Specified_DataTable_Row_Counts(Type dataSetType)
         {
@@ -120,7 +120,7 @@ partial class AutoGeneratorsFixture
 
             bool success = BaseDataSetGenerator.TryCreateGenerator(context, cachedType, out BaseDataSetGenerator? generator);
 
-            Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
+            //Skip.IfNot(success, $"couldn't create generator for {dataSetType.Name}");
 
             // Act
             object result = generator.Generate(context);
@@ -223,7 +223,7 @@ partial class AutoGeneratorsFixture
             yield return [typeof(TypedDataTable2)];
         }
 
-        [SkippableTheory]
+        [Theory]
         [MemberData(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataTable(Type dataTableType)
         {
@@ -234,7 +234,7 @@ partial class AutoGeneratorsFixture
 
             bool success = BaseDataTableGenerator.TryCreateGenerator(context, cachedType, out BaseDataTableGenerator? generator);
 
-            Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
+            //Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
             // Act
             object result = generator.Generate(context);
@@ -248,7 +248,7 @@ partial class AutoGeneratorsFixture
             dataTable.Rows.Should().NotBeEmpty();
         }
 
-        [SkippableTheory]
+        [Theory]
         [MemberData(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataTable_With_Specified_Row_Count(Type dataTableType)
         {
@@ -262,7 +262,7 @@ partial class AutoGeneratorsFixture
 
             bool success = BaseDataTableGenerator.TryCreateGenerator(context, cachedType, out BaseDataTableGenerator? generator);
 
-            Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
+          //  Skip.IfNot(success, $"couldn't create generator for {dataTableType.Name}");
 
             // Act
             object result = generator.Generate(context);
