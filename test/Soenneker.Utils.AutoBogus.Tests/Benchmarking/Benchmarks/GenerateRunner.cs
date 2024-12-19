@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
-using Soenneker.Facts.Local;
+using Soenneker.Facts.Manual;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
@@ -13,7 +13,7 @@ public class GenerateRunner : BenchmarkTest
     {
     }
 
-    [LocalFact]
+    [ManualFact]
     public async Task Generate()
     {
         Summary summary = BenchmarkRunner.Run<GenerateBenchmarks>(DefaultConf);
@@ -21,7 +21,7 @@ public class GenerateRunner : BenchmarkTest
         await OutputSummaryToLog(summary);
     }
 
-    [LocalFact]
+    [ManualFact]
     public async Task GenerateT()
     {
         Summary summary = BenchmarkRunner.Run<GenerateTBenchmarks>(DefaultConf);
@@ -29,7 +29,7 @@ public class GenerateRunner : BenchmarkTest
         await OutputSummaryToLog(summary);
     }
 
-    [LocalFact]
+    [ManualFact]
     public async Task Bogus()
     {
         Summary summary = BenchmarkRunner.Run<BogusBenchmarks>(DefaultConf);
