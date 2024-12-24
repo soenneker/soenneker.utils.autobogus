@@ -22,7 +22,7 @@ jobs:
           version=$(($GITHUB_RUN_NUMBER))
           echo "BUILD_VERSION=3.0.$version" >> ${GITHUB_ENV}
 
-      - name: Setup .NET 9.0
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
