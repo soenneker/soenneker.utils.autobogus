@@ -78,3 +78,17 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Add GitHub NuGet Source
+        run: |
+          dotnet nuget add source https://nuget.pkg.github.com/soenneker/index.json \
+          --name "github" \
+          --username "any" \
+          --password ${{ secrets.GH_TOKEN }} \
+          --store-password-in-clear-text
+
+      - name: Publish to GitHub Packages
+        run: |
+          dotnet nuget push ./*.nupkg \
+          --source "github" \
+          --api-key ${{ secrets.GH_TOKEN }}
