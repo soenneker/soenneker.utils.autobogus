@@ -29,8 +29,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="xunit.v3" Version="1.0.0" />
-    <PackageReference Include="xUnit.v3" Version="1.0.0" /></ItemGroup>
+        <PackageReference Include="xunit.v3" Version="1.0.1" />
+    <PackageReference Include="xUnit.v3" Version="1.0.1" /></ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Soenneker.Utils.AutoBogus.csproj" />
