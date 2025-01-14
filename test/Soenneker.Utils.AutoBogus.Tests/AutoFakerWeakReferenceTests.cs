@@ -50,7 +50,7 @@ public class AutoFakerWeakReferenceTests
     {
         var faker = new AutoFaker<TestClassWithWeakReference>();
 
-        var result = faker.Generate();
+        TestClassWithWeakReference result = faker.Generate();
         result.Should().NotBeNull();
         result.WeakReference.Should().NotBeNull();
     }
@@ -60,7 +60,7 @@ public class AutoFakerWeakReferenceTests
     {
         var faker = new AutoFaker<TestClassWithWeakReferenceT>();
 
-        var result = faker.Generate();
+        TestClassWithWeakReferenceT result = faker.Generate();
         result.Should().NotBeNull();
         result.WeakReference.TryGetTarget(out TestClassWithSimpleProperties? target).Should().BeTrue();
         target.Name.Should().NotBeNullOrEmpty();
@@ -71,7 +71,7 @@ public class AutoFakerWeakReferenceTests
     {
         var faker = new AutoFaker<TestClassWithWeakReferenceTPrivate>();
 
-        var result = faker.Generate();
+        TestClassWithWeakReferenceTPrivate result = faker.Generate();
         result.Should().NotBeNull();
 
         Type type = typeof(TestClassWithWeakReferenceTPrivate);

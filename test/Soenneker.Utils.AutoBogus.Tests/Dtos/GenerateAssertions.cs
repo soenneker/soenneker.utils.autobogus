@@ -17,9 +17,15 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
     private MethodInfo DefaultValueFactory;
     private IDictionary<Func<Type, bool>, Func<string, Type, object, string>> Assertions = new Dictionary<Func<Type, bool>, Func<string, Type, object, string>>();
 
-    internal GenerateAssertions(object subject) : base(subject)
+    private AssertionChain AssertionChain { get; set; }
+
+    protected override string Identifier => "Generate";
+
+    internal GenerateAssertions(object subject, AssertionChain assertionChain) : base(subject, assertionChain)
     {
         Type type = GetType();
+
+        AssertionChain = assertionChain;
 
         DefaultValueFactory = type.GetMethod("GetDefaultValue", BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -52,22 +58,17 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         Assertions.Add(IsEnumerable, AssertEnumerable);
         Assertions.Add(IsNullable, AssertNullable);
     }
-
-    private IAssertionScope Scope { get; set; }
-
-    protected override string Identifier => "Generate";
-
     public AndConstraint<object> BeGenerated()
     {
         Type type = Subject.GetType();
         Func<string, Type, object, string> assertion = GetAssertion(type);
 
-        Scope = Execute.Assertion;
+       // Scope = Execute.Assertion;
 
         // Assert the value and output any fail messages
         string? message = assertion.Invoke(null, type, Subject);
-            
-        Scope = Scope
+
+        AssertionChain = AssertionChain
             .ForCondition(message == null)
             .FailWith(message)
             .Then;
@@ -98,7 +99,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         Type type = Subject.GetType();
         IEnumerable<MemberInfo> memberInfos = GetMemberInfos(type);
 
-        Scope = Execute.Assertion;
+        //Scope = Execute.Assertion;
 
         foreach (MemberInfo? memberInfo in memberInfos)
         {
@@ -113,7 +114,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         Type type = Subject.GetType();
         Func<string, Type, object, string> assertion = GetAssertion(type);
 
-        Scope = Execute.Assertion;
+        //Scope = Execute.Assertion;
 
         assertion.Invoke(type.Name, type, Subject);
 
@@ -156,7 +157,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
             }
         }
 
-        Scope = Scope
+        AssertionChain = AssertionChain
             .ForCondition(equal)
             .FailWith($"Expected a default '{memberType.FullName}' value for '{memberInfo.Name}'.")
             .Then;
@@ -340,7 +341,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
         string? message = assertion.Invoke(path, memberType, value);
 
         // Register an assertion for each member
-        Scope = Scope
+        AssertionChain = AssertionChain
             .ForCondition(message == null)
             .FailWith(message)
             .Then;

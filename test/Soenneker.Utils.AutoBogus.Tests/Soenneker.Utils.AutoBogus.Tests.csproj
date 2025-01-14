@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -17,7 +17,7 @@
         <PackageReference Include="Ardalis.SmartEnum.JsonNet" Version="8.1.0" />
         <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-        <PackageReference Include="FluentAssertions" Version="7.0.0" />
+        <PackageReference Include="FluentAssertions" Version="8.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
         <PackageReference Include="Soenneker.Facts.Local" Version="3.0.394" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.131" />
@@ -29,7 +29,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="xunit.v3" Version="1.0.1" />
     <PackageReference Include="xUnit.v3" Version="1.0.1" /></ItemGroup>
 
     <ItemGroup>

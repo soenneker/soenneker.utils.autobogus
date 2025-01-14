@@ -77,12 +77,12 @@ partial class AutoGeneratorsFixture
 
             var dataSet = (DataSet) result;
 
-            dataSet.Tables.Should().NotBeEmpty();
+            dataSet.Tables.Count.Should().NotBe(0);
 
             foreach (DataTable? table in dataSet.Tables.OfType<DataTable>())
             {
-                table.Columns.Should().NotBeEmpty();
-                table.Rows.Should().NotBeEmpty();
+                table.Columns.Count.Should().NotBe(0);
+                table.Rows.Count.Should().NotBe(0);
             }
         }
 
@@ -130,13 +130,13 @@ partial class AutoGeneratorsFixture
 
             var dataSet = (DataSet) result;
 
-            dataSet.Tables.Should().NotBeEmpty();
+            dataSet.Tables.Count.Should().NotBe(0);
 
             foreach (DataTable? table in dataSet.Tables.OfType<DataTable>())
             {
-                table.Columns.Should().NotBeEmpty();
+                table.Columns.Count.Should().NotBe(0);
 
-                table.Rows.Should().HaveCount(3);
+                table.Rows.Count.Should().Be(3);
             }
         }
 
@@ -244,8 +244,8 @@ partial class AutoGeneratorsFixture
 
             var dataTable = (DataTable) result;
 
-            dataTable.Columns.Should().NotBeEmpty();
-            dataTable.Rows.Should().NotBeEmpty();
+            dataTable.Columns.Count.Should().NotBe(0);
+            dataTable.Rows.Count.Should().NotBe(0);
         }
 
         [Theory]
@@ -272,8 +272,8 @@ partial class AutoGeneratorsFixture
 
             var dataTable = (DataTable) result;
 
-            dataTable.Columns.Should().NotBeEmpty();
-            dataTable.Rows.Should().HaveCount(RowCount);
+            dataTable.Columns.Count.Should().NotBe(0);
+            dataTable.Rows.Count.Should().Be(RowCount);
         }
 
         internal class TypedDataTable1 : TypedTableBase<TypedDataRow1>
