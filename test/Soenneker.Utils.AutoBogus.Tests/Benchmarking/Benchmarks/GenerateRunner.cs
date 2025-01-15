@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
+using Soenneker.Facts.Local;
 using Soenneker.Facts.Manual;
 using Xunit;
 
@@ -13,27 +14,28 @@ public class GenerateRunner : BenchmarkTest
     {
     }
 
-    [ManualFact]
-    public async Task Generate()
+    //[ManualFact]
+    [LocalFact]
+    public async ValueTask Generate()
     {
         Summary summary = BenchmarkRunner.Run<GenerateBenchmarks>(DefaultConf);
 
-        await OutputSummaryToLog(summary);
+        await OutputSummaryToLog(summary, TestContext.Current.CancellationToken);
     }
 
     [ManualFact]
-    public async Task GenerateT()
+    public async ValueTask GenerateT()
     {
         Summary summary = BenchmarkRunner.Run<GenerateTBenchmarks>(DefaultConf);
 
-        await OutputSummaryToLog(summary);
+        await OutputSummaryToLog(summary, TestContext.Current.CancellationToken);
     }
 
     [ManualFact]
-    public async Task Bogus()
+    public async ValueTask Bogus()
     {
         Summary summary = BenchmarkRunner.Run<BogusBenchmarks>(DefaultConf);
 
-        await OutputSummaryToLog(summary);
+        await OutputSummaryToLog(summary, TestContext.Current.CancellationToken);
     }
 }

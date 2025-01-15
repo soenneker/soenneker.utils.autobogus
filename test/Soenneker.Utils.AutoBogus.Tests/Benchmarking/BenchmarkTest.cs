@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Reports;
@@ -20,9 +21,9 @@ public abstract class BenchmarkTest
         DefaultConf.SummaryStyle = SummaryStyle.Default.WithRatioStyle(RatioStyle.Trend);
     }
 
-    protected async System.Threading.Tasks.ValueTask OutputSummaryToLog(Summary summary)
+    protected async System.Threading.Tasks.ValueTask OutputSummaryToLog(Summary summary, CancellationToken cancellationToken = default)
     {
-        string[] logs = await File.ReadAllLinesAsync(summary.LogFilePath);
+        string[] logs = await File.ReadAllLinesAsync(summary.LogFilePath, cancellationToken);
 
         foreach (string? log in logs)
         {

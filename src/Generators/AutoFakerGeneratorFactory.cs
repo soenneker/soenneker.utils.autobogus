@@ -15,38 +15,42 @@ public static class AutoFakerGeneratorFactory
 {
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
     {
-        IAutoFakerGenerator? cachedGenerator = context.Binder.GeneratorService.GetGenerator(context.CachedType);
+        // Attempt to get a cached generator first
+        GeneratorService generatorService = context.Binder.GeneratorService;
+        CachedType? cachedType = context.CachedType;
 
+        IAutoFakerGenerator? cachedGenerator = generatorService.GetGenerator(cachedType);
         if (cachedGenerator != null)
             return cachedGenerator;
 
         IAutoFakerGenerator generator = CreateGenerator(context);
 
-        List<AutoFakerGeneratorOverride>? overrides = null;
-
-        if (context.Config.Overrides != null)
+        // Handle overrides
+        List<AutoFakerGeneratorOverride>? configOverrides = context.Config.Overrides;
+        if (configOverrides != null)
         {
-            overrides = [];
+            List<AutoFakerGeneratorOverride>? overrides = null;
 
-            for (var i = 0; i < context.Config.Overrides.Count; i++)
+            for (var i = 0; i < configOverrides.Count; i++)
             {
-                AutoFakerGeneratorOverride o = context.Config.Overrides[i];
+                AutoFakerGeneratorOverride overrideCandidate = configOverrides[i];
+                if (overrideCandidate.CanOverride(context))
+                {
+                    overrides ??= new List<AutoFakerGeneratorOverride>(configOverrides.Count);
+                    overrides.Add(overrideCandidate);
+                }
+            }
 
-                if (o.CanOverride(context))
-                    overrides.Add(o);
+            if (overrides != null)
+            {
+                var newOverrideGenerator = new AutoFakerGeneratorOverrideInvoker(generator, overrides);
+                generatorService.SetGenerator(cachedType, newOverrideGenerator);
+                return newOverrideGenerator;
             }
         }
 
-        if (overrides == null || overrides.Count == 0)
-        {
-            context.Binder.GeneratorService.SetGenerator(context.CachedType, generator);
-            return generator;
-        }
-
-        var newOverrideGenerator = new AutoFakerGeneratorOverrideInvoker(generator, overrides);
-
-        context.Binder.GeneratorService.SetGenerator(context.CachedType, newOverrideGenerator);
-        return newOverrideGenerator;
+        generatorService.SetGenerator(cachedType, generator);
+        return generator;
     }
 
     internal static IAutoFakerGenerator CreateGenerator(AutoFakerContext context)
@@ -183,7 +187,6 @@ public static class AutoFakerGeneratorFactory
     {
         CachedType genericCachedType = cachedType.MakeCachedGenericType(genericTypes)!;
 
-        var generator = (IAutoFakerGenerator) genericCachedType.CreateInstance();
-        return generator;
+        return (IAutoFakerGenerator) genericCachedType.CreateInstance();
     }
 }

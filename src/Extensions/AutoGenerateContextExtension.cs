@@ -47,9 +47,7 @@ public static class AutoGenerateContextExtension
     {
         count ??= context.Config.RepeatCount;
 
-        List<TType> items = GenerateMany<TType>(context, count.Value, false);
-
-        return items;
+        return GenerateMany<TType>(context, count.Value, false);
     }
 
     /// <summary>
@@ -63,9 +61,7 @@ public static class AutoGenerateContextExtension
     {
         count ??= context.Config.RepeatCount;
 
-        List<TType> items = GenerateMany<TType>(context, count.Value, true);
-
-        return items;
+        return GenerateMany<TType>(context, count.Value, true);
     }
 
     internal static List<TType> GenerateMany<TType>(AutoFakerContext context, int count, bool unique, int maxAttempts = 1, Func<TType?>? generate = null)
@@ -89,23 +85,21 @@ public static class AutoGenerateContextExtension
 
             return items;
         }
-        else
+
+        var hashSet = new HashSet<TType>();
+        var attempts = 0;
+        int totalAttempts = count + maxAttempts - 1;
+
+        while (hashSet.Count < count && attempts < totalAttempts)
         {
-            var hashSet = new HashSet<TType>();
-            var attempts = 0;
-            int totalAttempts = count + maxAttempts - 1;
+            TType? item = generate.Invoke();
 
-            while (hashSet.Count < count && attempts < totalAttempts)
-            {
-                TType? item = generate.Invoke();
+            if (item != null)
+                hashSet.Add(item);
 
-                if (item != null)
-                    hashSet.Add(item);
-
-                attempts++;
-            }
-
-            return hashSet.ToList();
+            attempts++;
         }
+
+        return hashSet.ToList();
     }
 }

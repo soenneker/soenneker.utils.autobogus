@@ -131,17 +131,20 @@ public class AutoFakerBinder : IAutoFakerBinder
                     {
                         member.Setter.Invoke(instance, value);
                     }
-                    else if (member.IsDictionary)
+                    else
                     {
-                        PopulateDictionary(value, instance, member);
-                    }
-                    else if (member.IsCollection)
-                    {
-                        PopulateCollection(value, instance, member);
+                        if (member.IsDictionary)
+                        {
+                            PopulateDictionary(value, instance, member);
+                        }
+                        else if (member.IsCollection)
+                        {
+                            PopulateCollection(value, instance, member);
+                        }
                     }
                 }
                 catch (Exception e)
-                {
+                { // TODO: get rid of this, deal with failing unit
                     Console.WriteLine(e.ToString());
                 }
             }
@@ -153,83 +156,103 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private static bool ShouldSkip(AutoMember autoMember, AutoFakerContext context)
     {
+        // Check if the member explicitly indicates it should be skipped.
         if (autoMember.ShouldSkip)
             return true;
 
-        //check if tree depth is reached
-        if (context.Config.TreeDepth != null)
-        {
-            if (context.TypesStack.Count >= context.Config.TreeDepth)
-                return true;
-        }
+        // Cache configuration values for better readability and efficiency.
+        AutoFakerConfig config = context.Config;
+        Stack<int> typesStack = context.TypesStack;
+        int stackCount = typesStack.Count;
 
-        if (context.TypesStack.Count < context.Config.RecursiveDepth)
+        // Handle special case: If TreeDepth is 0, all elements should be skipped.
+        if (config.TreeDepth == 0)
+            return true;
+
+        // Check if the tree depth is reached.
+        if (config.TreeDepth != null && stackCount >= config.TreeDepth)
+            return true;
+
+        // Handle special case: If RecursiveDepth is 0, all recursive elements should be skipped.
+        if (config.RecursiveDepth == 0)
+            return true;
+
+        // Check if the stack count is below the recursive depth threshold.
+        if (stackCount < config.RecursiveDepth)
             return false;
 
-        // Finally check if the recursive depth has been reached
-        int typeCount = CountMatchingType(context.TypesStack, autoMember.CachedType.CacheKey);
-
-        if (typeCount >= context.Config.RecursiveDepth)
-            return true;
+        // Inline logic to count matching types in the stack.
+        if (autoMember.CachedType.CacheKey is int cacheKeyValue)
+        {
+            int typeCount = 0;
+            foreach (int type in typesStack)
+            {
+                if (type == cacheKeyValue)
+                {
+                    typeCount++;
+                    if (typeCount >= config.RecursiveDepth)
+                        return true; // Exit early if recursive depth is reached.
+                }
+            }
+        }
 
         return false;
     }
 
-    private static int CountMatchingType(Stack<int> typesStack, int? cacheKey)
-    {
-        var typeCount = 0;
-
-        foreach (int item in typesStack)
-        {
-            if (item == cacheKey)
-            {
-                typeCount++;
-            }
-        }
-
-        return typeCount;
-    }
-
     private CachedConstructor? GetConstructor(CachedType cachedType)
     {
+        // Fast path: check the cache first.
         if (_constructorsCache.TryGetValue(cachedType, out CachedConstructor? cachedConstructor))
             return cachedConstructor;
 
-        CachedConstructor[]? constructors = cachedType.GetCachedConstructors();
+        // Fetch constructors for the given type.
+        ReadOnlySpan<CachedConstructor> constructors = cachedType.GetCachedConstructors().AsSpan();
 
-        if (constructors == null)
+        if (constructors.IsEmpty)
             return null;
 
+        // Handle specific type scenarios first for early exits.
         if (cachedType.IsDictionary)
-            return ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
+        {
+            cachedConstructor = ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
+            if (cachedConstructor != null)
+            {
+                _constructorsCache.TryAdd(cachedType, cachedConstructor);
+                return cachedConstructor;
+            }
+        }
 
         if (cachedType.IsEnumerable)
-            return ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
+        {
+            cachedConstructor = ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
+            if (cachedConstructor != null)
+            {
+                _constructorsCache.TryAdd(cachedType, cachedConstructor);
+                return cachedConstructor;
+            }
+        }
 
         CachedConstructor? constructorWithParameters = null;
 
-        for (var i = 0; i < constructors.Length; i++)
+        foreach (ref readonly CachedConstructor constructor in constructors)
         {
-            CachedConstructor constructor = constructors[i];
-
-            // Not going to support private constructors right now, and can't invoke a static one neither
+            // Skip private or static constructors.
             if (!constructor.IsPublic || constructor.IsStatic)
                 continue;
 
-            CachedParameter[] parameters = constructor.GetCachedParameters();
+            ReadOnlySpan<CachedParameter> parameters = constructor.GetCachedParameters().AsSpan();
 
-            if (parameters.Length == 0)
+            // If parameterless, cache and return immediately.
+            if (parameters.IsEmpty)
             {
                 _constructorsCache.TryAdd(cachedType, constructor);
                 return constructor;
             }
 
+            // Check if all parameters are valid.
             var constructorIsViable = true;
-
-            for (var j = 0; j < parameters.Length; j++)
+            foreach (ref readonly CachedParameter parameter in parameters)
             {
-                CachedParameter parameter = parameters[j];
-
                 if (parameter.CachedParameterType.IsFunc)
                 {
                     constructorIsViable = false;
@@ -243,6 +266,7 @@ public class AutoFakerBinder : IAutoFakerBinder
             constructorWithParameters ??= constructor;
         }
 
+        // Cache and return the constructor with parameters, if found.
         if (constructorWithParameters != null)
         {
             _constructorsCache.TryAdd(cachedType, constructorWithParameters);
@@ -252,7 +276,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return null;
     }
 
-    private static CachedConstructor? ResolveTypedConstructor(CachedType type, CachedConstructor[] constructors)
+    private static CachedConstructor? ResolveTypedConstructor(CachedType type, ReadOnlySpan<CachedConstructor> constructors)
     {
         for (var i = 0; i < constructors.Length; i++)
         {
@@ -289,47 +313,48 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     internal List<AutoMember> GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
     {
-        if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? members))
-            return members;
+        // Try to retrieve cached members to avoid redundant processing
+        if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? cachedMembers))
+            return cachedMembers;
 
-        var autoMembers = new List<AutoMember>();
-
-        CachedProperty[] cachedProperties = cachedType.GetCachedProperties()!;
+        // Fetch cached properties and fields from the cached type
+        CachedProperty[] cachedProperties = cachedType.GetCachedProperties();
         CachedField[]? cachedFields = cachedType.GetCachedFields();
-        autoMembers.Capacity = cachedProperties.Length + (cachedFields?.Length ?? 0);
 
+        // Calculate capacity to minimize allocations and resize operations
+        int totalCapacity = cachedProperties.Length + (cachedFields?.Length ?? 0);
+        var autoMembers = new List<AutoMember>(totalCapacity);
+
+        // Process properties
         for (var i = 0; i < cachedProperties.Length; i++)
         {
-            CachedProperty cachedProperty = cachedProperties[i];
+            ref readonly CachedProperty cachedProperty = ref cachedProperties[i];
 
-            if (cachedProperty.IsDelegate)
-                continue;
-
-            if (cachedProperty.IsEqualityContract)
+            // Skip properties that are delegates or equality contracts
+            if (cachedProperty.IsDelegate || cachedProperty.IsEqualityContract)
                 continue;
 
             autoMembers.Add(new AutoMember(cachedProperty, cacheService, autoFakerConfig));
         }
 
-        if (cachedFields != null)
+        // Process fields if present
+        if (cachedFields is not null)
         {
             for (var i = 0; i < cachedFields.Length; i++)
             {
-                CachedField cachedField = cachedFields[i];
+                ref readonly CachedField cachedField = ref cachedFields[i];
 
-                if (cachedField.FieldInfo.IsConstant())
-                    continue;
-
-                if (cachedField.IsDelegate)
-                    continue;
-
-                if (cachedField.FieldInfo.Name.Contains("k__BackingField"))
+                // Skip constants, delegates, and backing fields
+                if (cachedField.FieldInfo.IsConstant() ||
+                    cachedField.IsDelegate ||
+                    cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
                 autoMembers.Add(new AutoMember(cachedField, cacheService, autoFakerConfig));
             }
         }
 
+        // Cache the processed members for future use
         _autoMembersCache.TryAdd(cachedType, autoMembers);
 
         return autoMembers;

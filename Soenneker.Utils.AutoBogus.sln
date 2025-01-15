@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DD733813-BAA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soenneker.Utils.AutoBogus.Tests", "test\Soenneker.Utils.AutoBogus.Tests\Soenneker.Utils.AutoBogus.Tests.csproj", "{6456E465-9523-4612-9115-9D9B585B42E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soenneker.Utils.AutoBogus.Tests.Console", "test\Soenneker.Utils.AutoBogus.Console\Soenneker.Utils.AutoBogus.Tests.Console.csproj", "{E9CB7272-EA08-FF05-7915-CF6E3765E65D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{6456E465-9523-4612-9115-9D9B585B42E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6456E465-9523-4612-9115-9D9B585B42E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6456E465-9523-4612-9115-9D9B585B42E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9CB7272-EA08-FF05-7915-CF6E3765E65D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9CB7272-EA08-FF05-7915-CF6E3765E65D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9CB7272-EA08-FF05-7915-CF6E3765E65D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9CB7272-EA08-FF05-7915-CF6E3765E65D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{41850636-33B4-4228-AE59-A2113F66B9FA} = {DD733813-BAA4-429B-90A7-8E7ADE196683}
 		{D786EC1A-4F59-412F-8624-83E6E3525B0C} = {4E42254D-039C-40ED-B3F4-8C1A94A366D1}
 		{6456E465-9523-4612-9115-9D9B585B42E8} = {E355F0FD-671D-4F99-A5C3-2F0442EFD8CD}
+		{E9CB7272-EA08-FF05-7915-CF6E3765E65D} = {E355F0FD-671D-4F99-A5C3-2F0442EFD8CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B849EC5C-B7B3-4C90-9B66-CBC15CCB776A}
