@@ -19,7 +19,7 @@
         <PackageReference Include="AwesomeAssertions" Version="8.0.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.436" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.437" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.136" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.14" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
