@@ -100,6 +100,15 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_TestClassEmpty_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var record = faker.Generate<TestClassEmpty>();
+        record.Should().NotBeNull();
+    }
+
+    [Fact]
     public void Generate_TestRecordWithRecursiveConstructor_should_generate()
     {
         var faker = new AutoFaker();
@@ -264,23 +273,10 @@ public class AutoFakerTests
 
         var order = autoFaker.Generate<CustomOrder>();
 
-        order.DaysOfWeek.Should().NotBeNull();
-        order.DaysOfWeek.Should().BeEmpty();
-
-        order.NullableDaysOfWeek.Should().NotBeNull();
-        order.NullableDaysOfWeek.Should().BeEmpty();
+        order.NullableDaysOfWeek.Should().NotBeEmpty();
 
         order.Longitude.Should().NotBeNull();
         CustomOrder.Constant.Should().Be("Order2x89ei");
-    }
-
-    [Fact]
-    public void Generate_CalendarItem_should_generate_no_dayOfWeek()
-    {
-        var autoFaker = new AutoFaker();
-
-        var calendarItem = autoFaker.Generate<CalendarItem>();
-        calendarItem.DayOfWeek.Should().BeNull();
     }
 
     [Fact]

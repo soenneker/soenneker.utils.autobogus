@@ -27,9 +27,7 @@ public sealed class AutoFaker : IAutoFaker
     {
         CachedType autoFakerType = CachedTypeService.AutoFaker.Value;
 
-        MethodInfo methodInfo = autoFakerType.Type!.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
-
-        return methodInfo;
+        return autoFakerType.Type!.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
     });
 
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
@@ -85,8 +83,7 @@ public sealed class AutoFaker : IAutoFaker
         // TODO: Optimize
         MethodInfo method = _nonTypeParameterMethod.Value.MakeGenericMethod(type);
 
-        object? result = method.Invoke(this, null);
-        return result!;
+        return method.Invoke(this, null)!;
     }
 
     /// <summary>

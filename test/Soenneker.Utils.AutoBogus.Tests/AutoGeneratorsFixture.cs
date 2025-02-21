@@ -17,6 +17,7 @@ using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
 using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
+using Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Tests;

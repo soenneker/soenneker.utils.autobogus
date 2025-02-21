@@ -188,8 +188,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
                 // Create a blank instance. It will be populated in the FinalizeAction registered
                 // by PrepareFinish (context.Binder.PopulateInstance<TType>).
 
-                var instance = context.Binder.CreateInstanceWithRecursionGuard<TType>(context, cachedType);
-                return instance;
+                return context.Binder.CreateInstanceWithRecursionGuard<TType>(context, cachedType)!;
             }
 
             return _defaultCreateAction.Invoke(faker);
@@ -227,22 +226,26 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
                 return;
             }
 
-            List<AutoMember> autoMembers = context.Binder.GetMembersToPopulate(cachedType, _cacheService, Config);
-            var finalAutoMembers = new List<AutoMember>();
+            List<AutoMember>? autoMembers = context.Binder.GetMembersToPopulate(cachedType, _cacheService, Config);
 
-            List<string> memberNames = GetRuleSetsMemberNames(context);
-
-            for (var i = 0; i < autoMembers.Count; i++)
+            if (autoMembers != null)
             {
-                AutoMember autoMember = autoMembers[i];
-                if (!memberNames.Contains(autoMember.Name))
-                {
-                    finalAutoMembers.Add(autoMember);
-                }
-            }
+                var finalAutoMembers = new List<AutoMember>();
 
-            context.RecursiveConstructorStack.Clear();
-            AutoFakerBinder.PopulateMembers(instance, context, cachedType, finalAutoMembers);
+                List<string> memberNames = GetRuleSetsMemberNames(context);
+
+                for (var i = 0; i < autoMembers.Count; i++)
+                {
+                    AutoMember autoMember = autoMembers[i];
+                    if (!memberNames.Contains(autoMember.Name))
+                    {
+                        finalAutoMembers.Add(autoMember);
+                    }
+                }
+
+                context.RecursiveConstructorStack.Clear();
+                AutoFakerBinder.PopulateMembers(instance, context, cachedType, finalAutoMembers);
+            }
 
             // Ensure the default finish with is invoke
             finishWith?.Action(faker, instance);

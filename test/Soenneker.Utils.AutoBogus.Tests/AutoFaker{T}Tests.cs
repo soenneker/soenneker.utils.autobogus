@@ -29,6 +29,15 @@ public class AutoFakerTTests
     }
 
     [Fact]
+    public void Generate_TestClassEmpty_should_generate()
+    {
+        var faker = new AutoFaker();
+
+        var record = faker.Generate<TestClassEmpty>();
+        record.Should().NotBeNull();
+    }
+
+    [Fact]
     public void Generate_order_with_count_should_generate()
     {
         var autoFaker = new AutoFaker<Order>();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Generators.Types;
+using Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 using Soenneker.Utils.AutoBogus.Generators.Types.Immutables;
 
 namespace Soenneker.Utils.AutoBogus.Services;
@@ -14,7 +15,7 @@ internal static class CachedTypeService
     internal static readonly Lazy<CachedType> SetGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(SetGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> ReadOnlyDictionaryGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ReadOnlyDictionaryGenerator<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> NullableGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(NullableGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
-    internal static readonly Lazy<CachedType> EnumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(EnumGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+
     internal static readonly Lazy<CachedType> ArrayGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ArrayGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> DictionaryGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(DictionaryGenerator<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> CollectionGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(CollectionGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
@@ -27,4 +28,9 @@ internal static class CachedTypeService
     internal static readonly Lazy<CachedType> IEnumerable = new(() => StaticCacheService.Cache.GetCachedType(typeof(IEnumerable<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> AutoFaker = new(() => StaticCacheService.Cache.GetCachedType(typeof(AutoFaker)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> Object = new(() => StaticCacheService.Cache.GetCachedType(typeof(object)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+
+    // enums
+    internal static readonly Lazy<CachedType> EnumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(EnumGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    internal static readonly Lazy<CachedType> SmartEnumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(SmartEnumGenerator)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    internal static readonly Lazy<CachedType> IntellenumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(IntellenumGenerator)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 }

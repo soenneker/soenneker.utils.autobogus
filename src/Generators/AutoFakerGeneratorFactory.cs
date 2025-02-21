@@ -6,6 +6,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
+using Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Utils;
 
@@ -20,6 +21,7 @@ public static class AutoFakerGeneratorFactory
         CachedType? cachedType = context.CachedType;
 
         IAutoFakerGenerator? cachedGenerator = generatorService.GetGenerator(cachedType);
+
         if (cachedGenerator != null)
             return cachedGenerator;
 
@@ -178,6 +180,16 @@ public static class AutoFakerGeneratorFactory
         if (BaseDataSetGenerator.TryCreateGenerator(context, context.CachedType, out BaseDataSetGenerator dataSetGenerator))
         {
             return dataSetGenerator;
+        }
+
+        if (context.CachedType.IsIntellenum)
+        {
+            return new IntellenumGenerator();
+        }
+
+        if (context.CachedType.IsSmartEnum)
+        {
+            return new SmartEnumGenerator();
         }
 
         return CreateGenericGenerator(CachedTypeService.TypeGenerator.Value, cachedType);

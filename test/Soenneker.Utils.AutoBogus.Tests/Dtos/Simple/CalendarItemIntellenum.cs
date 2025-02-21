@@ -2,7 +2,7 @@
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
-public class CalendarItem
+public class CalendarItemIntellenum
 {
-    public DayOfWeekType DayOfWeek { get; set; }
+    public DayOfWeekTypeIntellenum DayOfWeek { get; set; }
 }

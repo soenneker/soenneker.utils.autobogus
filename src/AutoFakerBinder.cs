@@ -94,14 +94,17 @@ public class AutoFakerBinder : IAutoFakerBinder
     public void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType)
     {
         // Iterate the members and bind a generated value
-        List<AutoMember> autoMembers = GetMembersToPopulate(cachedType, context.CacheService, context.Config);
+        List<AutoMember>? autoMembers = GetMembersToPopulate(cachedType, context.CacheService, context.Config);
         context.RecursiveConstructorStack.Clear();
 
         PopulateMembers(instance, context, cachedType, autoMembers);
     }
 
-    internal static void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember> autoMembers)
+    internal static void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember>? autoMembers)
     {
+        if (autoMembers == null)
+            return;
+
         // Iterate the members and bind a generated value
         for (var i = 0; i < autoMembers.Count; i++)
         {
@@ -182,7 +185,7 @@ public class AutoFakerBinder : IAutoFakerBinder
             return false;
 
         // Inline logic to count matching types in the stack.
-        if (autoMember.CachedType.CacheKey is int cacheKeyValue)
+        if (autoMember.CachedType.CacheKey is { } cacheKeyValue)
         {
             int typeCount = 0;
             foreach (int type in typesStack)
@@ -190,6 +193,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 if (type == cacheKeyValue)
                 {
                     typeCount++;
+
                     if (typeCount >= config.RecursiveDepth)
                         return true; // Exit early if recursive depth is reached.
                 }
@@ -205,7 +209,6 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (_constructorsCache.TryGetValue(cachedType, out CachedConstructor? cachedConstructor))
             return cachedConstructor;
 
-        // Fetch constructors for the given type.
         ReadOnlySpan<CachedConstructor> constructors = cachedType.GetCachedConstructors().AsSpan();
 
         if (constructors.IsEmpty)
@@ -311,18 +314,22 @@ public class AutoFakerBinder : IAutoFakerBinder
         return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
-    internal List<AutoMember> GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
+    internal List<AutoMember>? GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
     {
         // Try to retrieve cached members to avoid redundant processing
         if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? cachedMembers))
             return cachedMembers;
 
         // Fetch cached properties and fields from the cached type
-        CachedProperty[] cachedProperties = cachedType.GetCachedProperties();
+        CachedProperty[]? cachedProperties = cachedType.GetCachedProperties();
         CachedField[]? cachedFields = cachedType.GetCachedFields();
 
         // Calculate capacity to minimize allocations and resize operations
-        int totalCapacity = cachedProperties.Length + (cachedFields?.Length ?? 0);
+        int totalCapacity = (cachedProperties?.Length ?? 0) + (cachedFields?.Length ?? 0);
+
+        if (totalCapacity == 0)
+            return null;
+
         var autoMembers = new List<AutoMember>(totalCapacity);
 
         // Process properties

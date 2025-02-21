@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using Soenneker.Benchmarking.Extensions.Summary;
-using Soenneker.Facts.Local;
 using Soenneker.Facts.Manual;
 using Soenneker.Tests.Benchmark;
 using Xunit;
@@ -16,8 +15,8 @@ public class GenerateRunner : BenchmarkTest
     {
     }
 
-    //[ManualFact]
-    [LocalFact]
+    [ManualFact]
+    //[LocalFact]
     public async ValueTask Generate()
     {
         Summary summary = BenchmarkRunner.Run<GenerateBenchmarks>(DefaultConf);

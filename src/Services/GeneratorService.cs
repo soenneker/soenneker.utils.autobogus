@@ -70,14 +70,12 @@ internal sealed class GeneratorService
 
     public IAutoFakerGenerator? GetFundamentalGenerator(CachedType cachedType)
     {
-        IAutoFakerGenerator? result = _cachedFundamentalGeneratorsByInt.Value.GetValueOrDefault(cachedType.CacheKey!.Value)?.Value;
-        return result;
+        return _cachedFundamentalGeneratorsByInt.Value.GetValueOrDefault(cachedType.CacheKey!.Value)?.Value;
     }
 
     public IAutoFakerGenerator? GetGenerator(CachedType cachedType)
     {
-        IAutoFakerGenerator? result = _cachedGenerators.GetValueOrDefault(cachedType.CacheKey!.Value);
-        return result;
+        return _cachedGenerators.GetValueOrDefault(cachedType.CacheKey!.Value);
     }
 
     public void SetGenerator(CachedType cachedType, IAutoFakerGenerator generator)

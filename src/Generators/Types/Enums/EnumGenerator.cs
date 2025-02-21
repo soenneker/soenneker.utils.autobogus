@@ -2,7 +2,7 @@
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
-namespace Soenneker.Utils.AutoBogus.Generators.Types;
+namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
 internal sealed class EnumGenerator<TType>: IAutoFakerGenerator where TType: struct, Enum
 {

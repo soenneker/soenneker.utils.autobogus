@@ -34,12 +34,12 @@ public sealed class CustomOrder : BaseCustomOrder
 
     public ICollection<string> Comments { get; set; }
 
-    public List<DayOfWeekType> DaysOfWeek { get; set; }
+    public List<DayOfWeekTypeSmartEnum> DaysOfWeek { get; set; }
 
     public Longitude Longitude { get; set; }
 
     [JsonPropertyName("nullableDaysOfWeek")]
-    public List<DayOfWeekType>? NullableDaysOfWeek { get; set; }
+    public List<DayOfWeekTypeSmartEnum>? NullableDaysOfWeek { get; set; }
 
     public CustomOrder(int id, ICalculator calculator)
     {
