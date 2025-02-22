@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.CalendarItem;
 using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Enums;
