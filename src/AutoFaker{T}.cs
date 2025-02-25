@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
@@ -17,6 +18,9 @@ namespace Soenneker.Utils.AutoBogus;
 public class AutoFaker<TType> : Faker<TType> where TType : class
 {
     public AutoFakerConfig Config { get; set; }
+
+    private ConcurrentDictionary<int, AutoFakerContext> ContextLoopUp { get; } = new();
+    
 
     /// <summary>
     /// The <see cref="AutoFakerBinder"/> instance to use for the generation request.
@@ -62,12 +66,21 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     {
         Initialize();
 
-        AutoFakerContext context = CreateContext(ruleSets);
+        CreateGenerateContext(ruleSets);
 
-        PrepareCreate(context);
-        PrepareFinish(context);
+        PrepareCreate();
+        PrepareFinish();
 
         return base.Generate(ruleSets);
+    }
+
+    private void CreateGenerateContext(string? ruleSets)
+    {
+        lock (ContextLoopUp)
+        {
+            // Think 1 needs to be added since the generate method increments the context
+            ContextLoopUp[FakerHub.IndexFaker+1] = CreateContext(ruleSets);
+        }
     }
 
     /// <summary>
@@ -80,10 +93,10 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     {
         Initialize();
 
-        AutoFakerContext context = CreateContext(ruleSets);
-
-        PrepareCreate(context);
-        PrepareFinish(context);
+        CreateGenerateContext(ruleSets);
+        
+        PrepareCreate();
+        PrepareFinish();
 
         return base.Generate(count, ruleSets);
     }
@@ -95,8 +108,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     /// <param name="ruleSets">An optional list of delimited rule sets to use for the populate request.</param>
     public override void Populate(TType instance, string? ruleSets = null)
     {
-        AutoFakerContext context = CreateContext(ruleSets);
-        PrepareFinish(context);
+        CreateGenerateContext(ruleSets);
+        PrepareFinish();
 
         base.Populate(instance, ruleSets);
     }
@@ -140,7 +153,15 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
         return validRuleSets;
     }
 
-    private void PrepareCreate(AutoFakerContext context)
+    protected AutoFakerContext GetContext(Faker fakerHub)
+    {
+        if (!ContextLoopUp.TryGetValue(fakerHub.IndexFaker, out var context))
+            throw new Exception("I done F'd up");
+
+        return context;
+    }
+
+    private void PrepareCreate()
     {
         // Check a create handler hasn't previously been set or configured externally
         if (_createInitialized || CreateActions[currentRuleSet] != null)
@@ -148,6 +169,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
         CreateActions[currentRuleSet] = faker =>
         {
+            var context = GetContext(faker);
+            
             // Only auto create if the 'default' rule set is defined for generation
             // This is because any specific rule sets are expected to handle the full creation
             if (context.RuleSets != null && context.RuleSets.Contains(currentRuleSet))
@@ -197,7 +220,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
         _createInitialized = true;
     }
 
-    private void PrepareFinish(AutoFakerContext context)
+    private void PrepareFinish()
     {
         if (_finishInitialized)
             return;
@@ -206,6 +229,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
         FinishWith((faker, instance) =>
         {
+            var context = GetContext(faker);
+            
             if (instance == null)
                 return;
 
