@@ -1,0 +1,25 @@
+﻿name: ✨ Feature Request
+description: Suggest an improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What should be added?
+      description: Describe the new feature, method, or behavior
+      placeholder: "It would help to have a method that..."
+
+  - type: textarea
+    id: usecase
+    attributes:
+      label: What’s the use case?
+      description: What developer problem does this solve?
+      placeholder: "This would help when building..."
+
+  - type: textarea
+    id: api
+    attributes:
+      label: Suggested API (optional)
+      description: If applicable, propose a sample method, interface, or signature
+      placeholder: "Maybe something like: `DoThingAsync(MyOptions options)`"

@@ -1,4 +1,4 @@
-# Contributing to Soenneker.Utils.AutoBogus
+﻿# Contributing to Soenneker.Utils.AutoBogus
 
 We're excited that you're interested in contributing!
 

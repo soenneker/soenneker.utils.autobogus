@@ -1,0 +1,37 @@
+﻿name: 🐛 Bug Report
+description: Report a problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What’s the issue?
+      description: Describe the unexpected behavior and what should happen instead
+      placeholder: "I'm using X method, but it throws Y..."
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Code snippets or steps to reproduce the issue
+      placeholder: |
+        1. Use this input...
+        2. Call this method...
+        3. Get this result...
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: .NET version, library version, OS, runtime
+      placeholder: ".NET 8, Windows 11, library v1.2.3"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Stack trace or error
+      description: Paste any logs or exceptions
+      render: shell

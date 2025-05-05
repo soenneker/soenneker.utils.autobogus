@@ -1,0 +1,23 @@
+﻿name: 📝 Documentation Update
+description: Suggest improvements to README, XML docs, or usage examples
+title: "[Docs]: "
+labels: [documentation]
+body:
+  - type: textarea
+    id: section
+    attributes:
+      label: Where’s the issue?
+      description: What part of the documentation is unclear or missing?
+      placeholder: "The usage section for X is missing how to configure Y..."
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggestion
+      description: What would clarify it?
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Context
+      description: Anything else that would help improve it?
