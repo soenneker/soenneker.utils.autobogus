@@ -9,7 +9,6 @@ body:
       label: What’s the issue?
       description: Describe the unexpected behavior and what should happen instead
       placeholder: "I'm using X method, but it throws Y..."
-      required: true
 
   - type: textarea
     id: repro
@@ -20,7 +19,6 @@ body:
         1. Use this input...
         2. Call this method...
         3. Get this result...
-      required: true
 
   - type: textarea
     id: env
