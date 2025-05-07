@@ -4,8 +4,6 @@ on:
     branches:
       - main
 
-    tags:
-      - v*
     paths-ignore:
       - 'test/**'
 
@@ -94,3 +92,28 @@ jobs:
           dotnet nuget push ./*.nupkg \
           --source "github" \
           --api-key ${{ secrets.GH_TOKEN }}
+
+      - name: Create GitHub Release
+        run: |
+          changelog=$(git log -20 --pretty=format:"- %s")
+          tag_name="v$BUILD_VERSION"
+
+          json_payload=$(
+            jq -n \
+              --arg tag_name "$tag_name" \
+              --arg name "$tag_name" \
+              --arg body "$changelog" \
+              '{
+                tag_name: $tag_name,
+                name: $name,
+                body: $body,
+                draft: false,
+                prerelease: false
+              }'
+          )
+
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d "$json_payload"
