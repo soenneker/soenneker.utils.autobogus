@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
@@ -30,7 +30,7 @@
         <LangVersion>preview</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
-    </PropertyGroup>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild></PropertyGroup>
 
     <ItemGroup>
       <Compile Remove="Generators\Types\NewFolder\**" />
