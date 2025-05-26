@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bogus;
-using FluentAssertions;
+using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;

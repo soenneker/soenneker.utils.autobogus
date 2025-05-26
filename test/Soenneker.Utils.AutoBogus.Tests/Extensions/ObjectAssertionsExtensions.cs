@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using FluentAssertions.Primitives;
+﻿using AwesomeAssertions;
+using AwesomeAssertions.Primitives;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Extensions;
