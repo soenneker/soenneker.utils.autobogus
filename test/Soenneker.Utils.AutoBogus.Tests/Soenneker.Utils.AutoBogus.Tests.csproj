@@ -16,7 +16,7 @@
     <ItemGroup>
         <PackageReference Include="Ardalis.SmartEnum.JsonNet" Version="8.1.0" />
         <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
-        <PackageReference Include="AwesomeAssertions" Version="8.2.0" />
+        <PackageReference Include="AwesomeAssertions" Version="9.0.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.15.0" />
         <PackageReference Include="Intellenum" Version="1.0.6" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
