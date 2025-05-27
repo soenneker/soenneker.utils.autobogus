@@ -84,14 +84,14 @@ jobs:
           dotnet nuget add source https://nuget.pkg.github.com/soenneker/index.json \
           --name "github" \
           --username "any" \
-          --password ${{ secrets.GH_TOKEN }} \
+          --password ${{ secrets.GH__TOKEN }} \
           --store-password-in-clear-text
 
       - name: Publish to GitHub Packages
         run: |
           dotnet nuget push ./*.nupkg \
           --source "github" \
-          --api-key ${{ secrets.GH_TOKEN }}
+          --api-key ${{ secrets.GH__TOKEN }}
 
       - name: Create GitHub Release
         run: |
@@ -113,7 +113,7 @@ jobs:
           )
 
           curl -s -X POST \
-            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.GH__TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/releases \
             -d "$json_payload"
