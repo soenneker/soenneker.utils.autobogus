@@ -20,9 +20,9 @@
         <PackageReference Include="BenchmarkDotNet" Version="0.15.0" />
         <PackageReference Include="Intellenum" Version="1.0.6" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.488" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.489" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.149" />
-        <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.32" />
+        <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.33" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
