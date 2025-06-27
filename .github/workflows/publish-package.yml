@@ -65,7 +65,7 @@ jobs:
           exponent=3.5
           
           for i in $(seq 1 $retries); do
-            if dotnet nuget push $nupkg_files --source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET_TOKEN}} --skip-duplicate; then
+            if dotnet nuget push $nupkg_files --source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET__TOKEN}} --skip-duplicate; then
               break
             fi
             
