@@ -280,16 +280,16 @@ public class AutoFakerTests
     }
 
     [Fact]
-    public void Generate_Stream_should_be_null()
+    public void Generate_Stream_should_not_be_null()
     {
         var faker = new AutoFaker();
 
         var stream = faker.Generate<Stream>();
-        stream.Should().BeNull();
+        stream.Should().NotBeNull();
     }
 
     [Fact]
-    public void Generate_MemoryStream_should_be_null()
+    public void Generate_MemoryStream_should_not_be_null()
     {
         var faker = new AutoFaker();
 
@@ -305,7 +305,7 @@ public class AutoFakerTests
         var video = faker.Generate<Video>();
         video.Should().NotBeNull();
         video.MemoryStreamsList.Should().NotBeNullOrEmpty();
-        video.StreamsArray.Should().BeEmpty();
+        video.StreamsArray.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -580,5 +580,41 @@ public class AutoFakerTests
         testClass.Child.Child.Child.Should().NotBeNull();
         testClass.Child.Child.Child.Child.Should().NotBeNull();
         testClass.Child.Child.Child.Child.Child.Should().BeNull();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithArrayIntCtor_should_not_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<TestClassWithArrayIntCtor>();
+        result.Should().NotBeNull();
+        result._ints.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithArrayStringCtor_should_not_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<TestClassWithArrayStringCtor>();
+        result.Should().NotBeNull();
+        result._strings.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithArrayIntProperty_should_not_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<TestClassWithArrayIntProperty>();
+        result.Should().NotBeNull();
+        result.Values.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithArrayStringProperty_should_not_be_null()
+    {
+        AutoFaker generator = new();
+        var result = generator.Generate<TestClassWithArrayStringProperty>();
+        result.Should().NotBeNull();
+        result.Values.Should().NotBeNullOrEmpty();
     }
 }

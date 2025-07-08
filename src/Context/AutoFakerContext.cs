@@ -49,7 +49,7 @@ public sealed class AutoFakerContext
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
-    public List<string>? RuleSets;
+    public HashSet<string>? RuleSets;
 
     internal readonly Stack<int> TypesStack;
 

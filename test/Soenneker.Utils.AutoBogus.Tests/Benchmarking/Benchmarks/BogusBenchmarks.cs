@@ -5,7 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
 public class BogusBenchmarks
 {
-    private Faker _faker = default!;
+    private Faker _faker = null!;
 
     [GlobalSetup]
     public void Setup()

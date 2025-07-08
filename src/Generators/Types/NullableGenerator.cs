@@ -4,9 +4,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class NullableGenerator<TType>
-    : IAutoFakerGenerator
-    where TType : struct
+internal sealed class NullableGenerator<TType> : IAutoFakerGenerator where TType : struct
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {

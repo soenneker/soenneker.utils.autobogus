@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -128,27 +128,20 @@ public class AutoFakerBinder : IAutoFakerBinder
 
             if (value != null)
             {
-                try
+                if (!member.IsReadOnly)
                 {
-                    if (!member.IsReadOnly)
-                    {
-                        member.Setter.Invoke(instance, value);
-                    }
-                    else
-                    {
-                        if (member.IsDictionary)
-                        {
-                            PopulateDictionary(value, instance, member);
-                        }
-                        else if (member.IsCollection)
-                        {
-                            PopulateCollection(value, instance, member);
-                        }
-                    }
+                    member.Setter.Invoke(instance, value);
                 }
-                catch (Exception e)
-                { // TODO: get rid of this, deal with failing unit
-                    Console.WriteLine(e.ToString());
+                else
+                {
+                    if (member.IsDictionary)
+                    {
+                        PopulateDictionary(value, instance, member);
+                    }
+                    else if (member.IsCollection)
+                    {
+                        PopulateCollection(value, instance, member);
+                    }
                 }
             }
 
@@ -187,7 +180,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         // Inline logic to count matching types in the stack.
         if (autoMember.CachedType.CacheKey is { } cacheKeyValue)
         {
-            int typeCount = 0;
+            var typeCount = 0;
             foreach (int type in typesStack)
             {
                 if (type == cacheKeyValue)
@@ -352,9 +345,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 ref readonly CachedField cachedField = ref cachedFields[i];
 
                 // Skip constants, delegates, and backing fields
-                if (cachedField.FieldInfo.IsConstant() ||
-                    cachedField.IsDelegate ||
-                    cachedField.FieldInfo.Name.Contains("k__BackingField"))
+                if (cachedField.FieldInfo.IsConstant() || cachedField.IsDelegate || cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
                 autoMembers.Add(new AutoMember(cachedField, cacheService, autoFakerConfig));
@@ -396,18 +387,43 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         object? instance = member.Getter(parent);
 
-        if (instance is IList {IsReadOnly: true})
-            return;
+        switch (instance)
+        {
+            case null:
+                return;
+            case Array destArray:
+            {
+                int itemsToCopy = Math.Min(destArray.Length, collection.Count);
+                var i = 0;
+
+
+                foreach (object? item in collection)
+                {
+                    if (i >= itemsToCopy)
+                        break;
+
+                    // Handles boxing/unboxing and element-type conversion internally
+                    destArray.SetValue(item, i++);
+                }
+
+                return;
+            }
+            case IList {IsReadOnly: true}:
+                return;
+        }
 
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
 
-        if (instance == null || addMethod == null)
+        if (addMethod == null)
             return;
+
+        var args = new object[1];
 
         foreach (object? item in collection)
         {
-            addMethod.Invoke(instance, [item]);
+            args[0] = item; // boxing avoidance
+            addMethod.Invoke(instance, args);
         }
     }
 

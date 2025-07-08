@@ -22,6 +22,6 @@ public class ImmutableDictionaryFixture
         obj.Should().NotBeNull();
         obj.SomeStringProperty.Should().NotBeNullOrWhiteSpace();
         obj.SomeReadOnlyDictionary.Should().NotBeEmpty();
-        obj.SomeImmutableDictionary.Should().BeNull();
+        obj.SomeImmutableDictionary.Should().NotBeEmpty();
     }
 }

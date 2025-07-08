@@ -37,7 +37,7 @@ public sealed class AutoFakerOverrideContext
     /// <summary>
     /// The requested rule sets provided for the generate request.
     /// </summary>
-    public List<string>? RuleSets { get; }
+    public HashSet<string>? RuleSets { get; }
 
     internal AutoFakerOverrideContext(AutoFakerContext generateContext)
     {

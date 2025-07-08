@@ -116,14 +116,14 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
     /// </summary>
     /// <param name="ruleSets"></param>
     /// <returns></returns>
-    private List<string> ParseRuleSets(string? ruleSets)
+    private HashSet<string> ParseRuleSets(string? ruleSets)
     {
         if (string.IsNullOrWhiteSpace(ruleSets))
         {
             ruleSets = null;
         }
 
-        var validRuleSets = new List<string>();
+        var validRuleSets = new HashSet<string>();
 
         string[] ruleSetArray = ruleSets?.Split(',') ?? [currentRuleSet];
 
@@ -162,7 +162,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
                 context.GenerateName = null;
 
                 // Get the members that should not be set during construction
-                List<string> memberNames = GetRuleSetsMemberNames(context);
+                HashSet<string> memberNames = GetRuleSetsMemberNames(context);
 
                 foreach (string? memberName in TypeProperties.Keys)
                 {
@@ -232,7 +232,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
             {
                 var finalAutoMembers = new List<AutoMember>();
 
-                List<string> memberNames = GetRuleSetsMemberNames(context);
+                HashSet<string> memberNames = GetRuleSetsMemberNames(context);
 
                 for (var i = 0; i < autoMembers.Count; i++)
                 {
@@ -254,17 +254,15 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
         _finishInitialized = true;
     }
 
-    private List<string> GetRuleSetsMemberNames(AutoFakerContext context)
+    private HashSet<string> GetRuleSetsMemberNames(AutoFakerContext context)
     {
-        var members = new List<string>();
+        var members = new HashSet<string>();
 
         if (context.RuleSets == null)
             return members;
 
-        for (var i = 0; i < context.RuleSets.Count; i++)
+        foreach (string ruleSetName in context.RuleSets)
         {
-            string ruleSetName = context.RuleSets[i];
-
             if (!Actions.TryGetValue(ruleSetName, out Dictionary<string, PopulateAction<TType>>? ruleSet))
             {
                 continue;

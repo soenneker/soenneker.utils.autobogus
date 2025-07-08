@@ -9,7 +9,7 @@ internal abstract class BaseDataSetGenerator : IAutoFakerGenerator
 {
     public static bool TryCreateGenerator(AutoFakerContext? context, CachedType dataSetType, out BaseDataSetGenerator? generator)
     {
-        generator = default;
+        generator = null;
         
         CachedType cachedDataSetType = context.CacheService.Cache.GetCachedType(typeof(DataSet));
 

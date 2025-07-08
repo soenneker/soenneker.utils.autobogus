@@ -8,6 +8,7 @@ namespace Soenneker.Utils.AutoBogus.Generators;
 internal sealed class AutoFakerGeneratorMemberOverride<TType, TValue> : AutoFakerGeneratorOverride
 {
     private Type Type { get; }
+
     private readonly CachedType _cachedType;
 
     private string MemberName { get; }

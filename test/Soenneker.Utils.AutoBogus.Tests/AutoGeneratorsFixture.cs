@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using AwesomeAssertions;
@@ -237,8 +238,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class ReferenceTypes
-        : AutoGeneratorsFixture
+    public class ReferenceTypes : AutoGeneratorsFixture
     {
         private sealed class TestClass
         {
@@ -260,8 +260,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class RegisteredGenerator
-        : AutoGeneratorsFixture
+    public class RegisteredGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [MemberData(nameof(GetRegisteredTypes))]
@@ -323,8 +322,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class ExpandoObjectGenerator
-        : AutoGeneratorsFixture
+    public class ExpandoObjectGenerator : AutoGeneratorsFixture
     {
         [Fact]
         public void Generate_Should_Return_Value()
@@ -359,8 +357,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class ArrayGenerator
-        : AutoGeneratorsFixture
+    public class ArrayGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(TestEnum[]))]
@@ -394,8 +391,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class EnumGenerator
-        : AutoGeneratorsFixture
+    public class EnumGenerator : AutoGeneratorsFixture
     {
         [Fact]
         public void Generate_Should_Return_Enum()
@@ -416,8 +412,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class DictionaryGenerator
-        : AutoGeneratorsFixture
+    public class DictionaryGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(IDictionary<int, TestEnum>))]
@@ -467,7 +462,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class ListGenerator: AutoGeneratorsFixture
+    public class ListGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(IList<TestEnum>))]
@@ -598,8 +593,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class EnumerableGenerator
-        : AutoGeneratorsFixture
+    public class EnumerableGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(IEnumerable<TestEnum>))]
@@ -635,8 +629,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class NullableGenerator
-        : AutoGeneratorsFixture
+    public class NullableGenerator : AutoGeneratorsFixture
     {
         [Fact]
         public void Generate_Should_Return_Value()
@@ -657,8 +650,7 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class TypeGenerator
-        : AutoGeneratorsFixture
+    public class TypeGenerator : AutoGeneratorsFixture
     {
         [Theory]
         [InlineData(typeof(TestStruct))]
@@ -694,14 +686,12 @@ public partial class AutoGeneratorsFixture
         }
     }
 
-    public class GeneratorOverrides
-        : AutoGeneratorsFixture
+    public class GeneratorOverrides : AutoGeneratorsFixture
     {
         private AutoFakerGeneratorOverride _autoFakerGeneratorOverride;
         private List<AutoFakerGeneratorOverride> _overrides;
 
-        private class TestAutoFakerGeneratorOverride
-            : AutoFakerGeneratorOverride
+        private class TestAutoFakerGeneratorOverride : AutoFakerGeneratorOverride
         {
             public TestAutoFakerGeneratorOverride(bool shouldOverride = false)
             {

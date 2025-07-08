@@ -10,11 +10,11 @@ public class RecursionGuard
     {
         foreach (int item in context.RecursiveConstructorStack)
         {
-            if (item == cacheKey)
-            {
-                IsRecursive = true;
-                return;
-            }
+            if (item != cacheKey)
+                continue;
+            
+            IsRecursive = true;
+            return;
         }
 
         // No recursion; push the cache key onto the stack

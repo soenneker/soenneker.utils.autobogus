@@ -15,11 +15,11 @@ public sealed class CacheService
     public CacheService(ReflectionCacheOptions? reflectionCacheOptions = null)
     {
         _reflectionCacheOptions = reflectionCacheOptions;
-        _cacheLazy = new Lazy<ReflectionCache>(() => new ReflectionCache(_reflectionCacheOptions, true), true);
+        _cacheLazy = new Lazy<ReflectionCache>(() => new ReflectionCache(_reflectionCacheOptions), true);
     }
 
     internal void ClearCache()
     {
-        _cacheLazy = new Lazy<ReflectionCache>(() => new ReflectionCache(_reflectionCacheOptions, true), true);
+        _cacheLazy = new Lazy<ReflectionCache>(() => new ReflectionCache(_reflectionCacheOptions), true);
     }
 }

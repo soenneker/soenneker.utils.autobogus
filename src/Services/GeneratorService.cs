@@ -45,6 +45,7 @@ internal sealed class GeneratorService
         {typeof(MemoryStream), new Lazy<IAutoFakerGenerator>(() => new MemoryStreamGenerator())},
         {typeof(Exception), new Lazy<IAutoFakerGenerator>(() => new ExceptionGenerator())},
         {typeof(WeakReference), new Lazy<IAutoFakerGenerator>(() => new WeakReferenceGenerator())},
+        {typeof(Stream), new Lazy<IAutoFakerGenerator>(() => new StreamGenerator())},
     };
 
     private readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt;
@@ -93,6 +94,10 @@ internal sealed class GeneratorService
 
         foreach (KeyValuePair<Type, Lazy<IAutoFakerGenerator>> kvp in _cachedFundamentalGenerators)
         {
+            // Abstract types
+            if (kvp.Key == typeof(Stream))
+                continue;
+
             supportedTypes.Add(kvp.Key);
         }
 

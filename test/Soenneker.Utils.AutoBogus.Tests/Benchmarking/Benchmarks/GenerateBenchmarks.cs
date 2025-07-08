@@ -5,7 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
 public class GenerateBenchmarks
 {
-    private AutoFaker _autoFaker = default!;
+    private AutoFaker _autoFaker = null!;
 
     [GlobalSetup]
     public void Setup()

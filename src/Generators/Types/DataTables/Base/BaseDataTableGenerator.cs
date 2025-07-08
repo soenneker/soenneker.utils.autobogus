@@ -146,7 +146,7 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
                             : foreignKey.RelatedTable.Rows[context.Faker.Random.Number(0, foreignKey.RelatedTable.Rows.Count - 1)];
             }
 
-            object[] columnValues = new object[table.Columns.Count];
+            var columnValues = new object[table.Columns.Count];
 
             for (var i = 0; i < table.Columns.Count; i++)
             {

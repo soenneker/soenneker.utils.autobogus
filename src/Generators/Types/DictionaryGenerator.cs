@@ -5,8 +5,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class DictionaryGenerator<TKey, TValue>
-    : IAutoFakerGenerator
+internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
@@ -21,8 +20,7 @@ internal sealed class DictionaryGenerator<TKey, TValue>
         {
             try
             {
-               // items = (IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
-                items = (IDictionary<TKey, TValue>)context.CachedType.CreateInstance(); //(IDictionary<TKey, TValue>)Activator.CreateInstance(context.GenerateType, true);
+                items = (IDictionary<TKey, TValue>) context.CachedType.CreateInstance();
             }
             catch
             {

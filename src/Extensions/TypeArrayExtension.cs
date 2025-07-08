@@ -23,6 +23,8 @@ internal static class TypeArrayExtension
                 case "IImmutableList`1":
                 case "ImmutableList`1":
                     return (cachedType, GenericCollectionType.ImmutableList);
+                case "ImmutableDictionary`2":
+                    return (cachedType, GenericCollectionType.ImmutableDictionary);
                 case "SortedList`2":
                     return (cachedType, GenericCollectionType.SortedList);
                 case "Dictionary`2":

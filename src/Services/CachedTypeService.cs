@@ -14,6 +14,7 @@ internal static class CachedTypeService
     internal static readonly Lazy<CachedType> ListGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ListGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> SetGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(SetGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> ReadOnlyDictionaryGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ReadOnlyDictionaryGenerator<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    internal static readonly Lazy<CachedType> ImmutableDictionaryGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ImmutableDictionaryGenerator<,>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
     internal static readonly Lazy<CachedType> NullableGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(NullableGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     internal static readonly Lazy<CachedType> ArrayGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(ArrayGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
@@ -31,6 +32,4 @@ internal static class CachedTypeService
 
     // enums
     internal static readonly Lazy<CachedType> EnumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(EnumGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
-    internal static readonly Lazy<CachedType> SmartEnumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(SmartEnumGenerator)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
-    internal static readonly Lazy<CachedType> IntellenumGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(IntellenumGenerator)), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 }

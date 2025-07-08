@@ -12,7 +12,7 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 public class AutoGenerateContextFixture
 {
     private readonly Faker _faker;
-    private readonly List<string> _ruleSets;
+    private readonly HashSet<string> _ruleSets;
     private readonly AutoFakerConfig _fakerConfig;
     private AutoFakerContext _context;
 
