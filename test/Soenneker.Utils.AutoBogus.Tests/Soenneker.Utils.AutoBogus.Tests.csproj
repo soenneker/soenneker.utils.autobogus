@@ -22,7 +22,7 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
         <PackageReference Include="Soenneker.Facts.Local" Version="3.0.501" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.153" />
-        <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.38" />
+        <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.39" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.2">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
