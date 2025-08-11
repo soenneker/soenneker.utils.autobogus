@@ -20,7 +20,7 @@
         <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
         <PackageReference Include="Intellenum" Version="1.0.6" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.506" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.507" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.154" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.41" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.3">
