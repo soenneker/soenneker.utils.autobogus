@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
@@ -28,6 +29,15 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private readonly ConcurrentDictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
     private readonly ConcurrentDictionary<CachedType, CachedConstructor> _constructorsCache = [];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsCompilerGeneratedBackingField(string name)
+    {
+        // Backing fields always start with '<', have a '>' before the suffix, and end with "k__BackingField"
+        return name.Length > 17
+               && name[0] == '<'
+               && name.EndsWith("k__BackingField", StringComparison.Ordinal);
+    }
 
     public AutoFakerBinder()
     {
@@ -58,7 +68,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (cachedType.IsAbstract || cachedType.IsInterface)
             return default;
 
-        CachedConstructor? constructor = GetConstructor(context.CachedType);
+        CachedConstructor? constructor = GetConstructor(cachedType);
 
         if (constructor == null)
             return default;
@@ -198,103 +208,83 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private CachedConstructor? GetConstructor(CachedType cachedType)
     {
-        // Fast path: check the cache first.
-        if (_constructorsCache.TryGetValue(cachedType, out CachedConstructor? cachedConstructor))
-            return cachedConstructor;
-
-        ReadOnlySpan<CachedConstructor> constructors = cachedType.GetCachedConstructors().AsSpan();
-
-        if (constructors.IsEmpty)
-            return null;
-
-        // Handle specific type scenarios first for early exits.
-        if (cachedType.IsDictionary)
+        return _constructorsCache.GetOrAdd(cachedType, static ct =>
         {
-            cachedConstructor = ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
-            if (cachedConstructor != null)
+            ReadOnlySpan<CachedConstructor> constructors = ct.GetCachedConstructors().AsSpan();
+
+            if (constructors.IsEmpty)
+                return null;
+
+            // Handle dictionary special case
+            if (ct.IsDictionary)
             {
-                _constructorsCache.TryAdd(cachedType, cachedConstructor);
-                return cachedConstructor;
-            }
-        }
-
-        if (cachedType.IsEnumerable)
-        {
-            cachedConstructor = ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
-            if (cachedConstructor != null)
-            {
-                _constructorsCache.TryAdd(cachedType, cachedConstructor);
-                return cachedConstructor;
-            }
-        }
-
-        CachedConstructor? constructorWithParameters = null;
-
-        foreach (ref readonly CachedConstructor constructor in constructors)
-        {
-            // Skip private or static constructors.
-            if (!constructor.IsPublic || constructor.IsStatic)
-                continue;
-
-            ReadOnlySpan<CachedParameter> parameters = constructor.GetCachedParameters().AsSpan();
-
-            // If parameterless, cache and return immediately.
-            if (parameters.IsEmpty)
-            {
-                _constructorsCache.TryAdd(cachedType, constructor);
-                return constructor;
+                CachedConstructor? dictCtor = ResolveTypedConstructor(CachedTypeService.IDictionary.Value, constructors);
+                if (dictCtor != null)
+                    return dictCtor;
             }
 
-            // Check if all parameters are valid.
-            var constructorIsViable = true;
-            foreach (ref readonly CachedParameter parameter in parameters)
+            // Handle enumerable special case
+            if (ct.IsEnumerable)
             {
-                if (parameter.CachedParameterType.IsFunc)
+                CachedConstructor? enumCtor = ResolveTypedConstructor(CachedTypeService.IEnumerable.Value, constructors);
+                if (enumCtor != null)
+                    return enumCtor;
+            }
+
+            CachedConstructor? constructorWithParameters = null;
+            foreach (ref readonly CachedConstructor constructor in constructors)
+            {
+                if (!constructor.IsPublic || constructor.IsStatic)
+                    continue;
+
+                Span<CachedParameter> parameters = constructor.GetCachedParameters().AsSpan();
+                if (parameters.IsEmpty)
+                    return constructor; // Found perfect match
+
+                var viable = true;
+                foreach (ref readonly CachedParameter parameter in parameters)
                 {
-                    constructorIsViable = false;
-                    break;
+                    if (parameter.CachedParameterType.IsFunc)
+                    {
+                        viable = false;
+                        break;
+                    }
                 }
+
+                if (viable)
+                    constructorWithParameters ??= constructor;
             }
 
-            if (!constructorIsViable)
-                continue;
-
-            constructorWithParameters ??= constructor;
-        }
-
-        // Cache and return the constructor with parameters, if found.
-        if (constructorWithParameters != null)
-        {
-            _constructorsCache.TryAdd(cachedType, constructorWithParameters);
             return constructorWithParameters;
-        }
-
-        return null;
+        });
     }
 
-    private static CachedConstructor? ResolveTypedConstructor(CachedType type, ReadOnlySpan<CachedConstructor> constructors)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static CachedConstructor? ResolveTypedConstructor(CachedType targetGenericDef, ReadOnlySpan<CachedConstructor> constructors)
     {
-        for (var i = 0; i < constructors.Length; i++)
+        for (int i = 0; i < constructors.Length; i++)
         {
-            CachedConstructor c = constructors[i];
+            ref readonly CachedConstructor ctor = ref constructors[i];
 
-            CachedParameter[] parameters = c.GetCachedParameters();
+            // Avoid array -> span churn each loop by working on the span directly
+            ReadOnlySpan<CachedParameter> parameters = ctor.GetCachedParameters().AsSpan();
 
+            // We only care about ctors with exactly one parameter
             if (parameters.Length != 1)
                 continue;
 
-            CachedParameter parameter = parameters[0];
-            CachedType parameterType = parameter.CachedParameterType;
+            ref readonly CachedParameter param = ref parameters[0];
+            CachedType paramType = param.CachedParameterType;
 
-            if (!parameterType.IsGenericType)
+            // Cheap check first
+            if (!paramType.IsGenericType)
                 continue;
 
-            CachedType? genericTypeDefinition = parameterType.GetCachedGenericTypeDefinition();
+            // Compare the generic type definition with the target
+            CachedType? gdef = paramType.GetCachedGenericTypeDefinition();
 
-            if (genericTypeDefinition == type)
-            {
-                return c;
-            }
+            if (gdef == targetGenericDef)
+                return ctor;
         }
 
         return null;
@@ -326,26 +316,27 @@ public class AutoFakerBinder : IAutoFakerBinder
         var autoMembers = new List<AutoMember>(totalCapacity);
 
         // Process properties
-        for (var i = 0; i < cachedProperties.Length; i++)
+        if (cachedProperties is { Length: > 0 })
         {
-            ref readonly CachedProperty cachedProperty = ref cachedProperties[i];
+            for (var i = 0; i < cachedProperties.Length; i++)
+            {
+                ref readonly CachedProperty cachedProperty = ref cachedProperties[i];
+                if (cachedProperty.IsDelegate || cachedProperty.IsEqualityContract)
+                    continue;
 
-            // Skip properties that are delegates or equality contracts
-            if (cachedProperty.IsDelegate || cachedProperty.IsEqualityContract)
-                continue;
-
-            autoMembers.Add(new AutoMember(cachedProperty, cacheService, autoFakerConfig));
+                autoMembers.Add(new AutoMember(cachedProperty, cacheService, autoFakerConfig));
+            }
         }
 
         // Process fields if present
-        if (cachedFields is not null)
+        if (cachedFields is { Length: > 0 })
         {
             for (var i = 0; i < cachedFields.Length; i++)
             {
                 ref readonly CachedField cachedField = ref cachedFields[i];
 
                 // Skip constants, delegates, and backing fields
-                if (cachedField.FieldInfo.IsConstant() || cachedField.IsDelegate || cachedField.FieldInfo.Name.Contains("k__BackingField"))
+                if (cachedField.FieldInfo.IsConstant() || cachedField.IsDelegate || IsCompilerGeneratedBackingField(cachedField.FieldInfo.Name))
                     continue;
 
                 autoMembers.Add(new AutoMember(cachedField, cacheService, autoFakerConfig));
@@ -364,19 +355,23 @@ public class AutoFakerBinder : IAutoFakerBinder
             return;
 
         object? instance = member.Getter(parent);
-
-        if (instance is IDictionary {IsReadOnly: true})
+        if (instance is IDictionary { IsReadOnly: true })
             return;
 
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
         CachedMethod? addMethod = GetAddMethod(member.CachedType, argTypes);
-
         if (instance == null || addMethod == null)
             return;
 
-        foreach (object? key in dictionary.Keys)
+        var args = new object[2]; // reuse the same array
+
+        IDictionaryEnumerator enumerator = dictionary.GetEnumerator(); // one pass, no second lookup
+        while (enumerator.MoveNext())
         {
-            addMethod.Invoke(instance, [key, dictionary[key]]);
+            DictionaryEntry entry = enumerator.Entry;
+            args[0] = entry.Key;
+            args[1] = entry.Value;
+            addMethod.Invoke(instance, args);
         }
     }
 

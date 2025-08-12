@@ -10,7 +10,7 @@ internal sealed class ImmutableDictionaryGenerator<TKey, TValue> : IAutoFakerGen
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        var builder = ImmutableDictionary.CreateBuilder<TKey, TValue>();
+        ImmutableDictionary<TKey, TValue>.Builder builder = ImmutableDictionary.CreateBuilder<TKey, TValue>();
 
         List<TKey> keys = context.GenerateUniqueMany<TKey>();
         int length = keys.Count;
