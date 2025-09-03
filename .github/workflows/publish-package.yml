@@ -23,7 +23,7 @@ jobs:
           echo "BUILD_VERSION=3.0.$version" >> ${GITHUB_ENV}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.0.x
 
