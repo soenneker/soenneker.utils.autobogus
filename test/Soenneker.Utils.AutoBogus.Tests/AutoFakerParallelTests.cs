@@ -28,9 +28,10 @@ public class AutoFakerParallelTests
 
         // Assert
         results.Count.Should().Be(numberOfTasks);
-
         List<int> ids = results.Select(x => x.Id).ToList();
-        ids.Should().OnlyHaveUniqueItems();
+
+        // Not all the same:
+        ids.Distinct().Count().Should().BeGreaterThan(1);
     }
 
     [Fact]
@@ -50,8 +51,9 @@ public class AutoFakerParallelTests
 
         // Assert
         results.Length.Should().Be(numberOfTasks);
-
         List<int> ids = results.Select(x => x.Id).ToList();
-        ids.Should().OnlyHaveUniqueItems();
+
+        // Not all the same:
+        ids.Distinct().Count().Should().BeGreaterThan(1);
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using Soenneker.Reflection.Cache.Constructors;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
@@ -36,7 +37,7 @@ internal sealed class SmartEnumGenerator : IAutoFakerGenerator
             return null!;
 
         // Convert IEnumerable to a more efficient indexed collection (avoid multiple enumerations)
-        var valueArray = values.Cast<object>().ToArray();
+        object[] valueArray = values.Cast<object>().ToArray();
         if (valueArray.Length == 0)
             return null!;
 
@@ -50,7 +51,7 @@ internal sealed class SmartEnumGenerator : IAutoFakerGenerator
             return selectedValue;
 
         // Attempt to create an instance of the derived type
-        var ctor = context.CachedType.GetCachedConstructor([typeof(string), typeof(int)]);
+        CachedConstructor? ctor = context.CachedType.GetCachedConstructor([typeof(string), typeof(int)]);
         if (ctor == null)
             return null!;
 
