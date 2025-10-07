@@ -140,7 +140,7 @@ public sealed class GenerateAssertions : ReferenceTypeAssertions<object, Generat
 
         // Resolve the default value for the current member type and check it matches
         MethodInfo factory = DefaultValueFactory.MakeGenericMethod(memberType);
-        object? defaultValue = factory.Invoke(this, new object[0]);
+        object? defaultValue = factory.Invoke(this, []);
         object? value = memberGetter.Invoke(Subject);
         bool equal = value == null && defaultValue == null;
 

@@ -253,7 +253,7 @@ public class AutoFakerTTests
     [Fact]
     public void TestClass_with_rule_should_be_empty()
     {
-        Faker<TestClassWithListString>? autoFaker = new AutoFaker<TestClassWithListString>().RuleFor(c => c.Value, new List<string>());
+        Faker<TestClassWithListString>? autoFaker = new AutoFaker<TestClassWithListString>().RuleFor(c => c.Value, []);
         TestClassWithListString? result = autoFaker.Generate();
 
         result.Value.Should().BeEmpty();

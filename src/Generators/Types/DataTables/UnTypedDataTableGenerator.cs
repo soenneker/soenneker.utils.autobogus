@@ -20,7 +20,7 @@ internal class UntypedDataTableGenerator : BaseDataTableGenerator
                     ColumnName = context.Faker.Database.Column() + i,
                     DataType = Type.GetType("System." + context.Faker.PickRandom(
                         ((TypeCode[])Enum.GetValues(typeof(TypeCode)))
-                        .Except(new[] { TypeCode.Empty, TypeCode.Object, TypeCode.DBNull })
+                        .Except([TypeCode.Empty, TypeCode.Object, TypeCode.DBNull])
                         .ToArray())),
                 });
         }

@@ -334,7 +334,7 @@ public class AutoFakerBinder : IAutoFakerBinder
             if (cachedProperty.IsDelegate || cachedProperty.IsEqualityContract)
                 continue;
 
-            autoMembers.Add(new AutoMember(cachedProperty, cacheService, autoFakerConfig));
+            autoMembers.Add(new AutoMember(cachedProperty, cachedType, cacheService, autoFakerConfig));
         }
 
         // Process fields if present
@@ -348,7 +348,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 if (cachedField.FieldInfo.IsConstant() || cachedField.IsDelegate || cachedField.FieldInfo.Name.Contains("k__BackingField"))
                     continue;
 
-                autoMembers.Add(new AutoMember(cachedField, cacheService, autoFakerConfig));
+                autoMembers.Add(new AutoMember(cachedField, cachedType, cacheService, autoFakerConfig));
             }
         }
 

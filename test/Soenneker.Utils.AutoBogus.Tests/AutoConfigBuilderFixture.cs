@@ -106,11 +106,10 @@ public class AutoConfigBuilderFixture
 
             _builder.WithSkip<ITestBuilder>(type2, null);
 
-            _fakerConfig.SkipTypes.Should().BeEquivalentTo(new[]
-            {
+            _fakerConfig.SkipTypes.Should().BeEquivalentTo([
                 type1,
                 type2
-            });
+            ]);
         }
     }
 
@@ -251,11 +250,10 @@ public class AutoConfigBuilderFixture
 
             _builder.WithOverride<ITestBuilder>(generatorOverride2, null);
 
-            _fakerConfig.Overrides.Should().BeEquivalentTo(new[]
-            {
+            _fakerConfig.Overrides.Should().BeEquivalentTo([
                 generatorOverride1,
                 generatorOverride2
-            });
+            ]);
         }
     }
 

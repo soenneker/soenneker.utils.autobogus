@@ -5,8 +5,8 @@ namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 public class TestClassICollectionPropertyWrappedWithReadOnly
 {
     // Both fields are readonly but the collections can be modified.
-    private readonly List<int> _collection = new();
-    private readonly List<int> _collectionToWrap = new();
+    private readonly List<int> _collection = [];
+    private readonly List<int> _collectionToWrap = [];
 
     // The returned collection is not wrapped and the Add method can be called.
     public ICollection<int> Collection => _collection;
