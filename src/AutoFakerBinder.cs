@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Soenneker.Extensions.FieldInfo;
+﻿using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Extensions;
 using Soenneker.Reflection.Cache.Fields;
@@ -18,6 +14,12 @@ using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Utils;
+using System;
+using System.Buffers;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Soenneker.Utils.AutoBogus;
 
@@ -28,6 +30,8 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private readonly ConcurrentDictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
     private readonly ConcurrentDictionary<CachedType, CachedConstructor> _constructorsCache = [];
+
+    private const string _backingSuffix = "k__BackingField";
 
     public AutoFakerBinder()
     {
@@ -67,7 +71,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         if (cachedParameters.Length == 0)
         {
-            return (TType?) constructor.Invoke();
+            return (TType?)constructor.Invoke();
         }
 
         var parameters = new object[cachedParameters.Length];
@@ -77,7 +81,7 @@ public class AutoFakerBinder : IAutoFakerBinder
             parameters[i] = GetParameterGenerator(cachedType, cachedParameters[i], context).Generate(context);
         }
 
-        return (TType?) constructor.Invoke(parameters);
+        return (TType?)constructor.Invoke(parameters);
     }
 
     /// <summary>
@@ -307,55 +311,88 @@ public class AutoFakerBinder : IAutoFakerBinder
         return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     internal List<AutoMember>? GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
     {
-        // Try to retrieve cached members to avoid redundant processing
         if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? cachedMembers))
             return cachedMembers;
 
-        // Fetch cached properties and fields from the cached type
+        // Fetch arrays (could be null)
         CachedProperty[]? cachedProperties = cachedType.GetCachedProperties();
         CachedField[]? cachedFields = cachedType.GetCachedFields();
 
-        // Calculate capacity to minimize allocations and resize operations
-        int totalCapacity = (cachedProperties?.Length ?? 0) + (cachedFields?.Length ?? 0);
+        int propsLen = cachedProperties?.Length ?? 0;
+        int fieldsLen = cachedFields?.Length ?? 0;
+        int totalCapacity = propsLen + fieldsLen;
 
         if (totalCapacity == 0)
             return null;
 
-        var autoMembers = new List<AutoMember>(totalCapacity);
+        // Build into a pooled buffer, then bulk-copy into List<T> once.
+        AutoMember[] buffer = ArrayPool<AutoMember>.Shared.Rent(totalCapacity);
+        int w = 0;
 
-        // Process properties
-        for (var i = 0; i < cachedProperties.Length; i++)
+        // Local copies for JIT friendliness
+        CachedType ct = cachedType;
+        CacheService svc = cacheService;
+        AutoFakerConfig cfg = autoFakerConfig;
+
+        // ----- Properties -----
+        if (propsLen != 0)
         {
-            ref readonly CachedProperty cachedProperty = ref cachedProperties[i];
-
-            // Skip properties that are delegates or equality contracts
-            if (cachedProperty.IsDelegate || cachedProperty.IsEqualityContract)
-                continue;
-
-            autoMembers.Add(new AutoMember(cachedProperty, cachedType, cacheService, autoFakerConfig));
-        }
-
-        // Process fields if present
-        if (cachedFields is not null)
-        {
-            for (var i = 0; i < cachedFields.Length; i++)
+            CachedProperty[] props = cachedProperties!;
+            for (int i = 0; i < props.Length; i++)
             {
-                ref readonly CachedField cachedField = ref cachedFields[i];
+                // ref readonly avoids defensive copies for structs
+                ref readonly CachedProperty p = ref props[i];
 
-                // Skip constants, delegates, and backing fields
-                if (cachedField.FieldInfo.IsConstant() || cachedField.IsDelegate || cachedField.FieldInfo.Name.Contains("k__BackingField"))
+                if (p.IsDelegate || p.IsEqualityContract)
                     continue;
 
-                autoMembers.Add(new AutoMember(cachedField, cachedType, cacheService, autoFakerConfig));
+                buffer[w++] = new AutoMember(p, ct, svc, cfg);
             }
         }
 
-        // Cache the processed members for future use
-        _autoMembersCache.TryAdd(cachedType, autoMembers);
+        // ----- Fields -----
+        if (fieldsLen != 0)
+        {
+            CachedField[] fields = cachedFields!;
+            for (int i = 0; i < fields.Length; i++)
+            {
+                ref readonly CachedField f = ref fields[i];
 
-        return autoMembers;
+                // Fast reject constants & delegates first
+                if (f.FieldInfo.IsConstant() || f.IsDelegate)
+                    continue;
+
+                string name = f.FieldInfo.Name;
+                if (name.Length >= _backingSuffix.Length && name.EndsWith(_backingSuffix, StringComparison.Ordinal))
+                    continue;
+
+                buffer[w++] = new AutoMember(f, ct, svc, cfg);
+            }
+        }
+
+        // Materialize result list
+        List<AutoMember> result;
+        if (w == 0)
+        {
+            result = [];
+        }
+        else
+        {
+            result = new List<AutoMember>(w);
+            result.AddRange(buffer.AsSpan(0, w)); // bulk add (no per-item Add overhead)
+        }
+
+        // Return buffer
+        Array.Clear(buffer, 0, w); // ensure references are cleared before returning to pool
+        ArrayPool<AutoMember>.Shared.Return(buffer, clearArray: false);
+
+        // Cache result (even if empty list)
+        _autoMembersCache.TryAdd(cachedType, result);
+
+        return result;
     }
 
     private static void PopulateDictionary(object value, object parent, AutoMember member)
@@ -365,7 +402,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         object? instance = member.Getter(parent);
 
-        if (instance is IDictionary {IsReadOnly: true})
+        if (instance is IDictionary { IsReadOnly: true })
             return;
 
         CachedType[] argTypes = member.CachedType.GetAddMethodArgumentTypes();
@@ -408,7 +445,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 
                 return;
             }
-            case IList {IsReadOnly: true}:
+            case IList { IsReadOnly: true }:
                 return;
         }
 

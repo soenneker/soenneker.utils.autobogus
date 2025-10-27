@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -64,42 +65,52 @@ public static class AutoGenerateContextExtension
         return GenerateMany<TType>(context, count.Value, true);
     }
 
-    internal static List<TType> GenerateMany<TType>(AutoFakerContext context, int count, bool unique, int maxAttempts = 1, Func<TType?>? generate = null)
+    internal static List<TType> GenerateMany<TType>(AutoFakerContext context, int count, bool unique, int maxAttempts = 1, Func<TType?>? generate = null,
+        IEqualityComparer<TType>? comparer = null)
     {
-        generate ??= context.Generate<TType>;
-
         if (count <= 0)
             return [];
 
+        Func<TType?> gen = generate ?? context.Generate<TType>;
+
         if (!unique)
         {
-            var items = new List<TType>(count);
+            TType[] buf = GC.AllocateUninitializedArray<TType>(count);
+            var written = 0;
 
             for (var i = 0; i < count; i++)
             {
-                TType? item = generate.Invoke();
-
-                if (item != null)
-                    items.Add(item);
+                TType? item = gen();
+                if (item is not null)
+                    buf[written++] = item;
             }
 
-            return items;
+            if (written == 0)
+                return [];
+
+            var result = new List<TType>(written);
+
+            result.AddRange(buf.AsSpan(0, written));
+
+            return result;
         }
 
-        var hashSet = new HashSet<TType>();
+
+        int totalAttempts = count + Math.Max(0, maxAttempts - 1);
+
+        HashSet<TType> set = comparer is null ? [] : new HashSet<TType>(comparer);
+        set.EnsureCapacity(count);
+
         var attempts = 0;
-        int totalAttempts = count + maxAttempts - 1;
-
-        while (hashSet.Count < count && attempts < totalAttempts)
+        while (set.Count < count && attempts < totalAttempts)
         {
-            TType? item = generate.Invoke();
-
-            if (item != null)
-                hashSet.Add(item);
+            TType? item = gen();
+            if (item is not null)
+                _ = set.Add(item);
 
             attempts++;
         }
 
-        return hashSet.ToList();
+        return set.Count == 0 ? [] : new List<TType>(set);
     }
 }

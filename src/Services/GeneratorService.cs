@@ -56,7 +56,7 @@ internal sealed class GeneratorService
     {
         _cachedFundamentalGeneratorsByInt = new Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>>(() =>
         {
-            var hashCodesMap = new Dictionary<int, Lazy<IAutoFakerGenerator>>();
+            var hashCodesMap = new Dictionary<int, Lazy<IAutoFakerGenerator>>(_cachedFundamentalGenerators.Count);
 
             foreach (KeyValuePair<Type, Lazy<IAutoFakerGenerator>> kvp in _cachedFundamentalGenerators)
             {
@@ -90,7 +90,7 @@ internal sealed class GeneratorService
     /// <returns></returns>
     public static List<Type> GetSupportedFundamentalTypes()
     {
-        var supportedTypes = new List<Type>();
+        var supportedTypes = new List<Type>(_cachedFundamentalGenerators.Count);
 
         foreach (KeyValuePair<Type, Lazy<IAutoFakerGenerator>> kvp in _cachedFundamentalGenerators)
         {

@@ -15,10 +15,10 @@ internal sealed class ImmutableDictionaryGenerator<TKey, TValue> : IAutoFakerGen
         List<TKey> keys = context.GenerateUniqueMany<TKey>();
         int length = keys.Count;
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             TKey key = keys[i];
-            TValue value = context.Generate<TValue>();
+            var value = context.Generate<TValue>();
 
             if (value != null)
             {

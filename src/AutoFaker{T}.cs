@@ -256,10 +256,10 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
     private HashSet<string> GetRuleSetsMemberNames(AutoFakerContext context)
     {
-        var members = new HashSet<string>();
-
         if (context.RuleSets == null)
-            return members;
+            return [];
+
+        var members = new HashSet<string>(context.RuleSets.Count);
 
         foreach (string ruleSetName in context.RuleSets)
         {
