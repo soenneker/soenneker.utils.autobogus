@@ -1,7 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU</Platforms>
         <NoWarn>$(NoWarn);1591</NoWarn>
@@ -9,7 +11,7 @@
 
     <PropertyGroup>
         <Description>The .NET Bogus autogenerator</Description>
-        <Version Condition="'$(BUILD_VERSION)' == ''">3.0.0</Version>
+        <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Utils.AutoBogus</AssemblyName>
         <PackageId>Soenneker.Utils.AutoBogus</PackageId>
@@ -30,16 +32,16 @@
         <LangVersion>preview</LangVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild></PropertyGroup>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="Generators\Types\NewFolder\**" />
-      <EmbeddedResource Remove="Generators\Types\NewFolder\**" />
-      <None Remove="Generators\Types\NewFolder\**" />
+        <Compile Remove="Generators\Types\NewFolder\**" />
+        <EmbeddedResource Remove="Generators\Types\NewFolder\**" />
+        <None Remove="Generators\Types\NewFolder\**" />
     </ItemGroup>
 
     <ItemGroup>
-        
         <None Include="..\README.md" Pack="true" PackagePath="\" />
         <None Include="..\LICENSE" Pack="true" PackagePath="\" />
         <None Include="..\icon.png" Pack="true" PackagePath="\" />
@@ -47,9 +49,9 @@
 
     <ItemGroup>
         <PackageReference Include="Bogus" Version="35.6.5" />
-        <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="3.0.58" />
-        <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="3.0.53" />
-        <PackageReference Include="Soenneker.Reflection.Cache" Version="3.0.556" />
-        <PackageReference Include="System.Collections.Immutable" Version="9.0.10" />
+        <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="4.0.59" />
+        <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="4.0.54" />
+        <PackageReference Include="Soenneker.Reflection.Cache" Version="4.0.558" />
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.0-rc.2.25502.107" />
     </ItemGroup>
 </Project>

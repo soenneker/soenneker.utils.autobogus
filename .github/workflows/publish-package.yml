@@ -1,4 +1,4 @@
-name: publish-package
+﻿name: publish-package
 on:
   push:
     branches:
@@ -20,12 +20,12 @@ jobs:
       - name: Setting up build version
         run: |
           version=$(($GITHUB_RUN_NUMBER))
-          echo "BUILD_VERSION=3.0.$version" >> ${GITHUB_ENV}
+          echo "BUILD_VERSION=4.0.$version" >> ${GITHUB_ENV}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Install dependencies with retry
         run: |

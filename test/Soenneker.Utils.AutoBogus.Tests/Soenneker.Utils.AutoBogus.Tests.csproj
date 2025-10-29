@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <Platforms>AnyCPU</Platforms>
@@ -20,8 +20,8 @@
         <PackageReference Include="BenchmarkDotNet" Version="0.15.4" />
         <PackageReference Include="Intellenum" Version="2.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="3.0.521" />
-        <PackageReference Include="Soenneker.Facts.Manual" Version="3.0.157" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.522" />
+        <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.158" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="3.0.47" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,14 +31,15 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-    <PackageReference Include="xUnit.v3" Version="3.1.0" /></ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\Soenneker.Utils.AutoBogus.csproj" />
+        <PackageReference Include="xUnit.v3" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\Simple\Abstract\" />
+        <ProjectReference Include="..\..\src\Soenneker.Utils.AutoBogus.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Dtos\Simple\Abstract\" />
     </ItemGroup>
 
 </Project>
