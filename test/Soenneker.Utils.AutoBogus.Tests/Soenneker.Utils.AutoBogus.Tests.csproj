@@ -19,7 +19,7 @@
         <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.15.6" />
         <PackageReference Include="Intellenum" Version="2.0.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
         <PackageReference Include="Soenneker.Facts.Local" Version="4.0.529" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.159" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.54" />
