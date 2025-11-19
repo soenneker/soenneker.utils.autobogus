@@ -103,7 +103,7 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
     private AutoFakerContext CreateContext(string? ruleSets)
     {
-        return new AutoFakerContext(Config!, Binder, FakerHub, _cacheService)
+        return new AutoFakerContext(Config, Binder, FakerHub, _cacheService)
         {
             RuleSets = ParseRuleSets(ruleSets)
         };
@@ -129,7 +129,8 @@ public class AutoFaker<TType> : Faker<TType> where TType : class
 
         for (var i = 0; i < ruleSetArray.Length; i++)
         {
-            string trimmedRuleSet = ruleSetArray[i].Trim();
+            string trimmedRuleSet = ruleSetArray[i]
+                .Trim();
 
             if (!string.IsNullOrWhiteSpace(trimmedRuleSet))
             {

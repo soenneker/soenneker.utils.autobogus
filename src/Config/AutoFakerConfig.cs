@@ -32,6 +32,8 @@ public sealed class AutoFakerConfig
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public DateTimeKind DateTimeKind;
 
+    public TimeSpan? DefaultTimezoneOffset;
+
     public ReflectionCacheOptions? ReflectionCacheOptions;
 
     public AutoFakerConfig()
@@ -42,5 +44,6 @@ public sealed class AutoFakerConfig
         RecursiveDepth = AutoFakerDefaultConfigOptions.RecursiveDepth;
         TreeDepth = AutoFakerDefaultConfigOptions.TreeDepth;
         DateTimeKind = AutoFakerDefaultConfigOptions.DateTimeKind;
+        DefaultTimezoneOffset = AutoFakerDefaultConfigOptions.DefaultTimezoneOffset;
     }
 }

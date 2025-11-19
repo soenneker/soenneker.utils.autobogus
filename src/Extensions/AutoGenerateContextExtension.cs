@@ -3,9 +3,7 @@ using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -95,7 +93,6 @@ public static class AutoGenerateContextExtension
             return result;
         }
 
-
         int totalAttempts = count + Math.Max(0, maxAttempts - 1);
 
         HashSet<TType> set = comparer is null ? [] : new HashSet<TType>(comparer);
@@ -111,6 +108,6 @@ public static class AutoGenerateContextExtension
             attempts++;
         }
 
-        return set.Count == 0 ? [] : new List<TType>(set);
+        return set.Count == 0 ? [] : [..set];
     }
 }

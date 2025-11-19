@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Numerics;
+using Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
@@ -45,12 +46,18 @@ internal sealed class GeneratorService
         {typeof(MemoryStream), new Lazy<IAutoFakerGenerator>(() => new MemoryStreamGenerator())},
         {typeof(Exception), new Lazy<IAutoFakerGenerator>(() => new ExceptionGenerator())},
         {typeof(WeakReference), new Lazy<IAutoFakerGenerator>(() => new WeakReferenceGenerator())},
-        {typeof(Stream), new Lazy<IAutoFakerGenerator>(() => new StreamGenerator())},
+        {typeof(Stream), new Lazy<IAutoFakerGenerator>(() => new StreamGenerator())}
     };
 
     private readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt;
 
     private readonly ConcurrentDictionary<int, IAutoFakerGenerator> _cachedGenerators = [];
+
+    private static readonly Lazy<IAutoFakerGenerator> _intellenumGenerator =
+        new(() => new IntellenumGenerator());
+
+    private static readonly Lazy<IAutoFakerGenerator> _smartEnumGenerator =
+        new(() => new SmartEnumGenerator());
 
     internal GeneratorService()
     {
@@ -82,6 +89,18 @@ internal sealed class GeneratorService
     public void SetGenerator(CachedType cachedType, IAutoFakerGenerator generator)
     {
         _cachedGenerators.TryAdd(cachedType.CacheKey!.Value, generator);
+    }
+
+    // Not really happy with this pattern...
+
+    internal IAutoFakerGenerator GetIntellenumGenerator()
+    {
+        return _intellenumGenerator.Value;
+    }
+
+    internal IAutoFakerGenerator GetSmartEnumGenerator()
+    {
+        return _smartEnumGenerator.Value;
     }
 
     /// <summary>

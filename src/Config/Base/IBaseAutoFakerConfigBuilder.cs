@@ -7,7 +7,7 @@ namespace Soenneker.Utils.AutoBogus.Config.Base;
 /// An interface for building configurations.
 /// </summary>
 /// <typeparam name="TBuilder">The builder type.</typeparam>
-public interface IBaseAutoFakerConfigBuilder<TBuilder>
+public interface IBaseAutoFakerConfigBuilder<out TBuilder>
 {
     /// <summary>
     /// Registers the number of rows to generate in a <see cref="System.Data.DataTable"/>.

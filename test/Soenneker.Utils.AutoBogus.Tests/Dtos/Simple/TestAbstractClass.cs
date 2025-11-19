@@ -1,5 +1,3 @@
 ﻿namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 
-public abstract class TestAbstractClass
-{
-}
+public abstract class TestAbstractClass;

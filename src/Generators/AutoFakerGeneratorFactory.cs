@@ -6,7 +6,6 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
-using Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Utils;
 
@@ -29,6 +28,7 @@ public static class AutoFakerGeneratorFactory
 
         // Handle overrides
         List<AutoFakerGeneratorOverride>? configOverrides = context.Config.Overrides;
+
         if (configOverrides != null)
         {
             List<AutoFakerGeneratorOverride>? overrides = null;
@@ -57,51 +57,51 @@ public static class AutoFakerGeneratorFactory
 
     internal static IAutoFakerGenerator CreateGenerator(AutoFakerContext context)
     {
-        IAutoFakerGenerator? fundamentalGenerator = context.Binder.GeneratorService.GetFundamentalGenerator(context.CachedType);
+        CachedType? cachedType = context.CachedType;
+
+        IAutoFakerGenerator? fundamentalGenerator = context.Binder.GeneratorService.GetFundamentalGenerator(cachedType);
 
         if (fundamentalGenerator != null)
             return fundamentalGenerator;
 
-        CachedType? cachedType = context.CachedType;
-
         // Need check if the type is an in/out parameter and adjusted accordingly
-        if (context.CachedType.IsByRef)
+        if (cachedType.IsByRef)
         {
             cachedType = cachedType.GetCachedElementType();
         }
 
         // Do some type -> generator mapping
-        if (context.CachedType.IsArray)
+        if (cachedType.IsArray)
         {
             cachedType = cachedType.GetCachedElementType();
             return CreateGenericGenerator(CachedTypeService.ArrayGenerator.Value, cachedType);
         }
 
-        if (context.CachedType.IsEnum)
+        if (cachedType.IsEnum)
         {
             return CreateGenericGenerator(CachedTypeService.EnumGenerator.Value, cachedType);
         }
 
-        if (context.CachedType.IsNullable)
+        if (cachedType.IsNullable)
         {
-            cachedType = context.CachedType.GetCachedGenericArguments()![0];
+            cachedType = cachedType.GetCachedGenericArguments()![0];
             return CreateGenericGenerator(CachedTypeService.NullableGenerator.Value, cachedType);
         }
 
         // Check if an expando object needs to generator
         // This actually means an existing dictionary needs to be populated
-        if (context.CachedType.IsExpandoObject)
+        if (cachedType.IsExpandoObject)
         {
             return new ExpandoObjectGenerator();
         }
 
-        if (context.CachedType.IsWeakReference)
+        if (cachedType.IsWeakReference)
         {
-            cachedType = context.CachedType.GetCachedGenericArguments()![0];
+            cachedType = cachedType.GetCachedGenericArguments()![0];
             return CreateGenericGenerator(CachedTypeService.WeakReferenceGenerator.Value, cachedType);
         }
 
-        (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(context.CachedType);
+        (CachedType? collectionType, GenericCollectionType? genericCollectionType) = GenericTypeUtil.GetGenericCollectionType(cachedType);
 
         if (collectionType != null)
         {
@@ -178,33 +178,45 @@ public static class AutoFakerGeneratorFactory
             }
         }
 
-        if (BaseDataTableGenerator.TryCreateGenerator(context, context.CachedType, out BaseDataTableGenerator dataTableGenerator))
+        if (BaseDataTableGenerator.TryCreateGenerator(context, cachedType, out BaseDataTableGenerator dataTableGenerator))
         {
             return dataTableGenerator;
         }
 
-        if (BaseDataSetGenerator.TryCreateGenerator(context, context.CachedType, out BaseDataSetGenerator dataSetGenerator))
+        if (BaseDataSetGenerator.TryCreateGenerator(context, cachedType, out BaseDataSetGenerator dataSetGenerator))
         {
             return dataSetGenerator;
         }
 
-        if (context.CachedType.IsIntellenum)
+        if (cachedType.IsIntellenum)
         {
-            return new IntellenumGenerator();
+            return context.Binder.GeneratorService.GetIntellenumGenerator();
         }
 
-        if (context.CachedType.IsSmartEnum)
+        if (cachedType.IsSmartEnum)
         {
-            return new SmartEnumGenerator();
+            return context.Binder.GeneratorService.GetSmartEnumGenerator();
         }
 
         return CreateGenericGenerator(CachedTypeService.TypeGenerator.Value, cachedType);
     }
 
-    private static IAutoFakerGenerator CreateGenericGenerator(CachedType cachedType, params CachedType[] genericTypes)
+    // We run these additional methods to avoid the params array allocation overhead on common cases
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1)
     {
-        CachedType genericCachedType = cachedType.MakeCachedGenericType(genericTypes)!;
+        CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1)!;
+        return (IAutoFakerGenerator)closed.CreateInstance();
+    }
 
-        return (IAutoFakerGenerator) genericCachedType.CreateInstance();
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1, CachedType arg2)
+    {
+        CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1, arg2)!;
+        return (IAutoFakerGenerator)closed.CreateInstance();
+    }
+
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, params CachedType[] genericTypes)
+    {
+        CachedType closed = genericTypeDefinition.MakeCachedGenericType(genericTypes)!;
+        return (IAutoFakerGenerator)closed.CreateInstance();
     }
 }

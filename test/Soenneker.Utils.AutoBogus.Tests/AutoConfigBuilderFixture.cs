@@ -15,7 +15,7 @@ public class AutoConfigBuilderFixture
     private readonly AutoFakerConfig _fakerConfig;
     private readonly AutoFakerConfigBuilder _builder;
 
-    private interface ITestBuilder { }
+    private interface ITestBuilder;
 
     public AutoConfigBuilderFixture()
     {

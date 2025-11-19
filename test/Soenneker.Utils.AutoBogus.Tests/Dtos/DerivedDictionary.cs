@@ -2,6 +2,4 @@
 
 namespace Soenneker.Utils.AutoBogus.Tests.Dtos;
 
-public class DerivedDictionary : Dictionary<string, object>
-{
-}
+public class DerivedDictionary : Dictionary<string, object>;

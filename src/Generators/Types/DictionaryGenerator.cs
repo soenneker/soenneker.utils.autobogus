@@ -12,6 +12,7 @@ internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         int target = context.Config.RepeatCount > 0 ? context.Config.RepeatCount : 0;
+
         if (target == 0)
             return new Dictionary<TKey, TValue>(0);
 

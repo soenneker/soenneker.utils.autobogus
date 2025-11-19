@@ -104,17 +104,11 @@ public partial class AutoGeneratorsFixture
 
         public class Dictionary
         {
-            public class NonGeneric : Dictionary<int, string>
-            {
-            }
+            public class NonGeneric : Dictionary<int, string>;
 
-            public class OneArgument<T> : Dictionary<T, string>
-            {
-            }
+            public class OneArgument<T> : Dictionary<T, string>;
 
-            public class TwoArgumentsThatAreDifferentFromBaseDictionaryClass<TValue, TKey> : Dictionary<TKey, TValue>
-            {
-            }
+            public class TwoArgumentsThatAreDifferentFromBaseDictionaryClass<TValue, TKey> : Dictionary<TKey, TValue>;
 
             public static IEnumerable<object[]> ListOfDictionaryTypes
             {
@@ -150,9 +144,7 @@ public partial class AutoGeneratorsFixture
 
         public class Set
         {
-            public class NonGeneric : HashSet<int>
-            {
-            }
+            public class NonGeneric : HashSet<int>;
 
             public class GenericWithDifferentType<TType> : HashSet<int>
             {
@@ -194,9 +186,7 @@ public partial class AutoGeneratorsFixture
 
         public class List
         {
-            public class NonGeneric : List<int>
-            {
-            }
+            public class NonGeneric : List<int>;
 
             public class GenericWithDifferentType<TType> : List<int>
             {
