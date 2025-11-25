@@ -190,12 +190,12 @@ public static class AutoFakerGeneratorFactory
 
         if (cachedType.IsIntellenum)
         {
-            return context.Binder.GeneratorService.GetIntellenumGenerator();
+            return GeneratorService.GetIntellenumGenerator();
         }
 
         if (cachedType.IsSmartEnum)
         {
-            return context.Binder.GeneratorService.GetSmartEnumGenerator();
+            return GeneratorService.GetSmartEnumGenerator();
         }
 
         return CreateGenericGenerator(CachedTypeService.TypeGenerator.Value, cachedType);

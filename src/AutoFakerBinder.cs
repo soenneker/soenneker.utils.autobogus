@@ -134,7 +134,13 @@ public class AutoFakerBinder : IAutoFakerBinder
             {
                 if (!member.IsReadOnly)
                 {
-                    member.Setter.Invoke(instance, value);
+                    // Only set if the value type is assignable to the member type
+                    Type? memberType = member.CachedType.Type;
+
+                    if (memberType != null && memberType.IsInstanceOfType(value))
+                    {
+                        member.Setter.Invoke(instance, value);
+                    }
                 }
                 else
                 {
@@ -413,7 +419,8 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         foreach (object? key in dictionary.Keys)
         {
-            addMethod.Invoke(instance, [key, dictionary[key]]);
+            object? dictValue = dictionary[key];
+            addMethod.Invoke(instance, [key, dictValue]);
         }
     }
 

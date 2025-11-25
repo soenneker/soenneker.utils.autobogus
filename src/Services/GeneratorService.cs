@@ -93,12 +93,12 @@ internal sealed class GeneratorService
 
     // Not really happy with this pattern...
 
-    internal IAutoFakerGenerator GetIntellenumGenerator()
+    internal static IAutoFakerGenerator GetIntellenumGenerator()
     {
         return _intellenumGenerator.Value;
     }
 
-    internal IAutoFakerGenerator GetSmartEnumGenerator()
+    internal static IAutoFakerGenerator GetSmartEnumGenerator()
     {
         return _smartEnumGenerator.Value;
     }
