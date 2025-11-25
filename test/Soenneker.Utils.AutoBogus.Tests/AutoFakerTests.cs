@@ -509,6 +509,39 @@ public class AutoFakerTests
     }
 
     [Fact]
+    public void Generate_with_recursive_depth_0_should_set_first_level_properties_but_not_children()
+    {
+        var faker = new AutoFaker
+        {
+            Config =
+            {
+                RecursiveDepth = 0
+            }
+        };
+
+        var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
+        
+        testClass.Name.Should().NotBeNull();
+        testClass.Age.Should().NotBe(0);
+        
+        testClass.Child.Should().BeNull();
+        
+        var order = faker.Generate<Order>();
+        
+        order.Id.Should().NotBe(0);
+        order.Code.Should().NotBeNull();
+        order.Status.Should().BeDefined();
+        order.DateCreated.Should().NotBe(default);
+        
+        order.Items.Should().NotBeNull();
+        order.Items.Should().BeEmpty();
+        order.Discounts.Should().NotBeNull();
+        order.Discounts.Should().BeEmpty();
+        order.Comments.Should().NotBeNull();
+        order.Comments.Should().BeEmpty();
+    }
+
+    [Fact]
     public void Generate_with_recursive_depth_1_should_generate()
     {
         var faker = new AutoFaker

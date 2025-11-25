@@ -69,7 +69,7 @@ internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
         }
         else
         {
-            // Custom IDictionary<,> fallback (can’t avoid interface calls)
+            // Custom IDictionary<,> fallback (canï¿½t avoid interface calls)
             // If it *happens* to be a Dictionary under the hood, ensure capacity
             if (items is Dictionary<TKey, TValue> d2)
                 d2.EnsureCapacity(target);
@@ -87,7 +87,7 @@ internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
                     continue;
 
                 // Using ContainsKey+indexer would be two lookups; Add throws on dup, so try/catch is ok but slower.
-                // Interface doesn’t expose TryAdd; if dups are possible, you can guard:
+                // Interface doesnï¿½t expose TryAdd; if dups are possible, you can guard:
                 if (items is Dictionary<TKey, TValue> d3)
                 {
                     _ = d3.TryAdd(key, val);

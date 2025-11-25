@@ -179,9 +179,30 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (config.TreeDepth != null && stackCount >= config.TreeDepth)
             return true;
 
-        // Handle special case: If RecursiveDepth is 0, all recursive elements should be skipped.
+        // Handle special case: If RecursiveDepth is 0, skip recursive types (same as parent) and nested children.
+        // When RecursiveDepth is 0:
+        // - stackCount = 0: We're generating first-level properties - skip if member type is same as parent (recursive)
+        // - stackCount > 0: We're generating nested children (skip them)
         if (config.RecursiveDepth == 0)
-            return true;
+        {
+            if (stackCount > 0)
+                return true; // Skip nested children
+            
+            // Skip recursive types (member type same as parent type) at first level
+            if (autoMember.CachedType.CacheKey is { } memberCacheKey &&
+                autoMember.ParentType.CacheKey is { } parentCacheKey &&
+                memberCacheKey == parentCacheKey)
+            {
+                // Check if this is a complex type (not a collection/dictionary, which are handled separately)
+                if (!autoMember.IsCollection && !autoMember.IsDictionary)
+                {
+                    // Check if it has members to populate (making it a complex type)
+                    List<AutoMember>? membersToPopulate = context.Binder.GetMembersToPopulate(autoMember.CachedType, context.CacheService, config);
+                    if (membersToPopulate != null && membersToPopulate.Count > 0)
+                        return true; // Skip recursive complex types
+                }
+            }
+        }
 
         // Check if the stack count is below the recursive depth threshold.
         if (stackCount < config.RecursiveDepth)

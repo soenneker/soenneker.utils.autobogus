@@ -44,6 +44,12 @@ public static class AutoGenerateContextExtension
     /// <returns>The generated collection of instances.</returns>
     public static List<TType> GenerateMany<TType>(this AutoFakerContext context, int? count = null)
     {
+        // When RecursiveDepth is 0 and we're generating nested items (stackCount > 0), return empty list
+        if (context.Config.RecursiveDepth == 0 && context.TypesStack.Count > 0)
+        {
+            return [];
+        }
+
         count ??= context.Config.RepeatCount;
 
         return GenerateMany<TType>(context, count.Value, false);
