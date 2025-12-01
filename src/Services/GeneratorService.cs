@@ -76,16 +76,44 @@ internal sealed class GeneratorService
 
     }
 
+    /// <summary>
+    /// Gets a built-in generator for fundamental types (primitives, strings, dates, etc.) if one exists.
+    /// </summary>
+    /// <param name="cachedType">The cached type information for the type to get a generator for.</param>
+    /// <returns>The generator for the type if it's a supported fundamental type; otherwise, <see langword="null"/>.</returns>
+    /// <remarks>
+    /// Fundamental types include primitives (int, bool, etc.), strings, DateTime, Guid, and other common .NET types.
+    /// This method only returns generators for these built-in types, not custom generators registered via <see cref="SetGenerator"/>.
+    /// </remarks>
     public IAutoFakerGenerator? GetFundamentalGenerator(CachedType cachedType)
     {
         return _cachedFundamentalGeneratorsByInt.Value.GetValueOrDefault(cachedType.CacheKey!.Value)?.Value;
     }
 
+    /// <summary>
+    /// Gets a custom generator that was previously registered for the specified cached type.
+    /// </summary>
+    /// <param name="cachedType">The cached type information for the type to get a generator for.</param>
+    /// <returns>The custom generator if one was registered via <see cref="SetGenerator"/>; otherwise, <see langword="null"/>.</returns>
+    /// <remarks>
+    /// This method retrieves generators that were explicitly registered using <see cref="SetGenerator"/>.
+    /// It does not return fundamental type generators; use <see cref="GetFundamentalGenerator"/> for those.
+    /// </remarks>
     public IAutoFakerGenerator? GetGenerator(CachedType cachedType)
     {
         return _cachedGenerators.GetValueOrDefault(cachedType.CacheKey!.Value);
     }
 
+    /// <summary>
+    /// Registers a custom generator to use for generating instances of the specified type.
+    /// </summary>
+    /// <param name="cachedType">The cached type information for the type to register a generator for.</param>
+    /// <param name="generator">The custom generator implementation that will be used to generate instances of this type.</param>
+    /// <remarks>
+    /// Once registered, this generator will be used for all generation requests of the specified type.
+    /// Custom generators take precedence over default generation logic. This is useful for types that require
+    /// special handling or complex initialization logic.
+    /// </remarks>
     public void SetGenerator(CachedType cachedType, IAutoFakerGenerator generator)
     {
         _cachedGenerators.TryAdd(cachedType.CacheKey!.Value, generator);
@@ -123,6 +151,12 @@ internal sealed class GeneratorService
         return supportedTypes;
     }
 
+    /// <summary>
+    /// Removes all custom generators that were registered via <see cref="SetGenerator"/>, resetting to default generation behavior.
+    /// </summary>
+    /// <remarks>
+    /// This does not affect fundamental type generators, which are always available. Only custom generators are cleared.
+    /// </remarks>
     public void Clear()
     {
         _cachedGenerators.Clear();

@@ -30,6 +30,10 @@ public sealed class AutoFaker : IAutoFaker
         return autoFakerType.Type!.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
     });
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AutoFaker"/> class.
+    /// </summary>
+    /// <param name="autoFakerConfig">Optional configuration for the faker instance. If null, a default configuration is used.</param>
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
     {
         Faker = new Faker();
@@ -86,10 +90,6 @@ public sealed class AutoFaker : IAutoFaker
         return method.Invoke(this, null)!;
     }
 
-    /// <summary>
-    /// Configures all faker instances and generate requests.
-    /// </summary>
-    /// <param name="configure">A handler to build the default faker configuration.</param>
     public void Configure(Action<IAutoFakerDefaultConfigBuilder> configure)
     {
         var builder = new AutoFakerConfigBuilder(Config);

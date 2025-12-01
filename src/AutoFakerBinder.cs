@@ -33,6 +33,9 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private const string _backingSuffix = "k__BackingField";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AutoFakerBinder"/> class.
+    /// </summary>
     public AutoFakerBinder()
     {
         GeneratorService = new GeneratorService();
@@ -50,13 +53,6 @@ public class AutoFakerBinder : IAutoFakerBinder
         return CreateInstance<TType>(context, cachedType);
     }
 
-    /// <summary>
-    /// Creates an instance of <typeparamref name="TType"/>.
-    /// </summary>
-    /// <typeparam name="TType">The type of instance to create.</typeparam>
-    /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
-    /// <param name="cachedType"></param>
-    /// <returns>The created instance of <typeparamref name="TType"/>.</returns>
     public virtual TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
     {
         if (cachedType.IsAbstract || cachedType.IsInterface)
@@ -84,17 +80,6 @@ public class AutoFakerBinder : IAutoFakerBinder
         return (TType?)constructor.Invoke(parameters);
     }
 
-    /// <summary>
-    /// Populates the provided instance with generated values.
-    /// </summary>
-    /// <typeparam name="TType">The type of instance to populate.</typeparam>
-    /// <param name="instance">The instance to populate.</param>
-    /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
-    /// <param name="cachedType"></param>
-    /// <remarks>
-    /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object. This means the populated
-    /// values are applied to the provided instance and not a copy.
-    /// </remarks>
     public void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType)
     {
         // Iterate the members and bind a generated value
