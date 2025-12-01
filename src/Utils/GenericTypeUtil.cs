@@ -23,7 +23,8 @@ internal static class GenericTypeUtil
             interfacesList.Add(interfaceType);
         }
 
-        if (interfaces.Length == 0)
+        // If we have no types to check (no interfaces and type isn't generic), return null
+        if (interfacesList.Count == 0)
             return (null, null);
 
         (CachedType?, GenericCollectionType?) result = interfacesList.GetTypeOfGenericCollectionFromInterfaceTypes();

@@ -17,4 +17,6 @@ public static class AutoFakerDefaultConfigOptions
     internal static readonly DateTimeKind DateTimeKind = DateTimeKind.Utc;
 
     internal static readonly TimeSpan? DefaultTimezoneOffset = null;
+
+    internal const bool ShallowGenerate = false;
 }

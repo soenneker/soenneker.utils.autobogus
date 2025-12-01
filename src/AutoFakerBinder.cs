@@ -171,6 +171,15 @@ public class AutoFakerBinder : IAutoFakerBinder
         Stack<int> typesStack = context.TypesStack;
         int stackCount = typesStack.Count;
 
+        // If ShallowGenerate is enabled, skip complex reference types (but keep primitives, value types, strings, collections, etc.)
+        if (config.ShallowGenerate)
+        {
+            if (IsComplexReferenceType(autoMember.CachedType, autoMember))
+            {
+                return true;
+            }
+        }
+
         // Handle special case: If TreeDepth is 0, all elements should be skipped.
         if (config.TreeDepth == 0)
             return true;
@@ -225,6 +234,143 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
 
         return false;
+    }
+
+    private static bool IsComplexReferenceType(CachedType cachedType, AutoMember autoMember)
+    {
+        // For dictionaries, skip them entirely when ShallowGenerate is enabled
+        // Check dictionaries first because they might also be considered collections
+        if (autoMember.IsDictionary)
+        {
+            return true;
+        }
+
+        // For collections, check if the element type is a complex reference type
+        if (autoMember.IsCollection)
+        {
+            // Try to get generic arguments directly from the type first (most common case)
+            if (cachedType.IsGenericType)
+            {
+                CachedType[]? generics = cachedType.GetCachedGenericArguments();
+                if (generics != null && generics.Length > 0)
+                {
+                    // If the element type is a complex reference type, skip the collection
+                    if (IsElementTypeComplex(generics[0]))
+                        return true;
+                }
+            }
+
+            // Fallback to checking via GenericTypeUtil (handles interfaces and edge cases)
+            (CachedType? collectionType, _) = GenericTypeUtil.GetGenericCollectionType(cachedType);
+            if (collectionType != null)
+            {
+                CachedType[]? generics = collectionType.GetCachedGenericArguments();
+                if (generics != null && generics.Length > 0)
+                {
+                    // If the element type is a complex reference type, skip the collection
+                    if (IsElementTypeComplex(generics[0]))
+                        return true;
+                }
+            }
+            
+            // If we can't determine the element type, don't skip (allow generation)
+            return false;
+        }
+
+        // For arrays, check if the element type is a complex reference type
+        if (cachedType.IsArray)
+        {
+            CachedType? elementCachedType = cachedType.GetCachedElementType();
+            if (elementCachedType != null)
+            {
+                // If the element type is a complex reference type, skip the array
+                return IsElementTypeComplex(elementCachedType);
+            }
+            return false;
+        }
+
+        // Value types (structs) are not complex reference types
+        if (cachedType.IsValueType)
+            return false;
+
+        // Primitives are not complex
+        if (cachedType.Type != null && cachedType.Type.IsPrimitive)
+            return false;
+
+        // String is not a complex reference type (it's a special case)
+        if (cachedType.Type == typeof(string))
+            return false;
+
+        // Enums are not complex
+        if (cachedType.IsEnum)
+            return false;
+
+        // Delegates are not complex
+        if (cachedType.IsDelegate)
+            return false;
+
+        // For nullable types, check the underlying type
+        if (cachedType.IsNullable)
+        {
+            CachedType[]? generics = cachedType.GetCachedGenericArguments();
+            if (generics != null && generics.Length > 0)
+            {
+                // Recursively check the underlying type
+                return IsElementTypeComplex(generics[0]);
+            }
+            // If we can't determine the underlying type, don't skip (allow generation)
+            return false;
+        }
+
+        // Everything else is a complex reference type (class)
+        return true;
+    }
+
+    private static bool IsElementTypeComplex(CachedType elementCachedType)
+    {
+        // Value types (structs) are not complex
+        if (elementCachedType.IsValueType)
+            return false;
+
+        // Primitives are not complex
+        if (elementCachedType.Type != null && elementCachedType.Type.IsPrimitive)
+            return false;
+
+        // String is not a complex reference type
+        if (elementCachedType.Type == typeof(string))
+            return false;
+
+        // Enums are not complex
+        if (elementCachedType.IsEnum)
+            return false;
+
+        // Delegates are not complex
+        if (elementCachedType.IsDelegate)
+            return false;
+
+        // For nullable types, check the underlying type
+        if (elementCachedType.IsNullable)
+        {
+            CachedType[]? generics = elementCachedType.GetCachedGenericArguments();
+            if (generics != null && generics.Length > 0)
+            {
+                // Recursively check the underlying type
+                return IsElementTypeComplex(generics[0]);
+            }
+            // If we can't determine the underlying type, don't skip (allow generation)
+            return false;
+        }
+
+        // Arrays of arrays - check the inner element type recursively
+        if (elementCachedType.IsArray)
+        {
+            CachedType? innerElementCachedType = elementCachedType.GetCachedElementType();
+            if (innerElementCachedType != null)
+                return IsElementTypeComplex(innerElementCachedType);
+        }
+
+        // Everything else is a complex reference type (class)
+        return true;
     }
 
     private CachedConstructor? GetConstructor(CachedType cachedType)

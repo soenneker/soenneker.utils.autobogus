@@ -36,6 +36,14 @@ public sealed class AutoFakerConfig
 
     public ReflectionCacheOptions? ReflectionCacheOptions;
 
+    /// <summary>
+    /// Indicates whether generation should be performed using shallow copying instead of deep copying.
+    /// </summary>
+    /// <remarks>When set to <see langword="true"/>, only the top-level structure is generated, and nested
+    /// objects or collections are not recursively copied. Use this option when a full deep copy is unnecessary or to
+    /// improve performance for large object graphs.</remarks>
+    public bool ShallowGenerate;
+
     public AutoFakerConfig()
     {
         Locale = AutoFakerDefaultConfigOptions.Locale;
@@ -45,5 +53,6 @@ public sealed class AutoFakerConfig
         TreeDepth = AutoFakerDefaultConfigOptions.TreeDepth;
         DateTimeKind = AutoFakerDefaultConfigOptions.DateTimeKind;
         DefaultTimezoneOffset = AutoFakerDefaultConfigOptions.DefaultTimezoneOffset;
+        ShallowGenerate = AutoFakerDefaultConfigOptions.ShallowGenerate;
     }
 }
