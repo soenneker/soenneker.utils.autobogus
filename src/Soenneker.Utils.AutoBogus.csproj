@@ -16,7 +16,7 @@
         <AssemblyName>Soenneker.Utils.AutoBogus</AssemblyName>
         <PackageId>Soenneker.Utils.AutoBogus</PackageId>
         <PackageTags>utils autobogus autofaker faker bogus tests mock c# .net csharp dotnet</PackageTags>
-        <Copyright>Copyright © 2023-2025 Jake Soenneker</Copyright>
+        <Copyright>Copyright © 2023-2026 Jake Soenneker</Copyright>
         <Authors>Jake Soenneker</Authors>
         <Company>https://soenneker.com</Company>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
