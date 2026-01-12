@@ -9,7 +9,6 @@ internal sealed class ArrayGenerator<TType> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        List<TType> items = context.GenerateMany<TType>();
-        return items.ToArray();
+        return context.GenerateArray<TType>();
     }
 }

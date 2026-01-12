@@ -12,11 +12,10 @@ internal sealed class ImmutableArrayGenerator<TType> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        List<TType> items = context.GenerateMany<TType>();
-
         try
         {
-            ImmutableArray<TType> array = [..items];
+            TType[] items = context.GenerateArray<TType>();
+            ImmutableArray<TType> array = ImmutableArray.CreateRange(items);
             return array;
         }
         catch (Exception)

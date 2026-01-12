@@ -106,22 +106,33 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
     {
         if (string.IsNullOrWhiteSpace(ruleSets))
         {
-            ruleSets = null;
+            return new HashSet<string> { currentRuleSet };
         }
 
         var validRuleSets = new HashSet<string>();
 
-        string[] ruleSetArray = ruleSets?.Split(',') ?? [currentRuleSet];
+        ReadOnlySpan<char> span = ruleSets.AsSpan();
+        var start = 0;
 
-        for (var i = 0; i < ruleSetArray.Length; i++)
+        while (start < span.Length)
         {
-            string trimmedRuleSet = ruleSetArray[i]
-                .Trim();
+            int comma = span.Slice(start).IndexOf(',');
 
-            if (!string.IsNullOrWhiteSpace(trimmedRuleSet))
+            ReadOnlySpan<char> token = comma < 0
+                ? span.Slice(start)
+                : span.Slice(start, comma);
+
+            token = token.Trim();
+
+            if (!token.IsEmpty)
             {
-                validRuleSets.Add(trimmedRuleSet);
+                validRuleSets.Add(token.ToString());
             }
+
+            if (comma < 0)
+                break;
+
+            start += comma + 1;
         }
 
         return validRuleSets;

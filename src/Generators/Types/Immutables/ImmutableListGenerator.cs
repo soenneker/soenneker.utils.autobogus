@@ -12,10 +12,9 @@ internal sealed class ImmutableListGenerator<TType> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
-        List<TType> items = context.GenerateMany<TType>();
-
         try
         {
+            TType[] items = context.GenerateArray<TType>();
             ImmutableList<TType> list = ImmutableList.CreateRange(items);
             return list;
         }

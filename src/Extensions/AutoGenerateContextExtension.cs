@@ -3,7 +3,9 @@ using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Soenneker.Utils.AutoBogus.Extensions;
 
@@ -53,6 +55,23 @@ public static class AutoGenerateContextExtension
         count ??= context.Config.RepeatCount;
 
         return GenerateMany<TType>(context, count.Value, false);
+    }
+
+    /// <summary>
+    /// Generates an array of instances of type <typeparamref name="TType"/>.
+    /// Items that generate as <see langword="null"/> are skipped (consistent with <see cref="GenerateMany{TType}"/>).
+    /// </summary>
+    public static TType[] GenerateArray<TType>(this AutoFakerContext context, int? count = null)
+    {
+        // When RecursiveDepth is 0 and we're generating nested items (stackCount > 0), return empty array
+        if (context.Config.RecursiveDepth == 0 && context.TypesStack.Count > 0)
+        {
+            return [];
+        }
+
+        count ??= context.Config.RepeatCount;
+
+        return GenerateArray<TType>(context, count.Value);
     }
 
     /// <summary>
@@ -115,5 +134,42 @@ public static class AutoGenerateContextExtension
         }
 
         return set.Count == 0 ? [] : [..set];
+    }
+
+    internal static TType[] GenerateArray<TType>(AutoFakerContext context, int count, Func<TType?>? generate = null)
+    {
+        if (count <= 0)
+            return [];
+
+        Func<TType?> gen = generate ?? context.Generate<TType>;
+
+        TType[] rented = ArrayPool<TType>.Shared.Rent(count);
+        var written = 0;
+
+        try
+        {
+            for (var i = 0; i < count; i++)
+            {
+                TType? item = gen();
+                if (item is not null)
+                    rented[written++] = item;
+            }
+
+            if (written == 0)
+                return [];
+
+            TType[] result = GC.AllocateUninitializedArray<TType>(written);
+            rented.AsSpan(0, written).CopyTo(result);
+            return result;
+        }
+        finally
+        {
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<TType>())
+            {
+                rented.AsSpan(0, written).Clear();
+            }
+
+            ArrayPool<TType>.Shared.Return(rented);
+        }
     }
 }
