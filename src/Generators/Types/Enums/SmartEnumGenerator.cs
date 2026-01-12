@@ -4,7 +4,6 @@ using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using System;
 using System.Collections;
-using System.Linq;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Constructors;
 
@@ -36,13 +35,35 @@ internal sealed class SmartEnumGenerator : IAutoFakerGenerator
         if (propertyInfo?.PropertyInfo?.GetValue(null) is not IEnumerable values)
             return null!;
 
-        // Convert IEnumerable to a more efficient indexed collection (avoid multiple enumerations)
-        object[] valueArray = values.Cast<object>().ToArray();
-        if (valueArray.Length == 0)
-            return null!;
+        object? selectedValue = null;
 
-        // Select a random item using a single call to Random
-        object selectedValue = valueArray[Random.Shared.Next(valueArray.Length)];
+        // Fast-path: indexed access without allocations
+        if (values is IList list)
+        {
+            if (list.Count == 0)
+                return null!;
+
+            selectedValue = list[Random.Shared.Next(list.Count)];
+        }
+        else
+        {
+            // Reservoir sampling: choose a random element in one pass without buffering
+            var seen = 0;
+
+            foreach (object? v in values)
+            {
+                if (v is null)
+                    continue;
+
+                seen++;
+
+                if (Random.Shared.Next(seen) == 0)
+                    selectedValue = v;
+            }
+
+            if (selectedValue is null)
+                return null!;
+        }
 
         Type selectedType = selectedValue.GetType();
 
@@ -51,18 +72,19 @@ internal sealed class SmartEnumGenerator : IAutoFakerGenerator
             return selectedValue;
 
         // Attempt to create an instance of the derived type
-        CachedConstructor? ctor = context.CachedType.GetCachedConstructor([typeof(string), typeof(int)]);
+        CachedConstructor? ctor = context.CachedType.GetCachedConstructor(typeof(string), typeof(int));
         if (ctor == null)
             return null!;
 
-        // Retrieve Name and Value properties just once
-        PropertyInfo? nameProperty = selectedType.GetProperty("Name");
-        PropertyInfo? valueProperty = selectedType.GetProperty("Value");
+        // Retrieve Name and Value properties via reflection cache
+        CachedType selectedCachedType = context.CacheService.Cache.GetCachedType(selectedType);
+        PropertyInfo? nameProperty = selectedCachedType.GetCachedProperty("Name")?.PropertyInfo;
+        PropertyInfo? valueProperty = selectedCachedType.GetCachedProperty("Value")?.PropertyInfo;
 
         if (nameProperty?.GetValue(selectedValue) is string name &&
             valueProperty?.GetValue(selectedValue) is int value)
         {
-            return ctor.Invoke([name, value]);
+            return ctor.Invoke(name, value);
         }
 
         return null!;

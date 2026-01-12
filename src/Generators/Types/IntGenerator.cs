@@ -3,7 +3,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class IntGenerator: IAutoFakerGenerator
+internal sealed class IntGenerator : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {

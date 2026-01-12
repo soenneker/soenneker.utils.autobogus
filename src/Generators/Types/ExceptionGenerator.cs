@@ -4,7 +4,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
-internal sealed class ExceptionGenerator: IAutoFakerGenerator
+internal sealed class ExceptionGenerator : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {

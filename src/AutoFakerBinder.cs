@@ -70,14 +70,47 @@ public class AutoFakerBinder : IAutoFakerBinder
             return (TType?)constructor.Invoke();
         }
 
-        var parameters = new object[cachedParameters.Length];
-
-        for (var i = 0; i < parameters.Length; i++)
+        // Avoid params object[] allocations for common arities (1..4).
+        switch (cachedParameters.Length)
         {
-            parameters[i] = GetParameterGenerator(cachedType, cachedParameters[i], context).Generate(context);
-        }
+            case 1:
+            {
+                object? p0 = GetParameterGenerator(cachedType, cachedParameters[0], context).Generate(context);
+                return (TType?)constructor.Invoke(p0);
+            }
+            case 2:
+            {
+                object? p0 = GetParameterGenerator(cachedType, cachedParameters[0], context).Generate(context);
+                object? p1 = GetParameterGenerator(cachedType, cachedParameters[1], context).Generate(context);
+                return (TType?)constructor.Invoke(p0, p1);
+            }
+            case 3:
+            {
+                object? p0 = GetParameterGenerator(cachedType, cachedParameters[0], context).Generate(context);
+                object? p1 = GetParameterGenerator(cachedType, cachedParameters[1], context).Generate(context);
+                object? p2 = GetParameterGenerator(cachedType, cachedParameters[2], context).Generate(context);
+                return (TType?)constructor.Invoke(p0, p1, p2);
+            }
+            case 4:
+            {
+                object? p0 = GetParameterGenerator(cachedType, cachedParameters[0], context).Generate(context);
+                object? p1 = GetParameterGenerator(cachedType, cachedParameters[1], context).Generate(context);
+                object? p2 = GetParameterGenerator(cachedType, cachedParameters[2], context).Generate(context);
+                object? p3 = GetParameterGenerator(cachedType, cachedParameters[3], context).Generate(context);
+                return (TType?)constructor.Invoke(p0, p1, p2, p3);
+            }
+            default:
+            {
+                var parameters = new object[cachedParameters.Length];
 
-        return (TType?)constructor.Invoke(parameters);
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    parameters[i] = GetParameterGenerator(cachedType, cachedParameters[i], context).Generate(context);
+                }
+
+                return (TType?)constructor.Invoke(parameters);
+            }
+        }
     }
 
     public void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType)
@@ -572,7 +605,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         foreach (object? key in dictionary.Keys)
         {
             object? dictValue = dictionary[key];
-            addMethod.Invoke(instance, [key, dictValue]);
+            addMethod.Invoke(instance, key, dictValue);
         }
     }
 
@@ -614,18 +647,16 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (addMethod == null)
             return;
 
-        var args = new object[1];
-
         foreach (object? item in collection)
         {
-            args[0] = item; // boxing avoidance
-            addMethod.Invoke(instance, args);
+            addMethod.Invoke(instance, item);
         }
     }
 
     private static CachedMethod? GetAddMethod(CachedType cachedType, CachedType[] argTypes)
     {
-        CachedMethod? method = cachedType.GetCachedMethod("Add", argTypes.ToTypes());
+        // Prefer CachedType[] overload to avoid allocating Type[].
+        CachedMethod? method = cachedType.GetCachedMethod("Add", argTypes);
 
         if (method != null)
             return method;

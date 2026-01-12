@@ -214,6 +214,18 @@ public static class AutoFakerGeneratorFactory
         return (IAutoFakerGenerator)closed.CreateInstance();
     }
 
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1, CachedType arg2, CachedType arg3)
+    {
+        CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1, arg2, arg3)!;
+        return (IAutoFakerGenerator) closed.CreateInstance();
+    }
+
+    private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1, CachedType arg2, CachedType arg3, CachedType arg4)
+    {
+        CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1, arg2, arg3, arg4)!;
+        return (IAutoFakerGenerator) closed.CreateInstance();
+    }
+
     private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, params CachedType[] genericTypes)
     {
         CachedType closed = genericTypeDefinition.MakeCachedGenericType(genericTypes)!;

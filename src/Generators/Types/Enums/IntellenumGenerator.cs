@@ -16,7 +16,7 @@ internal sealed class IntellenumGenerator : IAutoFakerGenerator
         if (listMethod == null)
             return null!;
 
-        object result = listMethod.Invoke(null, null);
+        object? result = listMethod.Invoke(null);
 
         if (result is not IEnumerable values)
             return null!;

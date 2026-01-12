@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Bogus;
+using Soenneker.Reflection.Cache.Methods;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
@@ -23,12 +24,7 @@ public sealed class AutoFaker : IAutoFaker
 
     internal CacheService? CacheService { get; private set; }
 
-    private readonly Lazy<MethodInfo> _nonTypeParameterMethod = new(() =>
-    {
-        CachedType autoFakerType = CachedTypeService.AutoFaker.Value;
-
-        return autoFakerType.Type!.GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
-    });
+    private CachedMethod? _generateMethodDefinition;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AutoFaker"/> class.
@@ -84,9 +80,19 @@ public sealed class AutoFaker : IAutoFaker
     {
         Initialize();
 
-        // TODO: Optimize
-        MethodInfo method = _nonTypeParameterMethod.Value.MakeGenericMethod(type);
+        // Use Reflection.Cache's CachedMethod generic construction + compiled invokers (avoid MakeGenericMethod + reflection Invoke).
+        _generateMethodDefinition ??= CacheService!.Cache.GetCachedType(typeof(AutoFaker)).GetCachedMethod("Generate");
 
+        if (_generateMethodDefinition != null)
+        {
+            CachedMethod? constructed = _generateMethodDefinition.MakeCachedGenericMethod(type);
+            if (constructed != null)
+                return constructed.Invoke(this)!;
+        }
+
+        // Fallback: plain reflection
+        MethodInfo method = typeof(AutoFaker).GetMethod("Generate", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)!;
+        method = method.MakeGenericMethod(type);
         return method.Invoke(this, null)!;
     }
 

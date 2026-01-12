@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
@@ -54,6 +55,24 @@ internal sealed class ReadOnlyDictionaryGenerator<TKey, TValue> : IAutoFakerGene
                 items.Add(key, value);
             }
         }
+
+        // Avoid Activator.CreateInstance(params object[]) allocation where possible.
+        if (generateType == typeof(Dictionary<TKey, TValue>))
+        {
+            return items is Dictionary<TKey, TValue> d ? d : new Dictionary<TKey, TValue>(items);
+        }
+
+        if (generateType == typeof(ReadOnlyDictionary<TKey, TValue>))
+        {
+            return new ReadOnlyDictionary<TKey, TValue>(items);
+        }
+
+        var cachedGenType = context.CacheService.Cache.GetCachedType(generateType);
+
+        // Prefer IDictionary<TKey,TValue> ctor; fall back to reflection if needed.
+        var ctor = cachedGenType.GetCachedConstructor(typeof(IDictionary<TKey, TValue>));
+        if (ctor != null)
+            return ctor.Invoke(items);
 
         return Activator.CreateInstance(generateType, items);
     }

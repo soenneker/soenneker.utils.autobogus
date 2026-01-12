@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
@@ -12,6 +12,17 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 
 internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
 {
+    private static readonly ConcurrentDictionary<Type, Proxy> _proxyCache = new();
+
+    private static Proxy GetProxy(Type dataType)
+    {
+        return _proxyCache.GetOrAdd(dataType, static t =>
+        {
+            Type proxyType = typeof(Proxy<>).MakeGenericType(t);
+            return (Proxy) Activator.CreateInstance(proxyType)!;
+        });
+    }
+
     public object Generate(AutoFakerContext context)
     {
         DataTable table = CreateTable(context);
@@ -78,32 +89,74 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         var constrainedColumns = new Dictionary<DataColumn, ConstrainedColumnInfo>();
         var constraintHasUniqueColumns = new HashSet<ForeignKeyConstraint>();
         var referencedRowByConstraint = new Dictionary<ForeignKeyConstraint, DataRow>();
+        var allConstraints = new List<ForeignKeyConstraint>();
 
-        foreach (ForeignKeyConstraint? foreignKey in table.Constraints.OfType<ForeignKeyConstraint>())
+        // Precompute unique columns once (avoids repeated UniqueConstraint enumeration)
+        var uniqueColumns = new HashSet<DataColumn>();
+        foreach (DataColumn col in table.Columns)
         {
-            bool containsUniqueColumns = foreignKey.Columns.Any(col =>
-                col.Unique ||
-                table.Constraints.OfType<UniqueConstraint>().Any(constraint => constraint.Columns.Contains(col)));
+            if (col.Unique)
+                uniqueColumns.Add(col);
+        }
+
+        foreach (Constraint c in table.Constraints)
+        {
+            if (c is UniqueConstraint uc)
+            {
+                DataColumn[] cols = uc.Columns;
+                for (var i = 0; i < cols.Length; i++)
+                    uniqueColumns.Add(cols[i]);
+            }
+        }
+
+        foreach (Constraint constraint in table.Constraints)
+        {
+            if (constraint is not ForeignKeyConstraint foreignKey)
+                continue;
+
+            allConstraints.Add(foreignKey);
+
+            var containsUniqueColumns = false;
+            DataColumn[] fkColumns = foreignKey.Columns;
+
+            for (var i = 0; i < fkColumns.Length; i++)
+            {
+                if (uniqueColumns.Contains(fkColumns[i]))
+                {
+                    containsUniqueColumns = true;
+                    break;
+                }
+            }
 
             for (var i = 0; i < foreignKey.Columns.Length; i++)
             {
                 DataColumn column = foreignKey.Columns[i];
                 DataColumn relatedColumn = foreignKey.RelatedColumns[i];
 
-                if (constrainedColumns.ContainsKey(column))
+                if (!constrainedColumns.TryAdd(column,
+                        new ConstrainedColumnInfo
+                        {
+                            Constraint = foreignKey,
+                            RelatedColumn = relatedColumn,
+                        }))
                     throw new Exception($"Column is constrained in multiple foreign key relationships simultaneously: {column.ColumnName} in DataTable {table.TableName}");
-
-                constrainedColumns[column] =
-                    new ConstrainedColumnInfo
-                    {
-                        Constraint = foreignKey,
-                        RelatedColumn = relatedColumn,
-                    };
             }
 
-            if (foreignKey.RelatedTable == table
-                && foreignKey.Columns.Any(col => !col.AllowDBNull))
-                throw new Exception($"Self-reference columns must be nullable so that at least one record can be added when the table is initially empty: DataTable {table.TableName}");
+            if (foreignKey.RelatedTable == table)
+            {
+                var hasNonNullableSelfReference = false;
+                for (var i = 0; i < foreignKey.Columns.Length; i++)
+                {
+                    if (!foreignKey.Columns[i].AllowDBNull)
+                    {
+                        hasNonNullableSelfReference = true;
+                        break;
+                    }
+                }
+
+                if (hasNonNullableSelfReference)
+                    throw new Exception($"Self-reference columns must be nullable so that at least one record can be added when the table is initially empty: DataTable {table.TableName}");
+            }
 
             if (containsUniqueColumns)
                 constraintHasUniqueColumns.Add(foreignKey);
@@ -129,8 +182,6 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
                 rowCount = foreignKey.RelatedTable.Rows.Count;
             }
         }
-
-        List<ForeignKeyConstraint> allConstraints = referencedRowByConstraint.Keys.ToList();
 
         while (rowCount > 0)
         {
@@ -169,7 +220,7 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
             case TypeCode.Empty:
             case TypeCode.DBNull: return null;
             case TypeCode.Boolean: return context.Faker.Random.Bool();
-            case TypeCode.Char: return context.Faker.Lorem.Letter().Single();
+            case TypeCode.Char: return context.Faker.Lorem.Letter()[0];
             case TypeCode.SByte: return context.Faker.Random.SByte();
             case TypeCode.Byte: return context.Faker.Random.Byte();
             case TypeCode.Int16: return context.Faker.Random.Short();
@@ -194,8 +245,8 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
                     return context.Faker.Date.Future() - context.Faker.Date.Future();
                 if (dataColumn.DataType == typeof(Guid))
                     return context.Faker.Random.Guid();
-                var proxy = (Proxy) Activator.CreateInstance(typeof(Proxy<>).MakeGenericType(dataColumn.DataType));
 
+                Proxy proxy = GetProxy(dataColumn.DataType);
                 return proxy.Generate(context);
         }
     }

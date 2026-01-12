@@ -17,4 +17,12 @@ public interface IAutoFakerConfigBuilder : IBaseAutoFakerConfigBuilder<IAutoFake
     /// The arguments will be matched to constructor parameters by position and type compatibility.
     /// </remarks>
     IAutoFakerConfigBuilder WithArgs(params object[] args);
+
+    IAutoFakerConfigBuilder WithArgs(object? arg0);
+
+    IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1);
+
+    IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1, object? arg2);
+
+    IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1, object? arg2, object? arg3);
 }

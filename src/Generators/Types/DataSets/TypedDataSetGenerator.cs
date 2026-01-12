@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
@@ -22,7 +21,10 @@ internal class TypedDataSetGenerator : BaseDataSetGenerator
     {
         var dataSet = _dataSetType.CreateInstance<DataSet>();
 
-        List<DataTable> allTables = dataSet.Tables.OfType<DataTable>().ToList();
+        var allTables = new List<DataTable>(dataSet.Tables.Count);
+        foreach (DataTable table in dataSet.Tables)
+            allTables.Add(table);
+
         var populatedTables = new HashSet<DataTable>();
 
         while (allTables.Count > 0)
@@ -33,11 +35,23 @@ internal class TypedDataSetGenerator : BaseDataSetGenerator
             {
                 DataTable table = allTables[i];
 
-                IEnumerable<DataTable> referencedTables = table.Constraints
-                    .OfType<ForeignKeyConstraint>()
-                    .Select(constraint => constraint.RelatedTable);
+                var canGenerate = true;
 
-                if (!referencedTables.Where(referencedTable => referencedTable != table).All(populatedTables.Contains))
+                // Ensure any referenced tables (excluding self) are populated first
+                foreach (Constraint constraint in table.Constraints)
+                {
+                    if (constraint is not ForeignKeyConstraint fk)
+                        continue;
+
+                    DataTable referenced = fk.RelatedTable;
+                    if (!ReferenceEquals(referenced, table) && !populatedTables.Contains(referenced))
+                    {
+                        canGenerate = false;
+                        break;
+                    }
+                }
+
+                if (!canGenerate)
                     continue;
 
                 CachedType cachedType = context.CacheService.Cache.GetCachedType(table.GetType());

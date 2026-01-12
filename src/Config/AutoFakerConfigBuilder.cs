@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
 using Soenneker.Utils.AutoBogus.Config.Base;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -60,6 +59,16 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
     IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(params object[] args) => WithArgs<IAutoFakerConfigBuilder>(args, this);
 
+    IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(object? arg0) => WithArgs<IAutoFakerConfigBuilder>([arg0!], this);
+
+    IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(object? arg0, object? arg1) => WithArgs<IAutoFakerConfigBuilder>([arg0!, arg1!], this);
+
+    IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(object? arg0, object? arg1, object? arg2) =>
+        WithArgs<IAutoFakerConfigBuilder>([arg0!, arg1!, arg2!], this);
+
+    IAutoFakerConfigBuilder IAutoFakerConfigBuilder.WithArgs(object? arg0, object? arg1, object? arg2, object? arg3) =>
+        WithArgs<IAutoFakerConfigBuilder>([arg0!, arg1!, arg2!, arg3!], this);
+
     internal TBuilder WithDataTableRowCount<TBuilder>(int count, TBuilder builder)
     {
         AutoFakerConfig.DataTableRowCount = count;
@@ -99,7 +108,7 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
         AutoFakerConfig.SkipPaths ??= [];
 
-        bool existing = AutoFakerConfig.SkipPaths.Any(s => s == path);
+        bool existing = AutoFakerConfig.SkipPaths.Contains(path);
 
         if (!existing)
             AutoFakerConfig.SkipPaths.Add(path);
@@ -119,7 +128,7 @@ internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, I
 
         AutoFakerConfig.Overrides ??= [];
 
-        bool existing = AutoFakerConfig.Overrides.Any(o => o == autoFakerGeneratorOverride);
+        bool existing = AutoFakerConfig.Overrides.Contains(autoFakerGeneratorOverride);
 
         if (!existing)
             AutoFakerConfig.Overrides.Add(autoFakerGeneratorOverride);
