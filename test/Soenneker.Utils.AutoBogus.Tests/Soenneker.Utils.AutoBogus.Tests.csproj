@@ -21,7 +21,7 @@
         <PackageReference Include="Intellenum" Version="2.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.549" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.550" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.161" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.61" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
