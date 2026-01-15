@@ -23,7 +23,7 @@
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
         <PackageReference Include="Soenneker.Facts.Local" Version="4.0.551" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.163" />
-        <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.61" />
+        <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.62" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
