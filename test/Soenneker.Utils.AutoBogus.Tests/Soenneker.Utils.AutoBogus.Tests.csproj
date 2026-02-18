@@ -21,7 +21,7 @@
     <ItemGroup>
         <PackageReference Include="Ardalis.SmartEnum.JsonNet" Version="8.1.0" />
         <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
-        <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
+        <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
         <PackageReference Include="Soenneker.Facts.Local" Version="4.0.563" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.164" />
