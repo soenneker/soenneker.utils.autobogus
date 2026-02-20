@@ -23,7 +23,7 @@
         <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
         <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.563" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.564" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.164" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.63" />
         <PackageReference Include="xUnit.v3" Version="3.2.2" />
