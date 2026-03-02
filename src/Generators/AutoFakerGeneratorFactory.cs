@@ -188,6 +188,11 @@ public static class AutoFakerGeneratorFactory
             return dataSetGenerator;
         }
 
+        if (cachedType.IsEnumValue)
+        {
+            return GeneratorService.GetEnumValuesGenerator();
+        }
+
         if (cachedType.IsIntellenum)
         {
             return GeneratorService.GetIntellenumGenerator();

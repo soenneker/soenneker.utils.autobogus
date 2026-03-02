@@ -1,6 +1,5 @@
 ﻿using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
-using Soenneker.Reflection.Cache.Extensions;
 using Soenneker.Reflection.Cache.Fields;
 using Soenneker.Reflection.Cache.Methods;
 using Soenneker.Reflection.Cache.Parameters;

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Bogus;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Services;
 

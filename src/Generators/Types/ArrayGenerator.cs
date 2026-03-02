@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Soenneker.Utils.AutoBogus.Context;
+﻿using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 

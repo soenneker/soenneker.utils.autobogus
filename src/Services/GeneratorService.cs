@@ -1,4 +1,4 @@
-﻿using Soenneker.Reflection.Cache.Types;
+using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using System;
@@ -58,6 +58,9 @@ internal sealed class GeneratorService
 
     private static readonly Lazy<IAutoFakerGenerator> _smartEnumGenerator =
         new(() => new SmartEnumGenerator());
+
+    private static readonly Lazy<IAutoFakerGenerator> _enumValuesGenerator =
+        new(() => new EnumValuesGenerator());
 
     internal GeneratorService()
     {
@@ -129,6 +132,11 @@ internal sealed class GeneratorService
     internal static IAutoFakerGenerator GetSmartEnumGenerator()
     {
         return _smartEnumGenerator.Value;
+    }
+
+    internal static IAutoFakerGenerator GetEnumValuesGenerator()
+    {
+        return _enumValuesGenerator.Value;
     }
 
     /// <summary>

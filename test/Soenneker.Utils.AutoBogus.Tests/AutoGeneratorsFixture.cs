@@ -19,6 +19,7 @@ using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 using Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
+using Soenneker.Utils.AutoBogus.Tests.Enums;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -398,6 +399,31 @@ public partial class AutoGeneratorsFixture
             AutoFakerContext context = CreateContext(type);
 
             AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<EnumGenerator<TestEnum>>();
+        }
+    }
+
+    public class EnumValuesGenerator : AutoGeneratorsFixture
+    {
+        [Fact]
+        public void Generate_Should_Return_EnumValues()
+        {
+            Type type = typeof(OrderStatusEnumValue);
+            var generator = new Soenneker.Utils.AutoBogus.Generators.Types.Enums.EnumValuesGenerator();
+
+            object result = InvokeGenerator(type, generator);
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OrderStatusEnumValue>();
+            ((OrderStatusEnumValue)result).Value.Should().BeOneOf(1, 2, 3);
+        }
+
+        [Fact]
+        public void GetGenerator_Should_Return_EnumValuesGenerator()
+        {
+            Type type = typeof(OrderStatusEnumValue);
+            AutoFakerContext context = CreateContext(type);
+
+            AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<Soenneker.Utils.AutoBogus.Generators.Types.Enums.EnumValuesGenerator>();
         }
     }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Bogus;
 using Soenneker.Reflection.Cache.Methods;
-using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Config.Abstract;
