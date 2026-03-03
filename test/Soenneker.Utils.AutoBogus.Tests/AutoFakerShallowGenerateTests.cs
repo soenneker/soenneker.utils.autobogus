@@ -539,7 +539,7 @@ public class AutoFakerShallowGenerateTests
         // Verify that nullable primitives are not skipped - they can have values
         // We generate multiple times to increase the chance of getting non-null values
         // The key test is that nullable complex types ARE skipped (see next test)
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
             var instance = faker.Generate<TestClassWithNullableProperties>();
             instance.Should().NotBeNull();

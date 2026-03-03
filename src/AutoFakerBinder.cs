@@ -1,4 +1,4 @@
-﻿using Soenneker.Extensions.FieldInfo;
+using Soenneker.Extensions.FieldInfo;
 using Soenneker.Reflection.Cache.Constructors;
 using Soenneker.Reflection.Cache.Fields;
 using Soenneker.Reflection.Cache.Methods;
@@ -520,18 +520,14 @@ public class AutoFakerBinder : IAutoFakerBinder
 
         // Build into a pooled buffer, then bulk-copy into List<T> once.
         AutoMember[] buffer = ArrayPool<AutoMember>.Shared.Rent(totalCapacity);
-        int w = 0;
-
-        // Local copies for JIT friendliness
-        CachedType ct = cachedType;
-        CacheService svc = cacheService;
-        AutoFakerConfig cfg = autoFakerConfig;
+        var w = 0;
 
         // ----- Properties -----
         if (propsLen != 0)
         {
             CachedProperty[] props = cachedProperties!;
-            for (int i = 0; i < props.Length; i++)
+
+            for (var i = 0; i < props.Length; i++)
             {
                 // ref readonly avoids defensive copies for structs
                 ref readonly CachedProperty p = ref props[i];
@@ -539,7 +535,7 @@ public class AutoFakerBinder : IAutoFakerBinder
                 if (p.IsDelegate || p.IsEqualityContract)
                     continue;
 
-                buffer[w++] = new AutoMember(p, ct, svc, cfg);
+                buffer[w++] = new AutoMember(p, cachedType, cacheService, autoFakerConfig);
             }
         }
 
@@ -547,19 +543,19 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (fieldsLen != 0)
         {
             CachedField[] fields = cachedFields!;
-            for (int i = 0; i < fields.Length; i++)
+            for (var i = 0; i < fields.Length; i++)
             {
                 ref readonly CachedField f = ref fields[i];
 
-                // Fast reject constants & delegates first
-                if (f.FieldInfo.IsConstant() || f.IsDelegate)
+                // Fast reject constants, static fields & delegates first (static/initonly fields cannot be set after type init)
+                if (f.FieldInfo.IsConstant() || f.FieldInfo.IsStatic || f.IsDelegate)
                     continue;
 
                 string name = f.FieldInfo.Name;
                 if (name.Length >= _backingSuffix.Length && name.EndsWith(_backingSuffix, StringComparison.Ordinal))
                     continue;
 
-                buffer[w++] = new AutoMember(f, ct, svc, cfg);
+                buffer[w++] = new AutoMember(f, cachedType, cacheService, autoFakerConfig);
             }
         }
 

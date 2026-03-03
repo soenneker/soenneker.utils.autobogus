@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -106,6 +106,23 @@ public class AutoFakerTests
 
         var record = faker.Generate<TestClassEmpty>();
         record.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithPrivateStaticReadOnlyField_should_generate()
+    {
+        var faker = new AutoFaker();
+        var result = faker.Generate<TestClassWithPrivateStaticReadOnlyField>();
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_TestClassWithPrivateStaticReadOnlyFieldAndProperty_should_generate()
+    {
+        var faker = new AutoFaker();
+        var result = faker.Generate<TestClassWithPrivateStaticReadOnlyFieldAndProperty>();
+        result.Should().NotBeNull();
+        result.Property.Should().NotBeNull();
     }
 
     [Fact]
