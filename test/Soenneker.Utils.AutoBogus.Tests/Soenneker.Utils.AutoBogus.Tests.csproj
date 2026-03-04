@@ -25,7 +25,7 @@
         <PackageReference Include="Intellenum" Version="2.0.1" />
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
         <PackageReference Include="Soenneker.Facts.Local" Version="4.0.577" />
-        <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.165" />
+        <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.166" />
         <PackageReference Include="Soenneker.Gen.EnumValues" Version="4.0.15" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.63" />
         <PackageReference Include="xUnit.v3" Version="3.2.2" />
