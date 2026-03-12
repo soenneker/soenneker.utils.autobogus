@@ -1,4 +1,5 @@
 name: publish-package
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -7,12 +8,17 @@ on:
   push:
     branches:
       - main
-
     paths-ignore:
       - 'test/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
 
 env:
-    "PipelineEnvironment": true
+  PipelineEnvironment: true
+  NUGET_XMLDOC_MODE: skip
 
 jobs:
   publish-package:
@@ -20,104 +26,78 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      
+        with:
+          persist-credentials: false
+
       - name: Setting up build version
+        shell: bash
         run: |
-          version=$(($GITHUB_RUN_NUMBER))
-          echo "BUILD_VERSION=4.0.$version" >> ${GITHUB_ENV}
+          echo "BUILD_VERSION=4.0.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+
+      - name: Get release notes from latest commit
+        shell: bash
+        run: |
+          {
+            echo "PACKAGE_RELEASE_NOTES<<EOF"
+            git log -1 --pretty=%B
+            echo "EOF"
+          } >> "$GITHUB_ENV"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
-      - name: Install dependencies with retry
-        run: |
-          retries=5
-          base_wait_time=15
-          exponent=2
-
-          for i in $(seq 1 $retries); do
-            if dotnet restore; then
-              break
-            fi
-
-            if [ $i -lt $retries ]; then
-              wait_time=$(awk "BEGIN {print int($base_wait_time * ($exponent ^ ($i - 1)))}")
-              echo "dotnet restore failed, retrying in $wait_time seconds..."
-              sleep $wait_time
-            else
-              echo "dotnet restore failed after $retries retries."
-              exit 1
-            fi
-          done
+      - name: Restore tests
+        run: dotnet restore test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --verbosity minimal
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --configuration Release --no-restore --verbosity minimal
 
       - name: Test
-        run: dotnet test test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj --no-restore --verbosity normal
+        run: dotnet test test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --configuration Release --no-build --no-restore --verbosity normal
 
       - name: Pack
-        run: dotnet pack --no-build --configuration Release --output .
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          dotnet pack src/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.csproj \
+            --configuration Release \
+            --no-build \
+            --no-restore \
+            --output ./artifacts
 
       - name: Publish to NuGet with retry
+        shell: bash
         run: |
-          nupkg_files=$(find . -name "*.nupkg")
-          retries=5
-          base_wait_time=20 
-          exponent=3.5
-          
-          for i in $(seq 1 $retries); do
-            if dotnet nuget push $nupkg_files --source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET__TOKEN}} --skip-duplicate; then
-              break
-            fi
-            
-            if [ $i -lt $retries ]; then
-              wait_time=$(awk "BEGIN {print int($base_wait_time * ($exponent ^ ($i - 1)))}")
-              echo "NuGet publish failed, retrying in $wait_time seconds..."
-              sleep $wait_time
+          for i in 1 2 3; do
+            dotnet nuget push ./artifacts/*.nupkg \
+              --source "https://api.nuget.org/v3/index.json" \
+              --api-key "${{ secrets.NUGET__TOKEN }}" \
+              --skip-duplicate && break
+
+            if [ "$i" -lt 3 ]; then
+              echo "NuGet publish failed, retrying in 10 seconds..."
+              sleep 10
             else
-              echo "NuGet publish failed after $retries retries."
+              echo "NuGet publish failed after 3 attempts."
               exit 1
             fi
           done
 
-      - name: Add GitHub NuGet Source
-        run: |
-          dotnet nuget add source https://nuget.pkg.github.com/soenneker/index.json \
-          --name "github" \
-          --username "any" \
-          --password ${{ secrets.GH__TOKEN }} \
-          --store-password-in-clear-text
-
       - name: Publish to GitHub Packages
+        shell: bash
         run: |
-          dotnet nuget push ./*.nupkg \
-          --source "github" \
-          --api-key ${{ secrets.GH__TOKEN }}
+          dotnet nuget push ./artifacts/*.nupkg \
+            --source "https://nuget.pkg.github.com/soenneker/index.json" \
+            --api-key "${{ secrets.GH__TOKEN }}" \
+            --skip-duplicate
 
       - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GH__TOKEN }}
+        shell: bash
         run: |
-          changelog=$(git log -20 --pretty=format:"- %s")
-          tag_name="v$BUILD_VERSION"
-
-          json_payload=$(
-            jq -n \
-              --arg tag_name "$tag_name" \
-              --arg name "$tag_name" \
-              --arg body "$changelog" \
-              '{
-                tag_name: $tag_name,
-                name: $name,
-                body: $body,
-                draft: false,
-                prerelease: false
-              }'
-          )
-
-          curl -s -X POST \
-            -H "Authorization: Bearer ${{ secrets.GH__TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/releases \
-            -d "$json_payload"
+          gh release create "v$BUILD_VERSION" \
+            --title "v$BUILD_VERSION" \
+            --notes "${{ env.PACKAGE_RELEASE_NOTES }}"

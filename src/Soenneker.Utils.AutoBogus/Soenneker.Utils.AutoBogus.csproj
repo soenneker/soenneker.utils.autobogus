@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -33,12 +33,15 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <PackageReleaseNotes Condition="'$(PACKAGE_RELEASE_NOTES)' != ''">
+            $(PACKAGE_RELEASE_NOTES)
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\" />
-        <None Include="..\LICENSE" Pack="true" PackagePath="\" />
-        <None Include="..\icon.png" Pack="true" PackagePath="\" />
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+        <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>

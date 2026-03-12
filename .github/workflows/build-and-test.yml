@@ -1,12 +1,21 @@
-﻿name: build-and-test
+name: build-and-test
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 on:
-  # Testing - run for any PRs.
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 env:
-    "PipelineEnvironment": true
+  PipelineEnvironment: true
+  NUGET_XMLDOC_MODE: skip
 
 jobs:
   build-and-test:
@@ -14,38 +23,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
-      - name: Install dependencies with retry
-        run: |
-          retries=5
-          base_wait_time=15
-          exponent=2
+      - name: Restore tests
+        run: dotnet restore test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --verbosity minimal
 
-          for i in $(seq 1 $retries); do
-            if dotnet restore; then
-              break
-            fi
-
-            if [ $i -lt $retries ]; then
-              wait_time=$(awk "BEGIN {print int($base_wait_time * ($exponent ^ ($i - 1)))}")
-              echo "dotnet restore failed, retrying in $wait_time seconds..."
-              sleep $wait_time
-            else
-              echo "dotnet restore failed after $retries retries."
-              exit 1
-            fi
-          done
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+      - name: Build tests
+        run: dotnet build test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --configuration Release --no-restore --verbosity minimal
 
       - name: Test
-        run: dotnet test test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj --no-restore --verbosity normal
+        run: dotnet test test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --configuration Release --no-build --no-restore --verbosity minimal
 
       - name: Pack
-        run: dotnet pack --no-build --configuration Release --output .
+        run: dotnet pack src/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.csproj --configuration Release --no-build --no-restore --output . --verbosity minimal

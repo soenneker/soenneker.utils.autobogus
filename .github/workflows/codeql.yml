@@ -1,14 +1,18 @@
 name: codeql
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ "main" ]
     paths-ignore:
       - 'test/**'
+  workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+env:
+  NUGET_XMLDOC_MODE: skip
 
 permissions:
   actions: read
@@ -23,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -36,10 +42,10 @@ jobs:
           build-mode: manual
 
       - name: Restore src
-        run: dotnet restore ./src
+        run: dotnet restore ./src/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.csproj --verbosity minimal
 
       - name: Build src
-        run: dotnet build ./src --no-restore -c Release
+        run: dotnet build ./src/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.csproj --configuration Release --no-restore --verbosity minimal
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
