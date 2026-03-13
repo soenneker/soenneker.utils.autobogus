@@ -32,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Soenneker.Utils.AutoBogus.csproj" />
+        <ProjectReference Include="..\..\src\Soenneker.Utils.AutoBogus\Soenneker.Utils.AutoBogus.csproj" />
     </ItemGroup>
 
     <ItemGroup>
