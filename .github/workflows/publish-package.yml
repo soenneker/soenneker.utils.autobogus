@@ -50,13 +50,13 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore tests
-        run: dotnet restore test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --verbosity minimal
+        run: dotnet restore test/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.Tests.csproj --verbosity minimal
 
       - name: Build tests
-        run: dotnet build test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --configuration Release --no-restore --verbosity minimal
+        run: dotnet build test/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.Tests.csproj --configuration Release --no-restore --verbosity minimal
 
       - name: Test
-        run: dotnet test test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj --configuration Release --no-build --no-restore --verbosity normal
+        run: dotnet test test/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.Tests.csproj --configuration Release --no-build --no-restore --verbosity normal
 
 
       - name: Restore library
