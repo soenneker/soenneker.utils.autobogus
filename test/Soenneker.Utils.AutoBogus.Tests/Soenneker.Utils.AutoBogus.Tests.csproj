@@ -26,7 +26,7 @@
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
         <PackageReference Include="Soenneker.Facts.Local" Version="4.0.612" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.174" />
-        <PackageReference Include="Soenneker.Gen.EnumValues" Version="4.0.30" />
+        <PackageReference Include="Soenneker.Gen.EnumValues" Version="4.0.33" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.81" />
         <PackageReference Include="xUnit.v3" Version="3.2.2" />
     </ItemGroup>
