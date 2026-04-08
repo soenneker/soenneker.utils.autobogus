@@ -106,6 +106,17 @@ public sealed class AutoFakerConfig
     public bool ShallowGenerate;
 
     /// <summary>
+    /// When <see langword="true"/>, instance properties declared on base types are merged into generation for a concrete type
+    /// (derived members shadow base by name). When <see langword="false"/>, only members declared on the generated type are populated.
+    /// Per-type <see cref="Soenneker.Utils.AutoBogus.Attributes.AutoFakerIncludeInheritedPropertiesAttribute"/> overrides this value.
+    /// </summary>
+    /// <remarks>
+    /// Set this field on <see cref="AutoFakerConfig"/> (for example <c>new AutoFaker(new AutoFakerConfig { IncludeInheritedProperties = false })</c>).
+    /// It is not available on the fluent configuration builder.
+    /// </remarks>
+    public bool IncludeInheritedProperties;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="AutoFakerConfig"/> class with default values.
     /// </summary>
     public AutoFakerConfig()
@@ -118,5 +129,6 @@ public sealed class AutoFakerConfig
         DateTimeKind = AutoFakerDefaultConfigOptions.DateTimeKind;
         DefaultTimezoneOffset = AutoFakerDefaultConfigOptions.DefaultTimezoneOffset;
         ShallowGenerate = AutoFakerDefaultConfigOptions.ShallowGenerate;
+        IncludeInheritedProperties = AutoFakerDefaultConfigOptions.IncludeInheritedProperties;
     }
 }

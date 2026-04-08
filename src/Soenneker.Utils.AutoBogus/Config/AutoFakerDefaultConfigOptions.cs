@@ -19,4 +19,6 @@ public static class AutoFakerDefaultConfigOptions
     internal static readonly TimeSpan? DefaultTimezoneOffset = null;
 
     internal const bool ShallowGenerate = false;
+
+    internal const bool IncludeInheritedProperties = true;
 }

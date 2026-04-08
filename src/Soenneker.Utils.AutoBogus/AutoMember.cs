@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Soenneker.Reflection.Cache.Fields;
 using Soenneker.Reflection.Cache.Properties;
 using Soenneker.Reflection.Cache.Types;
@@ -47,20 +48,36 @@ internal sealed class AutoMember
 
     internal AutoMember(CachedProperty cachedProperty, CachedType parentType, CacheService cacheService, AutoFakerConfig config)
     {
-        Name = cachedProperty.PropertyInfo.Name;
+        PropertyInfo pi = cachedProperty.PropertyInfo;
+        PropertyInfo effective = ResolvePropertyForAccessors(pi);
 
-        CachedType = cacheService.Cache.GetCachedType(cachedProperty.PropertyInfo.PropertyType);
+        Name = pi.Name;
+
+        CachedType = cacheService.Cache.GetCachedType(pi.PropertyType);
         ParentType = parentType;
-        IsReadOnly = !cachedProperty.PropertyInfo.CanWrite;
-        Getter = obj => cachedProperty.PropertyInfo.GetValue(obj, []);
+        IsReadOnly = effective.GetSetMethod(nonPublic: true) is null;
+        Getter = obj => effective.GetValue(obj, []);
 
         if (!IsReadOnly)
-            Setter = (obj, value) => cachedProperty.PropertyInfo.SetValue(obj, value, []);
+            Setter = (obj, value) => effective.SetValue(obj, value, []);
 
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;
 
         SetShouldSkip(config);
+    }
+
+    private static PropertyInfo ResolvePropertyForAccessors(PropertyInfo pi)
+    {
+        if (pi.GetSetMethod(nonPublic: true) != null)
+            return pi;
+
+        Type? declaring = pi.DeclaringType;
+        if (declaring == null)
+            return pi;
+
+        PropertyInfo? declared = declaring.GetProperty(pi.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+        return declared?.GetSetMethod(nonPublic: true) != null ? declared : pi;
     }
 
     private void SetShouldSkip(AutoFakerConfig config)

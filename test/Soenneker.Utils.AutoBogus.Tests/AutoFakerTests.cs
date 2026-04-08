@@ -3,13 +3,13 @@ using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Overrides;
 using System.Linq;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Options;
-using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Delegates;
 using System;
@@ -24,7 +24,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var order = faker.Generate<Order>();
-        order.Should().NotBeNull();
+        order.Should()
+             .NotBeNull();
     }
 
     [Fact]
@@ -33,7 +34,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var dictionary = faker.Generate<Dictionary<int, string>>();
-        dictionary.Should().NotBeNull();
+        dictionary.Should()
+                  .NotBeNull();
     }
 
     [Fact]
@@ -42,7 +44,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var structObj = faker.Generate<TestStruct>();
-        structObj.Should().NotBeNull();
+        structObj.Should()
+                 .NotBeNull();
     }
 
     [Fact]
@@ -51,8 +54,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var record = faker.Generate<TestRecord>();
-        record.Should().NotBeNull();
-        record.Name.Should().NotBeNullOrEmpty();
+        record.Should()
+              .NotBeNull();
+        record.Name.Should()
+              .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -62,8 +67,10 @@ public class AutoFakerTests
 
         var record = faker.Generate<TestRecordStruct>();
 
-        record.Should().NotBeNull();
-        record.Name.Should().NotBeNullOrEmpty();
+        record.Should()
+              .NotBeNull();
+        record.Name.Should()
+              .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -73,8 +80,10 @@ public class AutoFakerTests
 
         var testClass = faker.Generate<TestClassWithNumber<int>>();
 
-        testClass.Should().NotBeNull();
-        testClass.Number.Should().NotBe(0);
+        testClass.Should()
+                 .NotBeNull();
+        testClass.Number.Should()
+                 .NotBe(0);
     }
 
     [Fact]
@@ -84,8 +93,10 @@ public class AutoFakerTests
 
         var testClass = faker.Generate<TestClassWithBigInteger>();
 
-        testClass.Should().NotBeNull();
-        testClass.BigInteger.Should().NotBeNull();
+        testClass.Should()
+                 .NotBeNull();
+        testClass.BigInteger.Should()
+                 .NotBeNull();
     }
 
     [Fact]
@@ -95,8 +106,10 @@ public class AutoFakerTests
 
         var testClass = faker.Generate<TestClassWithException>();
 
-        testClass.Should().NotBeNull();
-        testClass.Exception.Should().NotBeNull();
+        testClass.Should()
+                 .NotBeNull();
+        testClass.Exception.Should()
+                 .NotBeNull();
     }
 
     [Fact]
@@ -105,7 +118,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var record = faker.Generate<TestClassEmpty>();
-        record.Should().NotBeNull();
+        record.Should()
+              .NotBeNull();
     }
 
     [Fact]
@@ -113,7 +127,8 @@ public class AutoFakerTests
     {
         var faker = new AutoFaker();
         var result = faker.Generate<TestClassWithPrivateStaticReadOnlyField>();
-        result.Should().NotBeNull();
+        result.Should()
+              .NotBeNull();
     }
 
     [Fact]
@@ -121,8 +136,10 @@ public class AutoFakerTests
     {
         var faker = new AutoFaker();
         var result = faker.Generate<TestClassWithPrivateStaticReadOnlyFieldAndProperty>();
-        result.Should().NotBeNull();
-        result.Property.Should().NotBeNull();
+        result.Should()
+              .NotBeNull();
+        result.Property.Should()
+              .NotBeNull();
     }
 
     [Fact]
@@ -131,8 +148,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var record = faker.Generate<TestRecordWithRecursiveConstructor>();
-        record.Should().NotBeNull();
-        record.Name.Should().NotBeNullOrEmpty();
+        record.Should()
+              .NotBeNull();
+        record.Name.Should()
+              .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -141,8 +160,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var classObj = faker.Generate<TestClassWithRecursiveConstructor>();
-        classObj.Should().NotBeNull();
-        classObj.Name.Should().NotBeNullOrEmpty();
+        classObj.Should()
+                .NotBeNull();
+        classObj.Name.Should()
+                .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -151,8 +172,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var classObj = faker.Generate<TestClassWithRecursiveEnumerableConstructor>();
-        classObj.Should().NotBeNull();
-        classObj.Name.Should().NotBeNullOrEmpty();
+        classObj.Should()
+                .NotBeNull();
+        classObj.Name.Should()
+                .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -161,8 +184,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var classObj = faker.Generate<TestClassIReadOnlyCollection>();
-        classObj.Should().NotBeNull();
-        classObj.Ints.Should().NotBeNullOrEmpty();
+        classObj.Should()
+                .NotBeNull();
+        classObj.Ints.Should()
+                .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -171,8 +196,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var classObj = faker.Generate<TestClassCollection>();
-        classObj.Should().NotBeNull();
-        classObj.Strings.Should().NotBeNullOrEmpty();
+        classObj.Should()
+                .NotBeNull();
+        classObj.Strings.Should()
+                .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -181,8 +208,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var classObj = faker.Generate<TestClassReadOnlyCollection>();
-        classObj.Should().NotBeNull();
-        classObj.Strings.Should().NotBeNullOrEmpty();
+        classObj.Should()
+                .NotBeNull();
+        classObj.Strings.Should()
+                .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -191,9 +220,12 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var product = faker.Generate<Product>();
-        product.Should().NotBeNull();
-        product.GetRevisions.Should().NotBeNullOrEmpty();
-        product.ReadOnlySet.Should().NotBeNullOrEmpty();
+        product.Should()
+               .NotBeNull();
+        product.GetRevisions.Should()
+               .NotBeNullOrEmpty();
+        product.ReadOnlySet.Should()
+               .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -224,7 +256,8 @@ public class AutoFakerTests
             intList.Add(generated);
         }
 
-        intList.Count.Should().Be(1000);
+        intList.Count.Should()
+               .Be(1000);
     }
 
     [Fact]
@@ -245,7 +278,8 @@ public class AutoFakerTests
             var autoFaker = new AutoFaker(config);
 
             var order = autoFaker.Generate<CustomOrder>();
-            order.CustomId.Should().Be("Blah");
+            order.CustomId.Should()
+                 .Be("Blah");
         }
     }
 
@@ -255,7 +289,9 @@ public class AutoFakerTests
         var autoFaker = new AutoFaker();
 
         var order = autoFaker.Generate<CustomOrder>();
-        order.Items.Count().Should().Be(1);
+        order.Items.Count()
+             .Should()
+             .Be(1);
     }
 
     [Fact]
@@ -270,7 +306,9 @@ public class AutoFakerTests
         };
 
         var order = autoFaker.Generate<CustomOrder>();
-        order.Items.Count().Should().Be(3);
+        order.Items.Count()
+             .Should()
+             .Be(3);
     }
 
     [Fact]
@@ -290,10 +328,13 @@ public class AutoFakerTests
 
         var order = autoFaker.Generate<CustomOrder>();
 
-        order.NullableDaysOfWeek.Should().NotBeEmpty();
+        order.NullableDaysOfWeek.Should()
+             .NotBeEmpty();
 
-        order.Longitude.Should().NotBeNull();
-        CustomOrder.Constant.Should().Be("Order2x89ei");
+        order.Longitude.Should()
+             .NotBeNull();
+        CustomOrder.Constant.Should()
+                   .Be("Order2x89ei");
     }
 
     [Fact]
@@ -302,7 +343,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var stream = faker.Generate<Stream>();
-        stream.Should().NotBeNull();
+        stream.Should()
+              .NotBeNull();
     }
 
     [Fact]
@@ -311,7 +353,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var stream = faker.Generate<MemoryStream>();
-        stream.Should().NotBeNull();
+        stream.Should()
+              .NotBeNull();
     }
 
     [Fact]
@@ -320,9 +363,12 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var video = faker.Generate<Video>();
-        video.Should().NotBeNull();
-        video.MemoryStreamsList.Should().NotBeNullOrEmpty();
-        video.StreamsArray.Should().NotBeNullOrEmpty();
+        video.Should()
+             .NotBeNull();
+        video.MemoryStreamsList.Should()
+             .NotBeNullOrEmpty();
+        video.StreamsArray.Should()
+             .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -331,7 +377,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var video = faker.Generate<Video>();
-        video.Name.Should().NotBeNull();
+        video.Name.Should()
+             .NotBeNull();
     }
 
     [Fact]
@@ -340,7 +387,8 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var video = faker.Generate<Video>();
-        video.Id.Should().NotBeNull();
+        video.Id.Should()
+             .NotBeNull();
     }
 
     [Fact]
@@ -349,9 +397,12 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var immutableListDto = faker.Generate<ImmutableListDto>();
-        immutableListDto.Should().NotBeNull();
-        immutableListDto.List.Should().NotBeNullOrEmpty();
-        immutableListDto.IList.Should().NotBeNullOrEmpty();
+        immutableListDto.Should()
+                        .NotBeNull();
+        immutableListDto.List.Should()
+                        .NotBeNullOrEmpty();
+        immutableListDto.IList.Should()
+                        .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -360,8 +411,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var immutableListDto = faker.Generate<ImmutableArrayDto>();
-        immutableListDto.Should().NotBeNull();
-        immutableListDto.Array.Should().NotBeNullOrEmpty();
+        immutableListDto.Should()
+                        .NotBeNull();
+        immutableListDto.Array.Should()
+                        .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -370,8 +423,10 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var obj = faker.Generate<TestClassWithAbstractClassParameter>();
-        obj.Should().NotBeNull();
-        obj.TestClass.Should().BeNull();
+        obj.Should()
+           .NotBeNull();
+        obj.TestClass.Should()
+           .BeNull();
     }
 
     [Fact]
@@ -380,8 +435,105 @@ public class AutoFakerTests
         var faker = new AutoFaker();
 
         var obj = faker.Generate<TestClassWithDerivedClassParameter>();
-        obj.Should().NotBeNull();
-        obj.TestClass.Should().NotBeNull();
+        obj.Should()
+           .NotBeNull();
+        obj.TestClass.Should()
+           .NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_TestConcreteRestrictedSetterDerived_should_populate_inherited_properties()
+    {
+        var faker = new AutoFaker();
+
+        var obj = faker.Generate<TestConcreteRestrictedSetterDerived>();
+
+        obj.Should()
+           .NotBeNull();
+        obj.Derived.Should()
+           .NotBeNullOrEmpty();
+        obj.Title.Should()
+           .NotBeNullOrEmpty();
+        obj.Sequence.Should()
+           .NotBeNull();
+        obj.Magnitude.Should()
+           .NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_with_IncludeInheritedProperties_false_should_populate_only_declared_members()
+    {
+        var faker = new AutoFaker(new AutoFakerConfig { IncludeInheritedProperties = false });
+
+        var obj = faker.Generate<TestConcreteRestrictedSetterDerived>();
+
+        obj.Should()
+           .NotBeNull();
+        obj.Derived.Should()
+           .NotBeNullOrEmpty();
+        obj.Title.Should()
+           .BeNull();
+        obj.Sequence.Should()
+           .BeNull();
+        obj.Magnitude.Should()
+           .BeNull();
+    }
+
+    [Fact]
+    public void Generate_with_IncludeInheritedProperties_true_should_populate_inherited_properties()
+    {
+        var faker = new AutoFaker(new AutoFakerConfig { IncludeInheritedProperties = true });
+
+        var obj = faker.Generate<TestConcreteRestrictedSetterDerived>();
+
+        obj.Should()
+           .NotBeNull();
+        obj.Derived.Should()
+           .NotBeNullOrEmpty();
+        obj.Title.Should()
+           .NotBeNullOrEmpty();
+        obj.Sequence.Should()
+           .NotBeNull();
+        obj.Magnitude.Should()
+           .NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_AutoFakerIncludeInheritedProperties_true_overrides_global_false()
+    {
+        var faker = new AutoFaker(new AutoFakerConfig { IncludeInheritedProperties = false });
+
+        var obj = faker.Generate<TestConcreteRestrictedSetterDerivedForceInclude>();
+
+        obj.Should()
+           .NotBeNull();
+        obj.Derived.Should()
+           .NotBeNullOrEmpty();
+        obj.Title.Should()
+           .NotBeNullOrEmpty();
+        obj.Sequence.Should()
+           .NotBeNull();
+        obj.Magnitude.Should()
+           .NotBeNull();
+    }
+
+    [Fact]
+    public void Generate_AutoFakerIncludeInheritedProperties_false_overrides_global_true()
+    {
+        var faker = new AutoFaker(new AutoFakerConfig { IncludeInheritedProperties = true });
+
+        var obj = faker.Generate<TestConcreteRestrictedSetterDerivedForceExclude>();
+
+        obj.Should()
+           .NotBeNull();
+        obj.Derived.Should()
+           .NotBeNullOrEmpty();
+        obj.Title.Should()
+           .BeNull();
+        obj.Sequence.Should()
+           .BeNull();
+        obj.Magnitude.Should()
+           .BeNull();
     }
 
     [Fact]
@@ -389,7 +541,8 @@ public class AutoFakerTests
     {
         var autoFaker = new AutoFaker();
         var obj = autoFaker.Generate<TestClassWithFuncCtor<int>>();
-        obj.Should().BeNull();
+        obj.Should()
+           .BeNull();
     }
 
     [Fact]
@@ -397,7 +550,8 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<Action>();
-        result.Should().BeNull();
+        result.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -405,7 +559,8 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<Action<string>>();
-        result.Should().BeNull();
+        result.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -413,7 +568,8 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<Func<string, string>>();
-        result.Should().BeNull();
+        result.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -421,8 +577,10 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<TestClassWithAutoPropertyAction>();
-        result.Should().NotBeNull();
-        result.Action.Should().BeNull();
+        result.Should()
+              .NotBeNull();
+        result.Action.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -430,8 +588,10 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<TestClassWithAutoPropertyFunc>();
-        result.Should().NotBeNull();
-        result.Func.Should().BeNull();
+        result.Should()
+              .NotBeNull();
+        result.Func.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -439,7 +599,8 @@ public class AutoFakerTests
     {
         var autoFaker = new AutoFaker();
         var obj = autoFaker.Generate<TestClassWithReadOnlyStringField>();
-        obj._string.Should().BeNull();
+        obj._string.Should()
+           .BeNull();
     }
 
     [Fact]
@@ -447,7 +608,8 @@ public class AutoFakerTests
     {
         var autoFaker = new AutoFaker();
         var obj = autoFaker.Generate<TestClassWithPropertyChangedEvent>();
-        obj.Should().NotBeNull();
+        obj.Should()
+           .NotBeNull();
     }
 
     [Fact]
@@ -455,7 +617,8 @@ public class AutoFakerTests
     {
         var autoFaker = new AutoFaker();
         var obj = autoFaker.Generate<TestClassWithDelegate>();
-        obj.Should().NotBeNull();
+        obj.Should()
+           .NotBeNull();
     }
 
     [Fact]
@@ -473,7 +636,9 @@ public class AutoFakerTests
         };
 
         var obj = autoFaker.Generate<TestClassWithPrivateField>();
-        obj.GetValue().Should().BeNull();
+        obj.GetValue()
+           .Should()
+           .BeNull();
     }
 
     [Fact]
@@ -482,8 +647,10 @@ public class AutoFakerTests
         var autoFaker = new AutoFaker();
 
         var obj = autoFaker.Generate<TestClassWithTupleStringString>();
-        obj.Value.Item1.Should().NotBeNull();
-        obj.Value.Item2.Should().NotBeNull();
+        obj.Value.Item1.Should()
+           .NotBeNull();
+        obj.Value.Item2.Should()
+           .NotBeNull();
     }
 
     [Fact]
@@ -492,7 +659,8 @@ public class AutoFakerTests
         var autoFaker = new AutoFaker();
 
         var obj = autoFaker.Generate<TestClassWithNullableInt>();
-        obj.Value.Should().NotBeNull();
+        obj.Value.Should()
+           .NotBeNull();
     }
 
     [Fact]
@@ -506,7 +674,8 @@ public class AutoFakerTests
         faker2.UseSeed(1);
         var value2 = faker2.Generate<int>();
 
-        value1.Should().Be(value2);
+        value1.Should()
+              .Be(value2);
     }
 
     [Fact]
@@ -521,8 +690,10 @@ public class AutoFakerTests
         };
 
         var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
-        testClass.Name.Should().NotBeNull();
-        testClass.Child.Should().BeNull();
+        testClass.Name.Should()
+                 .NotBeNull();
+        testClass.Child.Should()
+                 .BeNull();
     }
 
     [Fact]
@@ -537,25 +708,38 @@ public class AutoFakerTests
         };
 
         var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
-        
-        testClass.Name.Should().NotBeNull();
-        testClass.Age.Should().NotBe(0);
-        
-        testClass.Child.Should().BeNull();
-        
+
+        testClass.Name.Should()
+                 .NotBeNull();
+        testClass.Age.Should()
+                 .NotBe(0);
+
+        testClass.Child.Should()
+                 .BeNull();
+
         var order = faker.Generate<Order>();
-        
-        order.Id.Should().NotBe(0);
-        order.Code.Should().NotBeNull();
-        order.Status.Should().BeDefined();
-        order.DateCreated.Should().NotBe(default);
-        
-        order.Items.Should().NotBeNull();
-        order.Items.Should().BeEmpty();
-        order.Discounts.Should().NotBeNull();
-        order.Discounts.Should().BeEmpty();
-        order.Comments.Should().NotBeNull();
-        order.Comments.Should().BeEmpty();
+
+        order.Id.Should()
+             .NotBe(0);
+        order.Code.Should()
+             .NotBeNull();
+        order.Status.Should()
+             .BeDefined();
+        order.DateCreated.Should()
+             .NotBe(default);
+
+        order.Items.Should()
+             .NotBeNull();
+        order.Items.Should()
+             .BeEmpty();
+        order.Discounts.Should()
+             .NotBeNull();
+        order.Discounts.Should()
+             .BeEmpty();
+        order.Comments.Should()
+             .NotBeNull();
+        order.Comments.Should()
+             .BeEmpty();
     }
 
     [Fact]
@@ -570,9 +754,12 @@ public class AutoFakerTests
         };
 
         var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
-        testClass.Name.Should().NotBeNull();
-        testClass.Child.Should().NotBeNull();
-        testClass.Child.Child.Should().BeNull();
+        testClass.Name.Should()
+                 .NotBeNull();
+        testClass.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Should()
+                 .BeNull();
     }
 
     [Fact]
@@ -587,10 +774,14 @@ public class AutoFakerTests
         };
 
         var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
-        testClass.Name.Should().NotBeNull();
-        testClass.Child.Should().NotBeNull();
-        testClass.Child.Child.Should().NotBeNull();
-        testClass.Child.Child.Child.Should().BeNull();
+        testClass.Name.Should()
+                 .NotBeNull();
+        testClass.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Child.Should()
+                 .BeNull();
     }
 
     [Fact]
@@ -605,11 +796,16 @@ public class AutoFakerTests
         };
 
         var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
-        testClass.Name.Should().NotBeNull();
-        testClass.Child.Should().NotBeNull();
-        testClass.Child.Child.Should().NotBeNull();
-        testClass.Child.Child.Child.Should().NotBeNull();
-        testClass.Child.Child.Child.Child.Should().BeNull();
+        testClass.Name.Should()
+                 .NotBeNull();
+        testClass.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Child.Child.Should()
+                 .BeNull();
     }
 
     [Fact]
@@ -624,12 +820,18 @@ public class AutoFakerTests
         };
 
         var testClass = faker.Generate<TestClassWithRecursiveConstructor>();
-        testClass.Name.Should().NotBeNull();
-        testClass.Child.Should().NotBeNull();
-        testClass.Child.Child.Should().NotBeNull();
-        testClass.Child.Child.Child.Should().NotBeNull();
-        testClass.Child.Child.Child.Child.Should().NotBeNull();
-        testClass.Child.Child.Child.Child.Child.Should().BeNull();
+        testClass.Name.Should()
+                 .NotBeNull();
+        testClass.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Child.Child.Should()
+                 .NotBeNull();
+        testClass.Child.Child.Child.Child.Child.Should()
+                 .BeNull();
     }
 
     [Fact]
@@ -637,8 +839,10 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<TestClassWithArrayIntCtor>();
-        result.Should().NotBeNull();
-        result._ints.Should().NotBeNullOrEmpty();
+        result.Should()
+              .NotBeNull();
+        result._ints.Should()
+              .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -646,8 +850,10 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<TestClassWithArrayStringCtor>();
-        result.Should().NotBeNull();
-        result._strings.Should().NotBeNullOrEmpty();
+        result.Should()
+              .NotBeNull();
+        result._strings.Should()
+              .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -655,8 +861,10 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<TestClassWithArrayIntProperty>();
-        result.Should().NotBeNull();
-        result.Values.Should().NotBeNullOrEmpty();
+        result.Should()
+              .NotBeNull();
+        result.Values.Should()
+              .NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -664,7 +872,9 @@ public class AutoFakerTests
     {
         AutoFaker generator = new();
         var result = generator.Generate<TestClassWithArrayStringProperty>();
-        result.Should().NotBeNull();
-        result.Values.Should().NotBeNullOrEmpty();
+        result.Should()
+              .NotBeNull();
+        result.Values.Should()
+              .NotBeNullOrEmpty();
     }
 }

@@ -6,6 +6,7 @@ using Soenneker.Reflection.Cache.Parameters;
 using Soenneker.Reflection.Cache.Properties;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Attributes;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
@@ -27,7 +28,7 @@ public class AutoFakerBinder : IAutoFakerBinder
 {
     internal readonly GeneratorService GeneratorService;
 
-    private readonly ConcurrentDictionary<CachedType, List<AutoMember>> _autoMembersCache = [];
+    private readonly ConcurrentDictionary<(int TypeKey, bool IncludeInherited), List<AutoMember>> _autoMembersCache = [];
     private readonly ConcurrentDictionary<CachedType, CachedConstructor> _constructorsCache = [];
 
     private const string _backingSuffix = "k__BackingField";
@@ -504,14 +505,18 @@ public class AutoFakerBinder : IAutoFakerBinder
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     internal List<AutoMember>? GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
     {
-        if (_autoMembersCache.TryGetValue(cachedType, out List<AutoMember>? cachedMembers))
+        bool includeInherited = GetEffectiveIncludeInheritedProperties(cachedType, autoFakerConfig);
+        int typeKey = cachedType.CacheKey!.Value;
+
+        if (_autoMembersCache.TryGetValue((typeKey, includeInherited), out List<AutoMember>? cachedMembers))
             return cachedMembers;
 
-        // Fetch arrays (could be null)
-        CachedProperty[]? cachedProperties = cachedType.GetCachedProperties();
+        List<CachedProperty>? inheritedProperties = includeInherited
+            ? CollectInheritedProperties(cachedType, cacheService)
+            : CollectDeclaredPropertiesOnly(cachedType);
         CachedField[]? cachedFields = cachedType.GetCachedFields();
 
-        int propsLen = cachedProperties?.Length ?? 0;
+        int propsLen = inheritedProperties?.Count ?? 0;
         int fieldsLen = cachedFields?.Length ?? 0;
         int totalCapacity = propsLen + fieldsLen;
 
@@ -522,18 +527,14 @@ public class AutoFakerBinder : IAutoFakerBinder
         AutoMember[] buffer = ArrayPool<AutoMember>.Shared.Rent(totalCapacity);
         var w = 0;
 
-        // ----- Properties -----
+        // ----- Properties (declared on this type and inherited; derived shadows base by name) -----
         if (propsLen != 0)
         {
-            CachedProperty[] props = cachedProperties!;
+            List<CachedProperty> props = inheritedProperties!;
 
-            for (var i = 0; i < props.Length; i++)
+            for (var i = 0; i < props.Count; i++)
             {
-                // ref readonly avoids defensive copies for structs
-                ref readonly CachedProperty p = ref props[i];
-
-                if (p.IsDelegate || p.IsEqualityContract)
-                    continue;
+                CachedProperty p = props[i];
 
                 buffer[w++] = new AutoMember(p, cachedType, cacheService, autoFakerConfig);
             }
@@ -543,9 +544,13 @@ public class AutoFakerBinder : IAutoFakerBinder
         if (fieldsLen != 0)
         {
             CachedField[] fields = cachedFields!;
+            Type? fieldDeclaringType = cachedType.Type;
             for (var i = 0; i < fields.Length; i++)
             {
                 ref readonly CachedField f = ref fields[i];
+
+                if (!includeInherited && fieldDeclaringType != null && f.FieldInfo.DeclaringType != fieldDeclaringType)
+                    continue;
 
                 // Fast reject constants, static fields & delegates first (static/initonly fields cannot be set after type init)
                 if (f.FieldInfo.IsConstant() || f.FieldInfo.IsStatic || f.IsDelegate)
@@ -576,9 +581,92 @@ public class AutoFakerBinder : IAutoFakerBinder
         ArrayPool<AutoMember>.Shared.Return(buffer, clearArray: false);
 
         // Cache result (even if empty list)
-        _autoMembersCache.TryAdd(cachedType, result);
+        _autoMembersCache.TryAdd((typeKey, includeInherited), result);
 
         return result;
+    }
+
+    private static bool GetEffectiveIncludeInheritedProperties(CachedType cachedType, AutoFakerConfig config)
+    {
+        if (cachedType.Type == null)
+            return config.IncludeInheritedProperties;
+
+        AutoFakerIncludeInheritedPropertiesAttribute? attr =
+            cachedType.GetCachedCustomAttribute<AutoFakerIncludeInheritedPropertiesAttribute>(inherit: true);
+        if (attr != null)
+            return attr.Include;
+
+        return config.IncludeInheritedProperties;
+    }
+
+    private static List<CachedProperty>? CollectDeclaredPropertiesOnly(CachedType cachedType)
+    {
+        CachedProperty[]? levelProps = cachedType.GetCachedProperties();
+        if (levelProps == null || levelProps.Length == 0)
+            return null;
+
+        Type? declaringType = cachedType.Type;
+        if (declaringType == null)
+            return null;
+
+        List<CachedProperty>? merged = null;
+
+        for (var i = 0; i < levelProps.Length; i++)
+        {
+            ref readonly CachedProperty p = ref levelProps[i];
+
+            // GetCachedProperties reflects all visible properties; inherited members must be excluded here.
+            if (p.PropertyInfo.DeclaringType != declaringType)
+                continue;
+
+            if (p.IsDelegate || p.IsEqualityContract || p.IsStatic)
+                continue;
+
+            merged ??= [];
+            merged.Add(p);
+        }
+
+        return merged;
+    }
+
+    private static List<CachedProperty>? CollectInheritedProperties(CachedType cachedType, CacheService cacheService)
+    {
+        List<CachedProperty>? merged = null;
+        HashSet<string>? seenPropertyNames = null;
+
+        for (CachedType? t = cachedType; t != null && t.Type != typeof(object); t = GetBaseCachedType(cacheService, t))
+        {
+            CachedProperty[]? levelProps = t.GetCachedProperties();
+            if (levelProps == null || levelProps.Length == 0)
+                continue;
+
+            merged ??= [];
+            seenPropertyNames ??= new HashSet<string>(StringComparer.Ordinal);
+
+            for (var i = 0; i < levelProps.Length; i++)
+            {
+                ref readonly CachedProperty p = ref levelProps[i];
+
+                if (p.IsDelegate || p.IsEqualityContract || p.IsStatic)
+                    continue;
+
+                if (!seenPropertyNames.Add(p.PropertyInfo.Name))
+                    continue;
+
+                merged.Add(p);
+            }
+        }
+
+        return merged;
+    }
+
+    private static CachedType? GetBaseCachedType(CacheService cacheService, CachedType cachedType)
+    {
+        Type? baseType = cachedType.Type.BaseType;
+        if (baseType == null || baseType == typeof(object))
+            return null;
+
+        return cacheService.Cache.GetCachedType(baseType);
     }
 
     private static void PopulateDictionary(object value, object parent, AutoMember member)
