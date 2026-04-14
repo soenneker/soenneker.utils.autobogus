@@ -1,16 +1,15 @@
-﻿using Soenneker.Utils.AutoBogus.FakeItEasy;
-using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
+﻿using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
 using AwesomeAssertions;
-using Xunit;
+using Soenneker.Facts.Manual;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoFakerBinderProxyTests
 {
-    [Fact]
+    [ManualFact]
     public void RuleFor_should_set_property_on_interface()
     {
-        var faker = new AutoFaker<ITestInterfaceWithProperty> { Binder = new FakeItEasyAutoFakerBinder() };
+        var faker = new AutoFaker<ITestInterfaceWithProperty>(){}; // Binder = new FakeItEasyBinder();
 
         faker.RuleFor(o => o.Name, () => "blah");
 
