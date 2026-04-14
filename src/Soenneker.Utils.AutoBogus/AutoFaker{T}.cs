@@ -106,7 +106,7 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
     {
         if (string.IsNullOrWhiteSpace(ruleSets))
         {
-            return new HashSet<string> { currentRuleSet };
+            return [currentRuleSet];
         }
 
         var validRuleSets = new HashSet<string>();
@@ -116,11 +116,10 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
         while (start < span.Length)
         {
-            int comma = span.Slice(start).IndexOf(',');
+            int comma = span.Slice(start)
+                            .IndexOf(',');
 
-            ReadOnlySpan<char> token = comma < 0
-                ? span.Slice(start)
-                : span.Slice(start, comma);
+            ReadOnlySpan<char> token = comma < 0 ? span.Slice(start) : span.Slice(start, comma);
 
             token = token.Trim();
 
@@ -207,12 +206,12 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
             if (instance == null)
                 return;
 
-            CachedType cachedType = context.CacheService.Cache.GetCachedType(instance.GetType());
+            CachedType runtimeCachedType = context.CacheService.Cache.GetCachedType(instance.GetType());
 
-            if (cachedType.IsExpandoObject)
+            if (runtimeCachedType.IsExpandoObject)
             {
                 context.ParentType = null;
-                context.CachedType = cachedType;
+                context.CachedType = runtimeCachedType;
 
                 context.GenerateName = null;
                 context.Instance = instance;
@@ -224,11 +223,20 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
                 return;
             }
 
+            CachedType parameterCachedType = context.CacheService.Cache.GetCachedType(typeof(TType));
+
+            CachedType cachedType;
+
+            if (parameterCachedType.IsInterface || parameterCachedType.IsAbstract)
+                cachedType = parameterCachedType;
+            else
+                cachedType = runtimeCachedType;
+
             List<AutoMember>? autoMembers = context.Binder.GetMembersToPopulate(cachedType, _cacheService, Config);
 
             if (autoMembers != null)
             {
-                var finalAutoMembers = new List<AutoMember>();
+                var finalAutoMembers = new List<AutoMember>(autoMembers.Count);
 
                 HashSet<string> memberNames = GetRuleSetsMemberNames(context);
 
