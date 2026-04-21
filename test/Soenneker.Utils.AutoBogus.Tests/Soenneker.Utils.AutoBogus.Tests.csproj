@@ -24,7 +24,7 @@
         <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
         <PackageReference Include="Intellenum" Version="2.0.1" />
         <PackageReference Include="Microsoft.OData.Client" Version="8.4.3" />
-        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.615" />
+        <PackageReference Include="Soenneker.Facts.Local" Version="4.0.616" />
         <PackageReference Include="Soenneker.Facts.Manual" Version="4.0.174" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.81" />
         <PackageReference Include="xUnit.v3" Version="3.2.2" />
