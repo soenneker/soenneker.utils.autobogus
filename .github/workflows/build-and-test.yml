@@ -38,7 +38,7 @@ jobs:
         run: dotnet build test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj --configuration Release --no-restore --verbosity minimal
 
       - name: Test
-        run: dotnet test test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal
+        run: dotnet test --project test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal
 
       - name: Restore library
         run: dotnet restore src/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.csproj --verbosity minimal
