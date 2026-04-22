@@ -80,8 +80,8 @@ public partial class AutoGeneratorsFixture
                 }
             }
 
-            [Theory]
-            [MemberData(nameof(ListOfReadOnlyDictionaryTypes))]
+            [Test]
+            [MethodDataSource(nameof(ListOfReadOnlyDictionaryTypes))]
             public void Should_Handle_Subclasses(Type readOnlyDictionaryType)
             {
                 // Arrange
@@ -120,8 +120,8 @@ public partial class AutoGeneratorsFixture
                 }
             }
 
-            [Theory]
-            [MemberData(nameof(ListOfDictionaryTypes))]
+            [Test]
+            [MethodDataSource(nameof(ListOfDictionaryTypes))]
             public void Should_Handle_Subclasses(Type dictionaryType)
             {
                 // Arrange
@@ -160,8 +160,8 @@ public partial class AutoGeneratorsFixture
                 }
             }
 
-            [Theory]
-            [MemberData(nameof(ListOfSetTypes))]
+            [Test]
+            [MethodDataSource(nameof(ListOfSetTypes))]
             public void Should_Handle_Subclasses(Type setType)
             {
                 var autoFaker = new AutoFaker();
@@ -202,8 +202,8 @@ public partial class AutoGeneratorsFixture
                 }
             }
 
-            [Theory]
-            [MemberData(nameof(ListOfListTypes))]
+            [Test]
+            [MethodDataSource(nameof(ListOfListTypes))]
             public void Should_Handle_Subclasses(Type listType)
             {
                 // Arrange
@@ -251,8 +251,8 @@ public partial class AutoGeneratorsFixture
 
     public class RegisteredGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [MemberData(nameof(GetRegisteredTypes))]
+        [Test]
+        [MethodDataSource(nameof(GetRegisteredTypes))]
         public void Generate_Should_Return_Value(Type type)
         {
             var autoFaker = new AutoFaker();
@@ -266,8 +266,8 @@ public partial class AutoGeneratorsFixture
             InvokeGenerator(type, generator).Should().BeOfType(type);
         }
 
-        [Theory]
-        [MemberData(nameof(GetRegisteredTypes))]
+        [Test]
+        [MethodDataSource(nameof(GetRegisteredTypes))]
         public void GetGenerator_Should_Return_Generator(Type type)
         {
             var autoFaker = new AutoFaker();
@@ -287,8 +287,8 @@ public partial class AutoGeneratorsFixture
             return GeneratorService.GetSupportedFundamentalTypes().Select(c => new object[] {c});
         }
 
-        [Theory]
-        [MemberData(nameof(GetDataSetAndDataTableTypes))]
+        [Test]
+        [MethodDataSource(nameof(GetDataSetAndDataTableTypes))]
         public void GetGenerator_Should_Return_Generator_For_DataSets_And_DataTables(Type dataType, Type generatorType)
         {
             // Arrange
@@ -348,12 +348,12 @@ public partial class AutoGeneratorsFixture
 
     public class ArrayGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(TestEnum[]))]
-        [InlineData(typeof(TestStruct[]))]
-        [InlineData(typeof(TestSealedClass[]))]
-        [InlineData(typeof(ITestInterface[]))]
-        [InlineData(typeof(TestAbstractClass[]))]
+        [Test]
+        [Arguments(typeof(TestEnum[]))]
+        [Arguments(typeof(TestStruct[]))]
+        [Arguments(typeof(TestSealedClass[]))]
+        [Arguments(typeof(ITestInterface[]))]
+        [Arguments(typeof(TestAbstractClass[]))]
         public void Generate_Should_Return_Array(Type type)
         {
             Type? itemType = type.GetElementType();
@@ -364,12 +364,12 @@ public partial class AutoGeneratorsFixture
             array.Should().NotBeNull();
         }
 
-        [Theory]
-        [InlineData(typeof(TestEnum[]))]
-        [InlineData(typeof(TestStruct[]))]
-        [InlineData(typeof(TestSealedClass[]))]
-        [InlineData(typeof(ITestInterface[]))]
-        [InlineData(typeof(TestAbstractClass[]))]
+        [Test]
+        [Arguments(typeof(TestEnum[]))]
+        [Arguments(typeof(TestStruct[]))]
+        [Arguments(typeof(TestSealedClass[]))]
+        [Arguments(typeof(ITestInterface[]))]
+        [Arguments(typeof(TestAbstractClass[]))]
         public void GetGenerator_Should_Return_ArrayGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
@@ -428,14 +428,14 @@ public partial class AutoGeneratorsFixture
 
     public class DictionaryGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(IDictionary<int, TestEnum>))]
-        [InlineData(typeof(IDictionary<int, TestStruct>))]
-        [InlineData(typeof(IDictionary<int, TestSealedClass>))]
-        [InlineData(typeof(IDictionary<int, ITestInterface>))]
-        [InlineData(typeof(IDictionary<int, TestAbstractClass>))]
-        [InlineData(typeof(Dictionary<int, TestSealedClass>))]
-        [InlineData(typeof(SortedList<int, TestSealedClass>))]
+        [Test]
+        [Arguments(typeof(IDictionary<int, TestEnum>))]
+        [Arguments(typeof(IDictionary<int, TestStruct>))]
+        [Arguments(typeof(IDictionary<int, TestSealedClass>))]
+        [Arguments(typeof(IDictionary<int, ITestInterface>))]
+        [Arguments(typeof(IDictionary<int, TestAbstractClass>))]
+        [Arguments(typeof(Dictionary<int, TestSealedClass>))]
+        [Arguments(typeof(SortedList<int, TestSealedClass>))]
         public void Generate_Should_Return_Dictionary(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -456,14 +456,14 @@ public partial class AutoGeneratorsFixture
             }
         }
 
-        [Theory]
-        [InlineData(typeof(IDictionary<int, TestEnum>))]
-        [InlineData(typeof(IDictionary<int, TestStruct>))]
-        [InlineData(typeof(IDictionary<int, TestSealedClass>))]
-        [InlineData(typeof(IDictionary<int, ITestInterface>))]
-        [InlineData(typeof(IDictionary<int, TestAbstractClass>))]
-        [InlineData(typeof(Dictionary<int, TestSealedClass>))]
-        [InlineData(typeof(SortedList<int, TestSealedClass>))]
+        [Test]
+        [Arguments(typeof(IDictionary<int, TestEnum>))]
+        [Arguments(typeof(IDictionary<int, TestStruct>))]
+        [Arguments(typeof(IDictionary<int, TestSealedClass>))]
+        [Arguments(typeof(IDictionary<int, ITestInterface>))]
+        [Arguments(typeof(IDictionary<int, TestAbstractClass>))]
+        [Arguments(typeof(Dictionary<int, TestSealedClass>))]
+        [Arguments(typeof(SortedList<int, TestSealedClass>))]
         public void GetGenerator_Should_Return_DictionaryGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
@@ -478,17 +478,17 @@ public partial class AutoGeneratorsFixture
 
     public class ListGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(IList<TestEnum>))]
-        [InlineData(typeof(IList<TestStruct>))]
-        [InlineData(typeof(IList<TestSealedClass>))]
-        [InlineData(typeof(IList<ITestInterface>))]
-        [InlineData(typeof(IList<TestAbstractClass>))]
-        [InlineData(typeof(List<TestEnum>))]
-        [InlineData(typeof(List<TestSealedClass>))]
-        [InlineData(typeof(List<TestStruct>))]
-        [InlineData(typeof(List<ITestInterface>))]
-        [InlineData(typeof(List<TestAbstractClass>))]
+        [Test]
+        [Arguments(typeof(IList<TestEnum>))]
+        [Arguments(typeof(IList<TestStruct>))]
+        [Arguments(typeof(IList<TestSealedClass>))]
+        [Arguments(typeof(IList<ITestInterface>))]
+        [Arguments(typeof(IList<TestAbstractClass>))]
+        [Arguments(typeof(List<TestEnum>))]
+        [Arguments(typeof(List<TestSealedClass>))]
+        [Arguments(typeof(List<TestStruct>))]
+        [Arguments(typeof(List<ITestInterface>))]
+        [Arguments(typeof(List<TestAbstractClass>))]
         public void Generate_Should_Return_List(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -500,17 +500,17 @@ public partial class AutoGeneratorsFixture
             list.Should().NotBeNull();
         }
 
-        [Theory]
-        [InlineData(typeof(ICollection<TestEnum>))]
-        [InlineData(typeof(ICollection<TestStruct>))]
-        [InlineData(typeof(ICollection<TestSealedClass>))]
-        [InlineData(typeof(ICollection<ITestInterface>))]
-        [InlineData(typeof(ICollection<TestAbstractClass>))]
-        [InlineData(typeof(Collection<TestEnum>))]
-        [InlineData(typeof(Collection<TestSealedClass>))]
-        [InlineData(typeof(Collection<TestStruct>))]
-        [InlineData(typeof(Collection<ITestInterface>))]
-        [InlineData(typeof(Collection<TestAbstractClass>))]
+        [Test]
+        [Arguments(typeof(ICollection<TestEnum>))]
+        [Arguments(typeof(ICollection<TestStruct>))]
+        [Arguments(typeof(ICollection<TestSealedClass>))]
+        [Arguments(typeof(ICollection<ITestInterface>))]
+        [Arguments(typeof(ICollection<TestAbstractClass>))]
+        [Arguments(typeof(Collection<TestEnum>))]
+        [Arguments(typeof(Collection<TestSealedClass>))]
+        [Arguments(typeof(Collection<TestStruct>))]
+        [Arguments(typeof(Collection<ITestInterface>))]
+        [Arguments(typeof(Collection<TestAbstractClass>))]
         public void Generate_Should_Return_Collection(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -522,17 +522,17 @@ public partial class AutoGeneratorsFixture
             collection.Should().NotBeNull();
         }
 
-        [Theory]
-        [InlineData(typeof(IList<TestEnum>))]
-        [InlineData(typeof(IList<TestStruct>))]
-        [InlineData(typeof(IList<TestSealedClass>))]
-        [InlineData(typeof(IList<ITestInterface>))]
-        [InlineData(typeof(IList<TestAbstractClass>))]
-        [InlineData(typeof(List<TestEnum>))]
-        [InlineData(typeof(List<TestSealedClass>))]
-        [InlineData(typeof(List<TestStruct>))]
-        [InlineData(typeof(List<ITestInterface>))]
-        [InlineData(typeof(List<TestAbstractClass>))]
+        [Test]
+        [Arguments(typeof(IList<TestEnum>))]
+        [Arguments(typeof(IList<TestStruct>))]
+        [Arguments(typeof(IList<TestSealedClass>))]
+        [Arguments(typeof(IList<ITestInterface>))]
+        [Arguments(typeof(IList<TestAbstractClass>))]
+        [Arguments(typeof(List<TestEnum>))]
+        [Arguments(typeof(List<TestSealedClass>))]
+        [Arguments(typeof(List<TestStruct>))]
+        [Arguments(typeof(List<ITestInterface>))]
+        [Arguments(typeof(List<TestAbstractClass>))]
         public void GetGenerator_Should_Return_ListGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
@@ -543,17 +543,17 @@ public partial class AutoGeneratorsFixture
             AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType(generatorType);
         }
 
-        [Theory]
-        [InlineData(typeof(ICollection<TestEnum>))]
-        [InlineData(typeof(ICollection<TestStruct>))]
-        [InlineData(typeof(ICollection<TestSealedClass>))]
-        [InlineData(typeof(ICollection<ITestInterface>))]
-        [InlineData(typeof(ICollection<TestAbstractClass>))]
-        [InlineData(typeof(Collection<TestEnum>))]
-        [InlineData(typeof(Collection<TestSealedClass>))]
-        [InlineData(typeof(Collection<TestStruct>))]
-        [InlineData(typeof(Collection<ITestInterface>))]
-        [InlineData(typeof(Collection<TestAbstractClass>))]
+        [Test]
+        [Arguments(typeof(ICollection<TestEnum>))]
+        [Arguments(typeof(ICollection<TestStruct>))]
+        [Arguments(typeof(ICollection<TestSealedClass>))]
+        [Arguments(typeof(ICollection<ITestInterface>))]
+        [Arguments(typeof(ICollection<TestAbstractClass>))]
+        [Arguments(typeof(Collection<TestEnum>))]
+        [Arguments(typeof(Collection<TestSealedClass>))]
+        [Arguments(typeof(Collection<TestStruct>))]
+        [Arguments(typeof(Collection<ITestInterface>))]
+        [Arguments(typeof(Collection<TestAbstractClass>))]
         public void GetGenerator_Should_Return_CollectionGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
@@ -567,14 +567,14 @@ public partial class AutoGeneratorsFixture
 
     public class SetGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(ISet<TestEnum>))]
-        [InlineData(typeof(ISet<TestStruct>))]
-        [InlineData(typeof(ISet<TestSealedClass>))]
-        [InlineData(typeof(ISet<ITestInterface>))]
-        [InlineData(typeof(ISet<TestAbstractClass>))]
-        [InlineData(typeof(HashSet<TestSealedClass>))]
-        [InlineData(typeof(IReadOnlySet<TestSealedClass>))]
+        [Test]
+        [Arguments(typeof(ISet<TestEnum>))]
+        [Arguments(typeof(ISet<TestStruct>))]
+        [Arguments(typeof(ISet<TestSealedClass>))]
+        [Arguments(typeof(ISet<ITestInterface>))]
+        [Arguments(typeof(ISet<TestAbstractClass>))]
+        [Arguments(typeof(HashSet<TestSealedClass>))]
+        [Arguments(typeof(IReadOnlySet<TestSealedClass>))]
         public void Generate_Should_Return_Set(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -586,14 +586,14 @@ public partial class AutoGeneratorsFixture
             set.Should().NotBeNull();
         }
 
-        [Theory]
-        [InlineData(typeof(ISet<TestEnum>))]
-        [InlineData(typeof(ISet<TestStruct>))]
-        [InlineData(typeof(ISet<TestSealedClass>))]
-        [InlineData(typeof(ISet<ITestInterface>))]
-        [InlineData(typeof(ISet<TestAbstractClass>))]
-        [InlineData(typeof(HashSet<TestSealedClass>))]
-        [InlineData(typeof(IReadOnlySet<TestSealedClass>))]
+        [Test]
+        [Arguments(typeof(ISet<TestEnum>))]
+        [Arguments(typeof(ISet<TestStruct>))]
+        [Arguments(typeof(ISet<TestSealedClass>))]
+        [Arguments(typeof(ISet<ITestInterface>))]
+        [Arguments(typeof(ISet<TestAbstractClass>))]
+        [Arguments(typeof(HashSet<TestSealedClass>))]
+        [Arguments(typeof(IReadOnlySet<TestSealedClass>))]
         public void GetGenerator_Should_Return_SetGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
@@ -609,12 +609,12 @@ public partial class AutoGeneratorsFixture
 
     public class EnumerableGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(IEnumerable<TestEnum>))]
-        [InlineData(typeof(IEnumerable<TestStruct>))]
-        [InlineData(typeof(IEnumerable<TestSealedClass>))]
-        [InlineData(typeof(IEnumerable<ITestInterface>))]
-        [InlineData(typeof(IEnumerable<TestAbstractClass>))]
+        [Test]
+        [Arguments(typeof(IEnumerable<TestEnum>))]
+        [Arguments(typeof(IEnumerable<TestStruct>))]
+        [Arguments(typeof(IEnumerable<TestSealedClass>))]
+        [Arguments(typeof(IEnumerable<ITestInterface>))]
+        [Arguments(typeof(IEnumerable<TestAbstractClass>))]
         public void Generate_Should_Return_Enumerable(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -626,12 +626,12 @@ public partial class AutoGeneratorsFixture
             enumerable.Should().NotBeNull();
         }
 
-        [Theory]
-        [InlineData(typeof(IEnumerable<TestEnum>))]
-        [InlineData(typeof(IEnumerable<TestStruct>))]
-        [InlineData(typeof(IEnumerable<TestSealedClass>))]
-        [InlineData(typeof(IEnumerable<ITestInterface>))]
-        [InlineData(typeof(IEnumerable<TestAbstractClass>))]
+        [Test]
+        [Arguments(typeof(IEnumerable<TestEnum>))]
+        [Arguments(typeof(IEnumerable<TestStruct>))]
+        [Arguments(typeof(IEnumerable<TestSealedClass>))]
+        [Arguments(typeof(IEnumerable<ITestInterface>))]
+        [Arguments(typeof(IEnumerable<TestAbstractClass>))]
         public void GetGenerator_Should_Return_EnumerableGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);
@@ -666,11 +666,11 @@ public partial class AutoGeneratorsFixture
 
     public class TypeGenerator : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(TestStruct))]
-        [InlineData(typeof(TestSealedClass))]
-        [InlineData(typeof(ITestInterface))]
-        [InlineData(typeof(TestAbstractClass))]
+        [Test]
+        [Arguments(typeof(TestStruct))]
+        [Arguments(typeof(TestSealedClass))]
+        [Arguments(typeof(ITestInterface))]
+        [Arguments(typeof(TestAbstractClass))]
         public void Generate_Should_Return_Value(Type type)
         {
             AutoFakerBinderService.SetBinder(new AutoFakerBinder());
@@ -686,11 +686,11 @@ public partial class AutoGeneratorsFixture
             }
         }
 
-        [Theory]
-        [InlineData(typeof(TestStruct))]
-        [InlineData(typeof(TestSealedClass))]
-        [InlineData(typeof(ITestInterface))]
-        [InlineData(typeof(TestAbstractClass))]
+        [Test]
+        [Arguments(typeof(TestStruct))]
+        [Arguments(typeof(TestSealedClass))]
+        [Arguments(typeof(ITestInterface))]
+        [Arguments(typeof(TestAbstractClass))]
         public void GetGenerator_Should_Return_TypeGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);

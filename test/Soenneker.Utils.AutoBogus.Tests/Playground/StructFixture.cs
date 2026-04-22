@@ -1,4 +1,5 @@
 using System;
+using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
@@ -13,8 +14,7 @@ public class StructFixture
             builder.WithOverride(new ExampleStructOverride());
         });
         var exampleStruct = faker.Generate<ExampleStruct>();
-        Console.WriteLine(exampleStruct.Month);
-        Assert.True(exampleStruct.Month > 0 && exampleStruct.Month <= 12);
+        exampleStruct.Month.Should().BeInRange(1, 12);
     }
 }
 class ExampleStructOverride : AutoFakerGeneratorOverride

@@ -57,8 +57,13 @@ public class AutoFakerFixture
 
         private readonly AutoFaker autoFaker = new AutoFaker();
 
-        [Theory]
-        [ClassData(typeof(TypeTestData))]
+        public static IEnumerable<object[]> GetTypeTestData()
+        {
+            return new TypeTestData();
+        }
+
+        [Test]
+        [MethodDataSource(nameof(GetTypeTestData))]
         public void Should_Generate_Type(Type type, Type? expectedType)
         {
             object result = autoFaker.Generate(type);
@@ -66,8 +71,8 @@ public class AutoFakerFixture
             result.GetType().Should().Be(expectedType);
         }
 
-        [Theory]
-        [ClassData(typeof(TypeTestData))]
+        [Test]
+        [MethodDataSource(nameof(GetTypeTestData))]
         public void Should_Generate_Many_Types(Type type, Type expectedType)
         {
             int count = AutoFakerDefaultConfigOptions.RepeatCount;

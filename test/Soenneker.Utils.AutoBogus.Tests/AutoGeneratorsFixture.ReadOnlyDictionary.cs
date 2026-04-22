@@ -17,9 +17,9 @@ public partial class AutoGeneratorsFixture
     public class ReadOnlyDictionaryGenerator
         : AutoGeneratorsFixture
     {
-        [Theory]
-        [InlineData(typeof(IReadOnlyDictionary<int, string>))]
-        [InlineData(typeof(ReadOnlyDictionary<int, string>))]
+        [Test]
+        [Arguments(typeof(IReadOnlyDictionary<int, string>))]
+        [Arguments(typeof(ReadOnlyDictionary<int, string>))]
         public void Generate_Should_Return_Dictionary(Type type)
         {
             Type[] genericTypes = type.GetGenericArguments();
@@ -39,13 +39,13 @@ public partial class AutoGeneratorsFixture
             }
         }
 
-        [Theory]
-        [InlineData(typeof(IReadOnlyDictionary<int, TestEnum>))]
-        [InlineData(typeof(IReadOnlyDictionary<int, TestStruct>))]
-        [InlineData(typeof(IReadOnlyDictionary<int, TestSealedClass>))]
-        [InlineData(typeof(IReadOnlyDictionary<int, ITestInterface>))]
-        [InlineData(typeof(IReadOnlyDictionary<int, TestAbstractClass>))]
-        [InlineData(typeof(ReadOnlyDictionary<int, TestSealedClass>))]
+        [Test]
+        [Arguments(typeof(IReadOnlyDictionary<int, TestEnum>))]
+        [Arguments(typeof(IReadOnlyDictionary<int, TestStruct>))]
+        [Arguments(typeof(IReadOnlyDictionary<int, TestSealedClass>))]
+        [Arguments(typeof(IReadOnlyDictionary<int, ITestInterface>))]
+        [Arguments(typeof(IReadOnlyDictionary<int, TestAbstractClass>))]
+        [Arguments(typeof(ReadOnlyDictionary<int, TestSealedClass>))]
         public void GetGenerator_Should_Return_ReadOnlyDictionaryGenerator(Type type)
         {
             AutoFakerContext context = CreateContext(type);

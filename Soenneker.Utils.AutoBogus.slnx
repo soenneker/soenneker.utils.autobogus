@@ -11,7 +11,6 @@
     <Project Path="src/Soenneker.Utils.AutoBogus/Soenneker.Utils.AutoBogus.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/Soenneker.Utils.AutoBogus.Console/Soenneker.Utils.AutoBogus.Tests.Console.csproj" />
     <Project Path="test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj" />
   </Folder>
 </Solution>

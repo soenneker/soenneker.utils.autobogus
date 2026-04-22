@@ -8,7 +8,6 @@ using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
-using Xunit.Sdk;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -24,8 +23,8 @@ partial class AutoGeneratorsFixture
             yield return [typeof(object), false];
         }
 
-        [Theory]
-        [MemberData(nameof(GetTryCreateGeneratorTestCases))]
+        [Test]
+        [MethodDataSource(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataSetType, bool shouldSucceed)
         {
             var autoFaker = new AutoFaker();
@@ -55,8 +54,8 @@ partial class AutoGeneratorsFixture
             yield return [typeof(TypedDataSetWithSelfReferencingTable)];
         }
 
-        [Theory]
-        [MemberData(nameof(GetGenerateTestCases))]
+        [Test]
+        [MethodDataSource(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataSet(Type dataSetType)
         {
             // Arrange
@@ -85,8 +84,8 @@ partial class AutoGeneratorsFixture
             }
         }
 
-        [Theory]
-        [MemberData(nameof(GetGenerateTestCases))]
+        [Test]
+        [MethodDataSource(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataSet_With_Specified_DataTable_Row_Counts(Type dataSetType)
         {
             // Arrange
@@ -192,8 +191,8 @@ partial class AutoGeneratorsFixture
             yield return [typeof(object), false];
         }
 
-        [Theory]
-        [MemberData(nameof(GetTryCreateGeneratorTestCases))]
+        [Test]
+        [MethodDataSource(nameof(GetTryCreateGeneratorTestCases))]
         public void TryCreateGenerator_Should_Create_Generator(Type dataTableType, bool shouldSucceed)
         {
             var autoFaker = new AutoFaker();
@@ -222,8 +221,8 @@ partial class AutoGeneratorsFixture
             yield return [typeof(TypedDataTable2)];
         }
 
-        [Theory]
-        [MemberData(nameof(GetGenerateTestCases))]
+        [Test]
+        [MethodDataSource(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataTable(Type dataTableType)
         {
             // Arrange
@@ -247,8 +246,8 @@ partial class AutoGeneratorsFixture
             dataTable.Rows.Count.Should().NotBe(0);
         }
 
-        [Theory]
-        [MemberData(nameof(GetGenerateTestCases))]
+        [Test]
+        [MethodDataSource(nameof(GetGenerateTestCases))]
         public void Generate_Should_Return_DataTable_With_Specified_Row_Count(Type dataTableType)
         {
             // Arrange
@@ -362,7 +361,7 @@ partial class AutoGeneratorsFixture
                 return type;
 
         if (throwOnError)
-            throw new XunitException($"Unable to resolve type: {fullTypeName}");
+            throw new InvalidOperationException($"Unable to resolve type: {fullTypeName}");
 
         return null;
     }

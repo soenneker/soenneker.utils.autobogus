@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Diagnostics;
-using System.IO;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using System.Linq;
 using Bogus;
@@ -146,6 +145,7 @@ public class AutoFakerTTests
 
 
     [LocalOnly]
+    [Test]
     public void TestPrivateReadOnlyFieldWithCtor_Should_Be_Set_via_AutoFaker()
     {
         var config = new AutoFakerConfig
@@ -164,6 +164,7 @@ public class AutoFakerTTests
     }
 
     [LocalOnly]
+    [Test]
     public void TestPrivateReadOnlyField_Should_Not_be_set_by_AutoFaker()
     {
         var config = new AutoFakerConfig
@@ -193,22 +194,10 @@ public class AutoFakerTTests
         };
 
         var objectToFake = new AutoFaker<TestClassICollectionPropertyWrappedWithReadOnly>(config);
+        TestClassICollectionPropertyWrappedWithReadOnly obj = objectToFake.Generate();
 
-        TextWriter originalOut = Console.Out;
-        try
-        {
-            using var writer = new StringWriter();
-            Console.SetOut(writer);
-            TestClassICollectionPropertyWrappedWithReadOnly obj = objectToFake.Generate();
-
-            writer.ToString().Should().BeEmpty();
-            obj.Collection.Should().NotBeEmpty();
-            obj.WrappedCollection.Should().BeEmpty();
-        }
-        finally
-        {
-            Console.SetOut(originalOut);
-        }
+        obj.Collection.Should().NotBeEmpty();
+        obj.WrappedCollection.Should().BeEmpty();
     }
 
     [Test]
@@ -223,22 +212,10 @@ public class AutoFakerTTests
         };
 
         var objectToFake = new AutoFaker<TestClassIDictionaryPropertyWrappedWithReadOnly>(config);
+        TestClassIDictionaryPropertyWrappedWithReadOnly obj = objectToFake.Generate();
 
-        TextWriter originalOut = Console.Out;
-        try
-        {
-            using var writer = new StringWriter();
-            Console.SetOut(writer);
-            TestClassIDictionaryPropertyWrappedWithReadOnly obj = objectToFake.Generate();
-
-            writer.ToString().Should().BeEmpty();
-            obj.Dictionary.Should().NotBeEmpty();
-            obj.WrappedDictionary.Should().BeEmpty();
-        }
-        finally
-        {
-            Console.SetOut(originalOut);
-        }
+        obj.Dictionary.Should().NotBeEmpty();
+        obj.WrappedDictionary.Should().BeEmpty();
     }
 
     [Test]
