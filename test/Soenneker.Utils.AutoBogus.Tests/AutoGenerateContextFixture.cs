@@ -5,7 +5,6 @@ using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -41,7 +40,7 @@ public class AutoGenerateContextFixture
             };
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Configured_RepeatCount()
         {
             int count = _faker.Random.Int(3, 5);
@@ -54,7 +53,7 @@ public class AutoGenerateContextFixture
             items.Should().BeEquivalentTo(expected);
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Duplicates_If_Not_Unique()
         {
             List<int>? items = AutoGenerateContextExtension.GenerateMany(_context, 2, false, 1, () => _value);
@@ -62,7 +61,7 @@ public class AutoGenerateContextFixture
             items.Should().BeEquivalentTo([_value, _value]);
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Generate_Duplicates_If_Unique()
         {
             int first = _value;
@@ -79,7 +78,7 @@ public class AutoGenerateContextFixture
             items.Should().BeEquivalentTo([first, second]);
         }
 
-        [Fact]
+        [Test]
         public void Should_Short_Circuit_If_Unique_Attempts_Overflow()
         {
             var attempts = 0;

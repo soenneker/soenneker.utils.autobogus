@@ -10,7 +10,6 @@ using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
@@ -237,7 +236,7 @@ public partial class AutoGeneratorsFixture
             }
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Throw_For_Reference_Types()
         {
             Type type = typeof(TestClass);
@@ -314,7 +313,7 @@ public partial class AutoGeneratorsFixture
 
     public class ExpandoObjectGenerator : AutoGeneratorsFixture
     {
-        [Fact]
+        [Test]
         public void Generate_Should_Return_Value()
         {
             Type type = typeof(ExpandoObject);
@@ -337,7 +336,7 @@ public partial class AutoGeneratorsFixture
             childProperty.Should().NotBe(0);
         }
 
-        [Fact]
+        [Test]
         public void GetGenerator_Should_Return_NullableGenerator()
         {
             Type type = typeof(ExpandoObject);
@@ -383,7 +382,7 @@ public partial class AutoGeneratorsFixture
 
     public class EnumGenerator : AutoGeneratorsFixture
     {
-        [Fact]
+        [Test]
         public void Generate_Should_Return_Enum()
         {
             Type type = typeof(TestEnum);
@@ -392,7 +391,7 @@ public partial class AutoGeneratorsFixture
             InvokeGenerator(type, generator).Should().BeOfType<TestEnum>();
         }
 
-        [Fact]
+        [Test]
         public void GetGenerator_Should_Return_EnumGenerator()
         {
             Type type = typeof(TestEnum);
@@ -404,7 +403,7 @@ public partial class AutoGeneratorsFixture
 
     public class EnumValuesGenerator : AutoGeneratorsFixture
     {
-        [Fact]
+        [Test]
         public void Generate_Should_Return_EnumValues()
         {
             Type type = typeof(OrderStatusEnumValue);
@@ -417,7 +416,7 @@ public partial class AutoGeneratorsFixture
             ((OrderStatusEnumValue)result).Value.Should().BeOneOf(1, 2, 3);
         }
 
-        [Fact]
+        [Test]
         public void GetGenerator_Should_Return_EnumValuesGenerator()
         {
             Type type = typeof(OrderStatusEnumValue);
@@ -646,7 +645,7 @@ public partial class AutoGeneratorsFixture
 
     public class NullableGenerator : AutoGeneratorsFixture
     {
-        [Fact]
+        [Test]
         public void Generate_Should_Return_Value()
         {
             Type type = typeof(TestEnum?);
@@ -655,7 +654,7 @@ public partial class AutoGeneratorsFixture
             InvokeGenerator(type, generator).Should().BeOfType<TestEnum>();
         }
 
-        [Fact]
+        [Test]
         public void GetGenerator_Should_Return_NullableGenerator()
         {
             Type type = typeof(TestEnum?);
@@ -738,7 +737,7 @@ public partial class AutoGeneratorsFixture
             ];
         }
 
-        //[Fact]
+        //[Test]
         //public void Should_Return_All_Matching_Overrides()
         //{
         //    var generatorOverride = new TestAutoFakerGeneratorOverride(true);
@@ -753,7 +752,7 @@ public partial class AutoGeneratorsFixture
         //    invoker.Overrides.Should().BeEquivalentTo(new[] {generatorOverride, _autoFakerGeneratorOverride});
         //}
 
-        [Fact]
+        [Test]
         public void Should_Return_Generator_If_No_Matching_Override()
         {
             _overrides = [new TestAutoFakerGeneratorOverride()];
@@ -762,7 +761,7 @@ public partial class AutoGeneratorsFixture
             AutoFakerGeneratorFactory.GetGenerator(context).Should().BeOfType<IntGenerator>();
         }
 
-        [Fact]
+        [Test]
         public void Should_Invoke_Generator()
         {
             AutoFakerContext context = CreateContext(typeof(string), _overrides);

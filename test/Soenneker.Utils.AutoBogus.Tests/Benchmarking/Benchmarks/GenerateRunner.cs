@@ -3,19 +3,18 @@ using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using Soenneker.Benchmarking.Extensions.Summary;
 using Soenneker.Tests.Benchmark;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
-[Collection("Collection")]
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
 public class GenerateRunner : BenchmarkTest
 {
-    public GenerateRunner(ITestOutputHelper outputHelper) : base(outputHelper)
+    public GenerateRunner() : base()
     {
     }
 
     //[ManualFact]
-    //[LocalFact]
+    //[LocalOnly]
     public async ValueTask Generate()
     {
         Summary summary = BenchmarkRunner.Run<GenerateBenchmarks>(DefaultConf);

@@ -1,12 +1,11 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.CalendarItem;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Enums;
 
 public class AutoFakerIntellenumTests
 {
-    [Fact]
+    [Test]
     public void Generate_calendar_should_generate()
     {
         var faker = new AutoFaker();

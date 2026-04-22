@@ -5,7 +5,6 @@ using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -27,7 +26,7 @@ public class AutoConfigBuilderFixture
 
     public class WithDateTimeKind : AutoConfigBuilderFixture
     {
-        [Fact]
+        [Test]
         public void Should_BeUniversal()
         {
             var person = AutoFaker.GenerateStatic<Human>();
@@ -38,7 +37,7 @@ public class AutoConfigBuilderFixture
     public class WithRecursiveDepth
         : AutoConfigBuilderFixture
     {
-        [Fact]
+        [Test]
         public void Should_Set_Config_RecursiveDepth()
         {
             int depth = _faker.Random.Int();
@@ -53,7 +52,7 @@ public class AutoConfigBuilderFixture
     public class WithTreeDepth
         : AutoConfigBuilderFixture
     {
-        [Fact]
+        [Test]
         public void Should_Set_Config_TreeDepth()
         {
             int depth = _faker.Random.Int();
@@ -63,7 +62,7 @@ public class AutoConfigBuilderFixture
             _fakerConfig.TreeDepth.Should().Be(depth);
         }
 
-        [Fact]
+        [Test]
         public void Should_Set_Config_TreeDepth_To_Default_If_Null()
         {
             int? depth = AutoFakerDefaultConfigOptions.TreeDepth;
@@ -77,7 +76,7 @@ public class AutoConfigBuilderFixture
     public class WithSkip_Type
         : AutoConfigBuilderFixture
     {
-        [Fact]
+        [Test]
         public void Should_Not_Add_Type_If_Already_Added()
         {
             Type type1 = typeof(int);
@@ -93,7 +92,7 @@ public class AutoConfigBuilderFixture
             _fakerConfig.SkipTypes.Should().ContainSingle();
         }
 
-        [Fact]
+        [Test]
         public void Should_Add_Type_To_Skip()
         {
             Type type1 = typeof(int);
@@ -121,7 +120,7 @@ public class AutoConfigBuilderFixture
             public string Value { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Add_Member_If_Already_Added()
         {
             Type type = typeof(TestSkip);
@@ -137,7 +136,7 @@ public class AutoConfigBuilderFixture
             _fakerConfig.SkipPaths.Should().ContainSingle();
         }
 
-        [Fact]
+        [Test]
         public void Should_Add_MemberName_To_Skip()
         {
             Type type = typeof(TestSkip);
@@ -164,7 +163,7 @@ public class AutoConfigBuilderFixture
             public string Value { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Add_Member_If_Already_Added()
         {
             Type type = typeof(TestSkip);
@@ -179,7 +178,7 @@ public class AutoConfigBuilderFixture
             _fakerConfig.SkipPaths.Should().ContainSingle();
         }
 
-        [Fact]
+        [Test]
         public void Should_Add_MemberName_To_Skip()
         {
             Type type = typeof(TestSkip);
@@ -214,7 +213,7 @@ public class AutoConfigBuilderFixture
             { }
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Add_Null_Override()
         {
             _builder.WithOverride<ITestBuilder>(null, null);
@@ -222,7 +221,7 @@ public class AutoConfigBuilderFixture
             _fakerConfig.Overrides.Should().BeNull();
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Add_Override_If_Already_Added()
         {
             var generatorOverride = new TestAutoFakerGeneratorOverride();
@@ -237,7 +236,7 @@ public class AutoConfigBuilderFixture
             _fakerConfig.Overrides.Should().ContainSingle();
         }
 
-        [Fact]
+        [Test]
         public void Should_Add_Override_If_Equivalency_Is_Different()
         {
             var generatorOverride1 = new TestAutoFakerGeneratorOverride();
@@ -260,7 +259,7 @@ public class AutoConfigBuilderFixture
     public class WithArgs
         : AutoConfigBuilderFixture
     {
-        [Fact]
+        [Test]
         public void Should_Set_Args()
         {
             var args = new object[] { _faker.Random.Int(), _faker.Random.String() };

@@ -1,13 +1,12 @@
 using System.Linq;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.CalendarItem;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Enums;
 
 public class AutoFakerEnumValuesTests
 {
-    [Fact]
+    [Test]
     public void Generate_CalendarItemEnumValues_should_generate()
     {
         var faker = new AutoFaker();
@@ -19,7 +18,7 @@ public class AutoFakerEnumValuesTests
         item.Status.Value.Should().BeOneOf(1, 2, 3);
     }
 
-    [Fact]
+    [Test]
     public void Generate_OrderStatusEnumValue_directly_should_return_one_of_defined_values()
     {
         var faker = new AutoFaker();
@@ -33,7 +32,7 @@ public class AutoFakerEnumValuesTests
             OrderStatusEnumValue.Cancelled);
     }
 
-    [Fact]
+    [Test]
     public void Generate_many_CalendarItemEnumValues_should_produce_varied_statuses()
     {
         var faker = new AutoFaker();

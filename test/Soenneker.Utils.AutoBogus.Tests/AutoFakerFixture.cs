@@ -11,7 +11,6 @@ using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
 using Soenneker.Utils.AutoBogus.Tests.Extensions;
 using Soenneker.Utils.AutoBogus.Tests.TestData;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -21,7 +20,7 @@ public class AutoFakerFixture
 
     public class Configure : AutoFakerFixture
     {
-        [Fact]
+        [Test]
         public void Should_Configure_Default_Config()
         {
             AutoFakerConfig? fakerConfig = null;
@@ -41,7 +40,7 @@ public class AutoFakerFixture
     public class Create
         : AutoFakerFixture
     {
-        [Fact]
+        [Test]
         public void Should_Configure_Child_Config()
         {
             Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>();
@@ -77,14 +76,14 @@ public class AutoFakerFixture
             AssertGenerateMany(type, _generateMany, null, count, configure);
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Complex_Type()
         {
             Action<IAutoGenerateConfigBuilder> configure = CreateConfigure<IAutoGenerateConfigBuilder>();
             AutoFaker.GenerateStatic<Order>(configure).Should().BeGeneratedWithoutMocks();
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Many_Complex_Types()
         {
             int count = AutoFakerDefaultConfigOptions.RepeatCount;
@@ -97,13 +96,13 @@ public class AutoFakerFixture
 
     public class Behaviors_Types : AutoFakerFixture
     {
-        [Fact]
+        [Test]
         public void Should_Not_Generate_Interface_Type()
         {
             AutoFaker.GenerateStatic<ITestInterface>().Should().BeNull();
         }
 
-        [Fact]
+        [Test]
         public void Should_Not_Generate_Abstract_Class_Type()
         {
             AutoFaker.GenerateStatic<TestAbstractClass>().Should().BeNull();
@@ -125,7 +124,7 @@ public class AutoFakerFixture
             _autoFaker = new AutoFaker(config);
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Recursive_Types()
         {
             var instance = _autoFaker.Generate<TestRecursiveClass>();
@@ -135,7 +134,7 @@ public class AutoFakerFixture
             instance.Child.Child.Child.Child.Should().BeNull();
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Recursive_Lists()
         {
             var instance = _autoFaker.Generate<TestRecursiveClass>();
@@ -150,7 +149,7 @@ public class AutoFakerFixture
             children3.Should().HaveCount(0);
         }
 
-        [Fact]
+        [Test]
         public void Should_Generate_Recursive_Sub_Types()
         {
             var instance = _autoFaker.Generate<TestRecursiveClass>();

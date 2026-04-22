@@ -1,6 +1,5 @@
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -10,7 +9,7 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 /// </summary>
 public class AutoFakerDataServiceCollectionTests
 {
-    [Fact]
+    [Test]
     public void Generate_ObjectWithDataServiceCollection_should_not_throw_and_property_should_be_null()
     {
         // Arrange

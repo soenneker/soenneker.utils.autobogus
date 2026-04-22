@@ -8,7 +8,6 @@ using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
-using Xunit;
 using Xunit.Sdk;
 
 namespace Soenneker.Utils.AutoBogus.Tests;

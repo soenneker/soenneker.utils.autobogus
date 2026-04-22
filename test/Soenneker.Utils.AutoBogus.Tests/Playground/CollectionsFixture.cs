@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 
@@ -18,7 +17,7 @@ public class CollectionsFixture
         public ISet<string> C8 { get; set; }
     }
     
-    [Fact]
+    [Test]
     public void Should_Generate_Collections()
     {
         var c2 = AutoFaker.GenerateStatic<IDictionary<string, string>>();
@@ -38,14 +37,14 @@ public class CollectionsFixture
         c8.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Should_Generate_ICollection()
     {
         var c1 = AutoFaker.GenerateStatic<ICollection<string>>();
         c1.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Should_Generate_Collection_Properties()
     {
         var collections = AutoFaker.GenerateStatic<Collections>();
@@ -60,7 +59,7 @@ public class CollectionsFixture
         collections.C8.Should().NotBeEmpty();
     }
 
-    //[Fact]
+    //[Test]
     //public void Should_Generate_Collection_Properties_With_Rules()
     //{
     //    Faker<Collections>? faker = new AutoFaker<Collections>()

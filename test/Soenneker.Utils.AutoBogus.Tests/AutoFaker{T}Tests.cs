@@ -1,14 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using System.Diagnostics;
 using System.IO;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 using System.Linq;
 using Bogus;
-using Soenneker.Facts.Local;
+using Soenneker.Tests.Attributes.Local;
 using Soenneker.Utils.AutoBogus.Config;
 using System.Reflection;
 using Soenneker.Reflection.Cache.Options;
@@ -17,7 +16,7 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoFakerTTests
 {
-    [Fact]
+    [Test]
     public void Generate_order_should_generate()
     {
         var autoFaker = new AutoFaker<Order>();
@@ -28,7 +27,7 @@ public class AutoFakerTTests
         order.Id.Should().Be(1);
     }
 
-    [Fact]
+    [Test]
     public void Generate_TestClassEmpty_should_generate()
     {
         var faker = new AutoFaker();
@@ -37,7 +36,7 @@ public class AutoFakerTTests
         record.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void Generate_order_with_count_should_generate()
     {
         var autoFaker = new AutoFaker<Order>();
@@ -49,7 +48,7 @@ public class AutoFakerTTests
         orders.All(x => x.Id == 1).Should().BeTrue();
     }
 
-    //[Fact]
+    //[Test]
     //public void Generate_order_inline_with_count_should_generate()
     //{
     //    List<Order>? orders = new AutoFaker<Order>()
@@ -62,7 +61,7 @@ public class AutoFakerTTests
     //    orders.All(x => x.Id == 1).Should().BeTrue();
     //}
 
-    [Fact]
+    [Test]
     public void Generate_record_should_generate()
     {
         var faker = new AutoFaker<TestRecord>();
@@ -73,7 +72,7 @@ public class AutoFakerTTests
         record.Name.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Generate_Product_should_generate()
     {
         var faker = new AutoFaker<Product>();
@@ -84,7 +83,7 @@ public class AutoFakerTTests
         product.ReadOnlySet.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Generate_many_Orders_should_generate()
     {
         var faker = new AutoFaker<Order>();
@@ -103,7 +102,7 @@ public class AutoFakerTTests
         stopwatch.Stop();
     }
 
-    [Fact]
+    [Test]
     public void Generate_with_default_RepeatCount_should_generate_correct_count()
     {
         var autoFaker = new AutoFaker<CustomOrder>();
@@ -112,7 +111,7 @@ public class AutoFakerTTests
         order.Items.Count().Should().Be(1);
     }
 
-    [Fact]
+    [Test]
     public void Generate_with_set_RepeatCount_should_generate_correct_count()
     {
         var autoFaker = new AutoFaker<CustomOrder>
@@ -127,7 +126,7 @@ public class AutoFakerTTests
         order.Items.Count().Should().Be(3);
     }
 
-    [Fact]
+    [Test]
     public void Generate_budget_and_budget_entries_should_generate()
     {
         Budget? budget = new AutoFaker<Budget>()
@@ -146,7 +145,7 @@ public class AutoFakerTTests
     }
 
 
-    [LocalFact]
+    [LocalOnly]
     public void TestPrivateReadOnlyFieldWithCtor_Should_Be_Set_via_AutoFaker()
     {
         var config = new AutoFakerConfig
@@ -164,7 +163,7 @@ public class AutoFakerTTests
         obj.GetKey().Should().NotBeNull();
     }
 
-    [LocalFact]
+    [LocalOnly]
     public void TestPrivateReadOnlyField_Should_Not_be_set_by_AutoFaker()
     {
         var config = new AutoFakerConfig
@@ -182,7 +181,7 @@ public class AutoFakerTTests
         obj.GetKey().Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void TestWrappedReadOnlyCollectionProperty_Should_not_be_set_by_AutoFaker()
     {
         var config = new AutoFakerConfig
@@ -212,7 +211,7 @@ public class AutoFakerTTests
         }
     }
 
-    [Fact]
+    [Test]
     public void TestWrappedReadOnlyDictionaryProperty_Should_not_be_set_by_AutoFaker()
     {
         var config = new AutoFakerConfig
@@ -242,7 +241,7 @@ public class AutoFakerTTests
         }
     }
 
-    [Fact]
+    [Test]
     public void TestClassWithFuncCtor_should_be_null()
     {
         var autoFaker = new AutoFaker<TestClassWithFuncCtor<int>>();
@@ -250,7 +249,7 @@ public class AutoFakerTTests
         obj.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void TestClass_with_rule_should_be_empty()
     {
         Faker<TestClassWithListString>? autoFaker = new AutoFaker<TestClassWithListString>().RuleFor(c => c.Value, []);
@@ -259,7 +258,7 @@ public class AutoFakerTTests
         result.Value.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void TestClassWithCollectionBackedByReadOnlyCollection_with_rule_should_be_empty()
     {
         var config = new AutoFakerConfig

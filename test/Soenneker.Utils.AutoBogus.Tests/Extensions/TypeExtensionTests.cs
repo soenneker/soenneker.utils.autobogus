@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AwesomeAssertions;
@@ -7,13 +7,12 @@ using Soenneker.Utils.AutoBogus.Enums;
 using Soenneker.Utils.AutoBogus.Extensions;
 using Soenneker.Utils.AutoBogus.Services;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Extensions;
 
 public class TypeExtensionTests
 {
-    [Fact]
+    [Test]
     public void IsDictionary_should_be_true()
     {
         Type derivedType = typeof(DerivedDictionary);
@@ -25,7 +24,7 @@ public class TypeExtensionTests
         result.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_readonly_dictionary()
     {
         var cacheService = new CacheService();
@@ -37,7 +36,7 @@ public class TypeExtensionTests
         result.Item2.Should().Be(GenericCollectionType.Dictionary);
     }
 
-    [Fact]
+    [Test]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_dictionary_for_Derived()
     {
         var cacheService = new CacheService();
@@ -49,7 +48,7 @@ public class TypeExtensionTests
         result.Item2.Should().Be(GenericCollectionType.Dictionary);
     }
 
-    [Fact]
+    [Test]
     public void GetTypeOfGenericCollectionFromInterfaceTypes_should_return_dictionary_for_DoubleDerived()
     {
         var cacheService = new CacheService();
@@ -62,7 +61,7 @@ public class TypeExtensionTests
         result.Item2.Should().Be(GenericCollectionType.Dictionary);
     }
 
-    [Fact]
+    [Test]
     public void IsReadOnlyDictionary_should_be_true()
     {
         var cacheService = new CacheService();

@@ -2,7 +2,6 @@ using System;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.AutoBogus.Tests.Dtos;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -12,7 +11,7 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 /// </summary>
 public class AutoFakerSkipPathsTests
 {
-    [Fact]
+    [Test]
     public void SkipPaths_Should_Use_Parent_Type_Name_Not_Member_Type_Name()
     {
         // Arrange
@@ -44,7 +43,7 @@ public class AutoFakerSkipPathsTests
         instance.DecimalProperty.Should().NotBe(0, "DecimalProperty should be generated");
     }
 
-    [Fact]
+    [Test]
     public void SkipPaths_Should_Not_Work_With_Member_Type_Name()
     {
         // Arrange - Using member type names (this should NOT work after the fix)
@@ -71,7 +70,7 @@ public class AutoFakerSkipPathsTests
         instance.IntProperty.Should().NotBe(0, "IntProperty should be generated because skip path used wrong type");
     }
 
-    [Fact]
+    [Test]
     public void SkipPaths_Should_Work_With_Multiple_Properties_Of_Same_Member_Type()
     {
         // Arrange - Test that multiple string properties can be skipped individually
@@ -94,7 +93,7 @@ public class AutoFakerSkipPathsTests
         instance.DateTimeProperty.Should().NotBe(default(DateTime), "DateTimeProperty should be generated");
     }
 
-    [Fact]
+    [Test]
     public void SkipPaths_Should_Work_With_All_Properties()
     {
         // Arrange - Skip all properties
@@ -139,7 +138,7 @@ public class AutoFakerSkipPathsTests
         public string DirectProperty { get; set; }
     }
 
-    [Fact]
+    [Test]
     public void SkipPaths_Should_Work_With_Nested_Objects()
     {
         // Arrange

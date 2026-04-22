@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 
@@ -29,7 +28,7 @@ public class EntityFrameworkFixture
         public virtual Other Other { get; set; }
     }
 
-    [Fact]
+    [Test]
     public void TestAutoFaker()
     {
         var parent = AutoFaker.GenerateStatic<Parent>(builder => builder.WithTreeDepth(2));

@@ -9,7 +9,6 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using Soenneker.Utils.AutoBogus.Generators.Types;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.Abstract;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 

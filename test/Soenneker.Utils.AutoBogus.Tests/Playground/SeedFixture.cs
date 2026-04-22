@@ -27,7 +27,7 @@ public class SeedFixture
         public ICollection<Book> Books { get; set; }
     }
 
-    //[Fact]
+    //[Test]
     //public void DateTimeOffsetTest()
     //{
     //    int seed = 1;
@@ -46,7 +46,7 @@ public class SeedFixture
     //    entity3.DeprecationDate.Should();
     //}
 
-    //[Fact]
+    //[Test]
     //public void AuthorTest()
     //{
     //    // Global seed configuration

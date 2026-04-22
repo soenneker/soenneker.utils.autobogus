@@ -10,7 +10,7 @@ public class TemplateFixture
         public string Status { get; set; }
     }
 
-    //[Fact]
+    //[Test]
     //public void TestAutoFaker()
     //{
     //    var binder = new TemplateBinder();

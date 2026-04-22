@@ -1,6 +1,5 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple.WeakReference;
 using System;
 using System.Reflection;
@@ -9,7 +8,7 @@ namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoFakerWeakReferenceTests
 {
-    [Fact]
+    [Test]
     public void Generate_TestClassWithWeakReference_should_generate()
     {
         var faker = new AutoFaker();
@@ -19,7 +18,7 @@ public class AutoFakerWeakReferenceTests
         result.WeakReference.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void Generate_TestClassWithWeakReferenceT_should_generate()
     {
         var faker = new AutoFaker();
@@ -30,7 +29,7 @@ public class AutoFakerWeakReferenceTests
         target.Name.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Generate_TestClassWithWeakReferenceTPrivate_should_generate()
     {
         var faker = new AutoFaker();
@@ -45,7 +44,7 @@ public class AutoFakerWeakReferenceTests
         field.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void AutoFakerT_Generate_TestClassWithWeakReference_should_generate()
     {
         var faker = new AutoFaker<TestClassWithWeakReference>();
@@ -55,7 +54,7 @@ public class AutoFakerWeakReferenceTests
         result.WeakReference.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void AutoFakerT_Generate_TestClassWithWeakReferenceT_should_generate()
     {
         var faker = new AutoFaker<TestClassWithWeakReferenceT>();
@@ -66,7 +65,7 @@ public class AutoFakerWeakReferenceTests
         target.Name.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
+    [Test]
     public void AutoFakerT_Generate_TestClassWithWeakReferenceTPrivate_should_generate()
     {
         var faker = new AutoFaker<TestClassWithWeakReferenceTPrivate>();

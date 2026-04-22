@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 
@@ -24,7 +23,7 @@ public class ParametersByRefFixture
         public string Value { get; }
     }
 
-    [Fact]
+    [Test]
     public void Should_Create_Instance()
     {
         var instance = AutoFaker.GenerateStatic<TestClass>();

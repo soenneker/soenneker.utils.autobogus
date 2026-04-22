@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Types;
 
 public class TimeSpanTests
 {
-    [Fact]
+    [Test]
     public void TimeSpan_should_be_generated()
     {
         var faker = new AutoFaker();

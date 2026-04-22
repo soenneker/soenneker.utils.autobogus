@@ -1,16 +1,15 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoFakerParallelTests
 {
-    [Fact]
+    [Test]
     public void Generate_with_ParallelExecution()
     {
         // Arrange
@@ -34,7 +33,7 @@ public class AutoFakerParallelTests
         ids.Distinct().Count().Should().BeGreaterThan(1);
     }
 
-    [Fact]
+    [Test]
     public async Task Generate_with_ParallelExecutionTasks()
     {
         // Arrange

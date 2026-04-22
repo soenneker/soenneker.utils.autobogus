@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 
@@ -23,7 +22,7 @@ public class InheritedDictionaryFixture
         { }
     }
 
-    [Fact]
+    [Test]
     public void Should_Populate_Object()
     {
         var obj = AutoFaker.GenerateStatic<Obj>();

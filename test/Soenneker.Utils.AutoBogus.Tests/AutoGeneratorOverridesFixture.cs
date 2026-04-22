@@ -3,7 +3,6 @@ using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -31,7 +30,7 @@ public class AutoGeneratorOverridesFixture
         }
     }
 
-    [Fact]
+    [Test]
     public void Should_Initialize_As_Configured()
     {
         AutoFaker.GenerateStatic<OverrideClass>(builder =>
@@ -43,7 +42,7 @@ public class AutoGeneratorOverridesFixture
         });
     }
 
-    // [Fact]
+    // [Test]
     // public void Should_Invoke_Type_Override()
     // {
     //     var value = AutoFaker.Generate<int>();

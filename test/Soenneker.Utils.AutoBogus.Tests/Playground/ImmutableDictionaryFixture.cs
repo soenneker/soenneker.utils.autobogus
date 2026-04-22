@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 
@@ -14,7 +13,7 @@ public class ImmutableDictionaryFixture
         public ImmutableDictionary<string, string> SomeImmutableDictionary { get; set; }
     }
 
-    [Fact]
+    [Test]
     public void Should_Populate_Object()
     {
         var obj = AutoFaker.GenerateStatic<Obj>();

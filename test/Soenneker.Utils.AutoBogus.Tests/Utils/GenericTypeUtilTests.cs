@@ -1,12 +1,11 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Utils;
 
 public class GenericTypeUtilTests
 {
-    [Fact]
+    [Test]
     public void Generate_should_generate()
     {
         var faker = new AutoFaker();

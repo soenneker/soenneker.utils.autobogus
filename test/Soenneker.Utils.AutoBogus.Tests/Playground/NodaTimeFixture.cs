@@ -1,7 +1,6 @@
 using System;
 using Bogus;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests.Playground;
 
@@ -36,7 +35,7 @@ public class NodaTimeFixture
     {
         private readonly DateTime _validDate = new DateTime(2020, 2, 2);
 
-        [Fact]
+        [Test]
         public void TestFaker()
         {
             TimeHolder? created = new Faker<TimeHolder>()
@@ -46,7 +45,7 @@ public class NodaTimeFixture
             created.Should().NotBeNull();
         }
 
-        [Fact]
+        [Test]
         public void TestAutoFaker()
         {
             Faker<TimeHolder>? faker = new Faker<TimeHolder>().RuleFor(x => x.Time, faker => _validDate);

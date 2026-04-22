@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
-using Xunit;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
 public class AutoFakerShallowGenerateTests
 {
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_complex_reference_types()
     {
         var faker = new AutoFaker
@@ -33,7 +32,7 @@ public class AutoFakerShallowGenerateTests
         order.Calculator.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_primitives()
     {
         var faker = new AutoFaker
@@ -51,7 +50,7 @@ public class AutoFakerShallowGenerateTests
         testClass.CreatedAt.Should().NotBe(default);
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_collections()
     {
         var faker = new AutoFaker
@@ -72,7 +71,7 @@ public class AutoFakerShallowGenerateTests
         guidValue.Should().NotBe(Guid.Empty);
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_arrays_of_primitives()
     {
         var faker = new AutoFaker
@@ -89,7 +88,7 @@ public class AutoFakerShallowGenerateTests
         testClass.Values.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_arrays_of_complex_types()
     {
         var faker = new AutoFaker
@@ -114,7 +113,7 @@ public class AutoFakerShallowGenerateTests
         order.Code.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_strings()
     {
         var faker = new AutoFaker
@@ -130,7 +129,7 @@ public class AutoFakerShallowGenerateTests
         testClass.Name.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_value_types()
     {
         var faker = new AutoFaker
@@ -148,7 +147,7 @@ public class AutoFakerShallowGenerateTests
         structObj.Age.Should().NotBe(0);
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_enums()
     {
         var faker = new AutoFaker
@@ -164,7 +163,7 @@ public class AutoFakerShallowGenerateTests
         order.Status.Should().BeDefined();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_still_generate_nullable_types()
     {
         var faker = new AutoFaker
@@ -181,7 +180,7 @@ public class AutoFakerShallowGenerateTests
         testClass.Value.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_nested_complex_types()
     {
         var faker = new AutoFaker
@@ -204,7 +203,7 @@ public class AutoFakerShallowGenerateTests
         testClass.CreatedAt.Should().NotBe(default);
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_with_config_should_work()
     {
         var faker = new AutoFaker
@@ -225,7 +224,7 @@ public class AutoFakerShallowGenerateTests
         order.Calculator.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_with_config_false_should_generate_complex_types()
     {
         var faker = new AutoFaker
@@ -243,7 +242,7 @@ public class AutoFakerShallowGenerateTests
         order.Id.Should().NotBe(0);
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_recursive_complex_types()
     {
         var faker = new AutoFaker
@@ -264,7 +263,7 @@ public class AutoFakerShallowGenerateTests
         testClass.Child.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_default_to_false()
     {
         var faker = new AutoFaker();
@@ -272,7 +271,7 @@ public class AutoFakerShallowGenerateTests
         faker.Config.ShallowGenerate.Should().BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_generate_dictionaries()
     {
         var faker = new AutoFaker
@@ -288,7 +287,7 @@ public class AutoFakerShallowGenerateTests
         dictionary.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_generate_lists()
     {
         var faker = new AutoFaker
@@ -305,7 +304,7 @@ public class AutoFakerShallowGenerateTests
         list.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_class_properties_but_keep_primitives()
     {
         // Create a test class with both primitives and complex types
@@ -330,7 +329,7 @@ public class AutoFakerShallowGenerateTests
         order.Calculator.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_work_with_AutoFakerT()
     {
         var faker = new AutoFaker<Order>
@@ -351,7 +350,7 @@ public class AutoFakerShallowGenerateTests
         order.Calculator.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_generate_collections_of_primitives()
     {
         var faker = new AutoFaker
@@ -374,7 +373,7 @@ public class AutoFakerShallowGenerateTests
         // The important thing is that concrete collections like List are generated
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_collections_of_complex_types()
     {
         var faker = new AutoFaker
@@ -402,7 +401,7 @@ public class AutoFakerShallowGenerateTests
         }
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_all_dictionaries()
     {
         var faker = new AutoFaker
@@ -424,7 +423,7 @@ public class AutoFakerShallowGenerateTests
         testClass.StringOrderDictionary.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_dictionaries_with_complex_values()
     {
         var faker = new AutoFaker
@@ -443,7 +442,7 @@ public class AutoFakerShallowGenerateTests
         testClass.StringOrderDictionary.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_generate_List_of_primitives()
     {
         var faker = new AutoFaker
@@ -460,7 +459,7 @@ public class AutoFakerShallowGenerateTests
         list.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_List_of_complex_types()
     {
         var faker = new AutoFaker
@@ -483,7 +482,7 @@ public class AutoFakerShallowGenerateTests
         }
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_Dictionary_with_primitive_values()
     {
         var faker = new AutoFaker
@@ -501,7 +500,7 @@ public class AutoFakerShallowGenerateTests
         testClass.StringIntDictionary.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_Dictionary_with_complex_values_when_used_as_property()
     {
         var faker = new AutoFaker
@@ -519,7 +518,7 @@ public class AutoFakerShallowGenerateTests
         testClass.StringOrderItemDictionary.Should().BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_generate_nullable_primitives()
     {
         var faker = new AutoFaker
@@ -548,7 +547,7 @@ public class AutoFakerShallowGenerateTests
         }
     }
 
-    [Fact]
+    [Test]
     public void ShallowGenerate_should_skip_nullable_complex_types()
     {
         var faker = new AutoFaker

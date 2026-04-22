@@ -11,7 +11,7 @@ public class OverridesFixture
         public Exception Exception { get; set; }
     }
 
-    //[Fact]
+    //[Test]
     //public void Should_Override()
     //{
     //    var name = AutoFaker.Generate<string>();
