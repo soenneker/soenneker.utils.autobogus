@@ -27,10 +27,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Soenneker.Utils.AutoBogus\Soenneker.Utils.AutoBogus.csproj" />
     </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Benchmarks\**\*.cs" />
-    <Compile Remove="Benchmarking\**\*.cs" />
-  </ItemGroup>
 </Project>
 
 
