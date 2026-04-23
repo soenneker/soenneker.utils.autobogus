@@ -1,9 +1,3 @@
-using System.Threading.Tasks;
-using BenchmarkDotNet.Reports;
-using BenchmarkDotNet.Running;
-using Soenneker.Benchmarking.Extensions.Summary;
-using Soenneker.Tests.Benchmark;
-
 namespace Soenneker.Utils.AutoBogus.Tests.Benchmarking.Benchmarks;
 
 public class GenerateRunner : BenchmarkTest
@@ -37,3 +31,6 @@ public class GenerateRunner : BenchmarkTest
         await summary.OutputSummaryToLog();
     }
 }
+
+
+
