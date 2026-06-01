@@ -35,10 +35,10 @@ internal sealed class AutoMember
         CachedType = cacheService.Cache.GetCachedType(cachedField.FieldInfo.FieldType);
         ParentType = parentType;
         IsReadOnly = !cachedField.FieldInfo.IsPrivate && cachedField.FieldInfo.IsInitOnly;
-        Getter = cachedField.FieldInfo.GetValue;
+        Getter = cachedField.GetGetter() ?? cachedField.FieldInfo.GetValue;
 
         if (!IsReadOnly)
-            Setter = cachedField.FieldInfo.SetValue;
+            Setter = cachedField.GetSetter() ?? cachedField.FieldInfo.SetValue;
 
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;
@@ -56,10 +56,10 @@ internal sealed class AutoMember
         CachedType = cacheService.Cache.GetCachedType(pi.PropertyType);
         ParentType = parentType;
         IsReadOnly = effective.GetSetMethod(nonPublic: true) is null;
-        Getter = obj => effective.GetValue(obj, []);
+        Getter = cachedProperty.GetGetter() ?? (obj => effective.GetValue(obj, []));
 
         if (!IsReadOnly)
-            Setter = (obj, value) => effective.SetValue(obj, value, []);
+            Setter = cachedProperty.GetSetter() ?? ((obj, value) => effective.SetValue(obj, value, []));
 
         IsDictionary = CachedType.IsDictionary;
         IsCollection = CachedType.IsCollection;

@@ -4,7 +4,6 @@ using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using System;
 using System.Collections;
-using System.Reflection;
 using Soenneker.Reflection.Cache.Constructors;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
@@ -78,11 +77,11 @@ internal sealed class SmartEnumGenerator : IAutoFakerGenerator
 
         // Retrieve Name and Value properties via reflection cache
         CachedType selectedCachedType = context.CacheService.Cache.GetCachedType(selectedType);
-        PropertyInfo? nameProperty = selectedCachedType.GetCachedProperty("Name")?.PropertyInfo;
-        PropertyInfo? valueProperty = selectedCachedType.GetCachedProperty("Value")?.PropertyInfo;
+        CachedProperty? nameProperty = selectedCachedType.GetCachedProperty("Name");
+        CachedProperty? valueProperty = selectedCachedType.GetCachedProperty("Value");
 
-        if (nameProperty?.GetValue(selectedValue) is string name &&
-            valueProperty?.GetValue(selectedValue) is int value)
+        if (nameProperty?.TryGetValue(selectedValue, out object? nameObj) == true && nameObj is string name &&
+            valueProperty?.TryGetValue(selectedValue, out object? valueObj) == true && valueObj is int value)
         {
             return ctor.Invoke(name, value);
         }

@@ -13,7 +13,6 @@ public class GenerateRunner : BenchmarkTest
     }
 
     [Skip("Manual")]
-    //[LocalOnly]
     public async ValueTask Generate()
     {
         Summary summary = BenchmarkRunner.Run<GenerateBenchmarks>(DefaultConf);
@@ -29,7 +28,7 @@ public class GenerateRunner : BenchmarkTest
         await summary.OutputSummaryToLog();
     }
 
-   [Skip("Manual")]
+    [Skip("Manual")]
     public async ValueTask Bogus()
     {
         Summary summary = BenchmarkRunner.Run<BogusBenchmarks>(DefaultConf);
@@ -37,6 +36,3 @@ public class GenerateRunner : BenchmarkTest
         await summary.OutputSummaryToLog();
     }
 }
-
-
-
