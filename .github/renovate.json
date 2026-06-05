@@ -3,5 +3,14 @@
   "automerge": true,
   "prHourlyLimit": 0,
   "autoApprove": true,
-  "semanticCommits": "disabled"
+  "semanticCommits": "disabled",
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "description": "Do not update exact NuGet pins like [1.2.3]",
+      "matchManagers": [ "nuget" ],
+      "matchCurrentValue": "/^\\[[^,]+\\]$/",
+      "enabled": false
+    }
+  ]
 }
