@@ -33,9 +33,6 @@ public class AutoFakerBinder : IAutoFakerBinder
 
     private const string _backingSuffix = "k__BackingField";
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AutoFakerBinder"/> class.
-    /// </summary>
     public AutoFakerBinder()
     {
         GeneratorService = new GeneratorService();

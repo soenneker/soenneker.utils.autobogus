@@ -25,10 +25,6 @@ public sealed class AutoFaker : IAutoFaker
 
     private CachedMethod? _generateMethodDefinition;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AutoFaker"/> class.
-    /// </summary>
-    /// <param name="autoFakerConfig">Optional configuration for the faker instance. If null, a default configuration is used.</param>
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
     {
         Faker = new Faker();

@@ -2,6 +2,9 @@
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
+/// <summary>
+/// Represents the auto faker default config options.
+/// </summary>
 public static class AutoFakerDefaultConfigOptions
 {
     internal const string Locale = "en";

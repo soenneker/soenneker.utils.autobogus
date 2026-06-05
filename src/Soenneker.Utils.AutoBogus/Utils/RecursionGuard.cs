@@ -12,11 +12,6 @@ public class RecursionGuard
     /// </summary>
     public bool IsRecursive { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RecursionGuard"/> class.
-    /// </summary>
-    /// <param name="context">The <see cref="AutoFakerContext"/> instance for the generate request.</param>
-    /// <param name="cacheKey">The cache key of the type being generated.</param>
     public RecursionGuard(AutoFakerContext context, int cacheKey)
     {
         foreach (int item in context.RecursiveConstructorStack)

@@ -5,12 +5,18 @@ using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
+/// <summary>
+/// Represents the auto faker config.
+/// </summary>
 public sealed class AutoFakerConfig
 {
     /// <summary>
     /// The Bogus.Faker locale to use when generating values.
     /// </summary>
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    /// <summary>
+    /// The locale.
+    /// </summary>
     public string Locale;
 
     /// <summary>
@@ -83,6 +89,9 @@ public sealed class AutoFakerConfig
     /// Gets or sets the <see cref="DateTimeKind"/> to use when generating DateTime values.
     /// </summary>
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    /// <summary>
+    /// The date time kind.
+    /// </summary>
     public DateTimeKind DateTimeKind;
 
     /// <summary>
@@ -116,9 +125,6 @@ public sealed class AutoFakerConfig
     /// </remarks>
     public bool IncludeInheritedProperties;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AutoFakerConfig"/> class with default values.
-    /// </summary>
     public AutoFakerConfig()
     {
         Locale = AutoFakerDefaultConfigOptions.Locale;

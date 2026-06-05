@@ -14,7 +14,6 @@ public sealed class AutoFakerIncludeInheritedPropertiesAttribute : Attribute
     /// </summary>
     public bool Include { get; }
 
-    /// <param name="include"><see langword="true"/> to include inherited properties; <see langword="false"/> to only populate members declared on the generated type.</param>
     public AutoFakerIncludeInheritedPropertiesAttribute(bool include)
     {
         Include = include;

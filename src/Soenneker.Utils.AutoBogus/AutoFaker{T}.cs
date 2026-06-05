@@ -29,10 +29,6 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
     private CacheService? _cacheService;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AutoFaker{TType}"/> class.
-    /// </summary>
-    /// <param name="autoFakerConfig">Optional configuration for the faker instance. If null, a default configuration is used.</param>
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
     {
         if (autoFakerConfig == null)

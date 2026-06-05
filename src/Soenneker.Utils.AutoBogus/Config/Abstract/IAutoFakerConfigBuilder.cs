@@ -18,11 +18,37 @@ public interface IAutoFakerConfigBuilder : IBaseAutoFakerConfigBuilder<IAutoFake
     /// </remarks>
     IAutoFakerConfigBuilder WithArgs(params object[] args);
 
+    /// <summary>
+    /// Executes the with args operation.
+    /// </summary>
+    /// <param name="arg0">The arg0.</param>
+    /// <returns>The result of the operation.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0);
 
+    /// <summary>
+    /// Executes the with args operation.
+    /// </summary>
+    /// <param name="arg0">The arg0.</param>
+    /// <param name="arg1">The arg1.</param>
+    /// <returns>The result of the operation.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1);
 
+    /// <summary>
+    /// Executes the with args operation.
+    /// </summary>
+    /// <param name="arg0">The arg0.</param>
+    /// <param name="arg1">The arg1.</param>
+    /// <param name="arg2">The arg2.</param>
+    /// <returns>The result of the operation.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1, object? arg2);
 
+    /// <summary>
+    /// Executes the with args operation.
+    /// </summary>
+    /// <param name="arg0">The arg0.</param>
+    /// <param name="arg1">The arg1.</param>
+    /// <param name="arg2">The arg2.</param>
+    /// <param name="arg3">The arg3.</param>
+    /// <returns>The result of the operation.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1, object? arg2, object? arg3);
 }

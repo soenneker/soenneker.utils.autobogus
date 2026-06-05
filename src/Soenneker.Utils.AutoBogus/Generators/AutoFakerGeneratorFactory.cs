@@ -11,6 +11,9 @@ using Soenneker.Utils.AutoBogus.Utils;
 
 namespace Soenneker.Utils.AutoBogus.Generators;
 
+/// <summary>
+/// Represents the auto faker generator factory.
+/// </summary>
 public static class AutoFakerGeneratorFactory
 {
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
