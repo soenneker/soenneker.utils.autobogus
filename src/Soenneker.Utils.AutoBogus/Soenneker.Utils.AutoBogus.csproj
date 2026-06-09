@@ -46,6 +46,6 @@
         <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="4.0.74" />
         <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="4.0.70" />
         <PackageReference Include="Soenneker.Reflection.Cache" Version="4.0.637" />
-        <PackageReference Include="System.Collections.Immutable" Version="10.0.8" />
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.9" />
     </ItemGroup>
 </Project>
