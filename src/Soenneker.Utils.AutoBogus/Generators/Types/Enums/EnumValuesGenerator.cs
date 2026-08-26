@@ -4,7 +4,6 @@ using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
@@ -30,18 +29,17 @@ internal sealed class EnumValuesGenerator : IAutoFakerGenerator
         }
         else
         {
-            var valueList = new List<object>();
+            var seen = 0;
 
             foreach (object? item in values)
             {
-                if (item != null)
-                    valueList.Add(item);
+                if (item is null)
+                    continue;
+
+                seen++;
+                if (Random.Shared.Next(seen) == 0)
+                    selectedValue = item;
             }
-
-            if (valueList.Count == 0)
-                return null!;
-
-            selectedValue = valueList[Random.Shared.Next(valueList.Count)];
         }
 
         return selectedValue ?? null!;

@@ -98,22 +98,14 @@ public static class AutoGenerateContextExtension
 
         if (!unique)
         {
-            TType[] buf = GC.AllocateUninitializedArray<TType>(count);
-            var written = 0;
+            var result = new List<TType>(count);
 
             for (var i = 0; i < count; i++)
             {
                 TType? item = gen();
                 if (item is not null)
-                    buf[written++] = item;
+                    result.Add(item);
             }
-
-            if (written == 0)
-                return [];
-
-            var result = new List<TType>(written);
-
-            result.AddRange(buf.AsSpan(0, written));
 
             return result;
         }

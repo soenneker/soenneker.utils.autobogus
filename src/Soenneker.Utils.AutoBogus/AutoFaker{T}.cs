@@ -232,21 +232,10 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
             if (autoMembers != null)
             {
-                var finalAutoMembers = new List<AutoMember>(autoMembers.Count);
-
                 HashSet<string> memberNames = GetRuleSetsMemberNames(context);
 
-                for (var i = 0; i < autoMembers.Count; i++)
-                {
-                    AutoMember autoMember = autoMembers[i];
-                    if (!memberNames.Contains(autoMember.Name))
-                    {
-                        finalAutoMembers.Add(autoMember);
-                    }
-                }
-
                 context.RecursiveConstructorStack.Clear();
-                AutoFakerBinder.PopulateMembers(instance, context, cachedType, finalAutoMembers);
+                AutoFakerBinder.PopulateMembers(instance, context, cachedType, autoMembers, memberNames);
             }
 
             // Ensure the default finish with is invoke

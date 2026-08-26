@@ -119,7 +119,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         PopulateMembers(instance, context, cachedType, autoMembers);
     }
 
-    internal static void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember>? autoMembers)
+    internal static void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember>? autoMembers,
+        HashSet<string>? excludedMemberNames = null)
     {
         if (autoMembers == null)
             return;
@@ -128,6 +129,9 @@ public class AutoFakerBinder : IAutoFakerBinder
         for (var i = 0; i < autoMembers.Count; i++)
         {
             AutoMember member = autoMembers[i];
+
+            if (excludedMemberNames?.Contains(member.Name) == true)
+                continue;
 
             // Check if the member has a skip config or the type has already been generated as a parent
             // If so skip this generation otherwise track it for use later in the object tree

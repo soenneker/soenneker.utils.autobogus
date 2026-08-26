@@ -5,7 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Utils;
 /// <summary>
 /// A guard class that prevents infinite recursion during instance creation.
 /// </summary>
-public class RecursionGuard
+public readonly struct RecursionGuard
 {
     /// <summary>
     /// Gets a value indicating whether the current generation request is recursive.

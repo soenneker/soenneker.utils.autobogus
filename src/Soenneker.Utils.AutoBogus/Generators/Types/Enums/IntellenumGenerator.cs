@@ -2,7 +2,6 @@
 using Soenneker.Utils.AutoBogus.Generators.Abstract;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Soenneker.Reflection.Cache.Methods;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
@@ -21,17 +20,27 @@ internal sealed class IntellenumGenerator : IAutoFakerGenerator
         if (result is not IEnumerable values)
             return null!;
 
-        // Convert to a list and pick a random value
-        var valueList = new List<object>();
+        if (values is IList list)
+        {
+            if (list.Count == 0)
+                return null!;
+
+            return list[Random.Shared.Next(list.Count)]!;
+        }
+
+        object? selected = null;
+        var seen = 0;
 
         foreach (object? item in values)
         {
-            valueList.Add(item);
+            if (item is null)
+                continue;
+
+            seen++;
+            if (Random.Shared.Next(seen) == 0)
+                selected = item;
         }
 
-        if (valueList.Count == 0)
-            return null!;
-
-        return valueList[Random.Shared.Next(valueList.Count)];
+        return selected ?? null!;
     }
 }
