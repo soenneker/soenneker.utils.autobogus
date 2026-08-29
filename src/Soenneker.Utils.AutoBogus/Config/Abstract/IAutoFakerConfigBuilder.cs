@@ -19,36 +19,36 @@ public interface IAutoFakerConfigBuilder : IBaseAutoFakerConfigBuilder<IAutoFake
     IAutoFakerConfigBuilder WithArgs(params object[] args);
 
     /// <summary>
-    /// Executes the with args operation.
+    /// Adds constructor arguments that AutoBogus should use when creating the target object.
     /// </summary>
-    /// <param name="arg0">The arg0.</param>
-    /// <returns>The result of the operation.</returns>
+    /// <param name="arg0">The first constructor argument.</param>
+    /// <returns>The same builder for fluent configuration.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0);
 
     /// <summary>
-    /// Executes the with args operation.
+    /// Adds constructor arguments that AutoBogus should use when creating the target object.
     /// </summary>
-    /// <param name="arg0">The arg0.</param>
-    /// <param name="arg1">The arg1.</param>
-    /// <returns>The result of the operation.</returns>
+    /// <param name="arg0">The first constructor argument.</param>
+    /// <param name="arg1">The second constructor argument.</param>
+    /// <returns>The same builder for fluent configuration.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1);
 
     /// <summary>
-    /// Executes the with args operation.
+    /// Adds constructor arguments that AutoBogus should use when creating the target object.
     /// </summary>
-    /// <param name="arg0">The arg0.</param>
-    /// <param name="arg1">The arg1.</param>
-    /// <param name="arg2">The arg2.</param>
-    /// <returns>The result of the operation.</returns>
+    /// <param name="arg0">The first constructor argument.</param>
+    /// <param name="arg1">The second constructor argument.</param>
+    /// <param name="arg2">The third constructor argument.</param>
+    /// <returns>The same builder for fluent configuration.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1, object? arg2);
 
     /// <summary>
-    /// Executes the with args operation.
+    /// Adds constructor arguments that AutoBogus should use when creating the target object.
     /// </summary>
-    /// <param name="arg0">The arg0.</param>
-    /// <param name="arg1">The arg1.</param>
-    /// <param name="arg2">The arg2.</param>
-    /// <param name="arg3">The arg3.</param>
-    /// <returns>The result of the operation.</returns>
+    /// <param name="arg0">The first constructor argument.</param>
+    /// <param name="arg1">The second constructor argument.</param>
+    /// <param name="arg2">The third constructor argument.</param>
+    /// <param name="arg3">The fourth constructor argument.</param>
+    /// <returns>The same builder for fluent configuration.</returns>
     IAutoFakerConfigBuilder WithArgs(object? arg0, object? arg1, object? arg2, object? arg3);
 }

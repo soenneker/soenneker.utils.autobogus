@@ -61,6 +61,7 @@ public static class AutoGenerateContextExtension
     /// Generates an array of instances of type <typeparamref name="TType"/>.
     /// Items that generate as <see langword="null"/> are skipped (consistent with <see cref="GenerateMany{TType}"/>).
     /// </summary>
+    /// <returns>Generates an array of instances of type <typeparamref name="TType"/>. Items that generate as <see langword="null"/> are skipped (consistent with <see cref="GenerateMany{TType}"/>).</returns>
     public static TType[] GenerateArray<TType>(this AutoFakerContext context, int? count = null)
     {
         // When RecursiveDepth is 0 and we're generating nested items (stackCount > 0), return empty array
