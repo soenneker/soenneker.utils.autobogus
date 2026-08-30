@@ -3,65 +3,55 @@
 [![](https://img.shields.io/nuget/dt/soenneker.utils.autobogus.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.utils.autobogus/)
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.utils.autobogus/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/soenneker/soenneker.utils.autobogus/actions/workflows/codeql.yml)
 
-# ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Utils.AutoBogus
-### The .NET Autogenerator 
+# Soenneker.Utils.AutoBogus
 
-This project is an automatic creator and populator for the fake data generator [Bogus](https://github.com/bchavez/Bogus). It's a replacement for the abandoned [AutoBogus](https://github.com/nickdodd79/AutoBogus) library.
+Automatic object creation and population backed by [Bogus](https://github.com/bchavez/Bogus).
 
-The goals:
-- Be *fast*
-- Support the latest types in .NET
-
-It uses the fastest .NET Reflection cache: [soenneker.reflection.cache](https://github.com/soenneker/soenneker.reflection.cache). Bogus updates are automatically integrated.
-
-.NET 9+ is supported.
+It generates primitives, collections, dictionaries, and populated object graphs without requiring a rule for every member. Use `AutoFaker<T>` when you also need normal Bogus rules for a particular model.
 
 ## Installation
 
-```
+```bash
 dotnet add package Soenneker.Utils.AutoBogus
 ```
 
 ## Usage
 
-- Create an `AutoFaker` instance:
 ```csharp
-var optionalConfig = new AutoFakerConfig();
-var autoFaker = new AutoFaker(optionalConfig);
+var faker = new AutoFaker(new AutoFakerConfig
+{
+    RepeatCount = 3,
+    RecursiveDepth = 1
+});
+
+string randomWord = faker.Generate<string>();
+Dictionary<int, string> dictionary = faker.Generate<Dictionary<int, string>>();
+Order order = faker.Generate<Order>();
+List<Order> orders = faker.Generate<Order>(10);
 ```
 
-- Call `Generate<>()` on any type you want:
+Reuse an `AutoFaker` where practical. Its reflection metadata and Bogus state are initialized lazily and then retained. To make generated values repeatable, seed that instance before generating:
 
 ```csharp
-var randomWord = autoFaker.Generate<string>();
-var dictionary = autoFaker.Generate<Dictionary<int, string>>();
-var order = autoFaker.Generate<Order>();
+faker.UseSeed(12345);
 ```
 
-- It's also possible to generate types via an argument:
+For a runtime `Type`, use the non-generic overload:
 
 ```csharp
-var randomWord = autoFaker.Generate(typeof(string));
-```
-
-- Set a faker, configuration, rules, etc:
-
-```csharp
-autoFaker.Config.Faker = new Faker("de");
-autoFaker.Config.RepeatCount = 3;
-...
+object value = faker.Generate(modelType);
 ```
 
 ## `AutoFakerOverride`
 
-This is the recommended way for controlling type customization:
+Use an override when every generated instance of a type needs custom population:
 
 ```csharp
 public class OrderOverride : AutoFakerOverride<Order>
 {
     public override void Generate(AutoFakerOverrideContext context)
     {
-        var target = (context.Instance as Order)!;
+        var target = (Order) context.Instance!;
         target.Id = 123;
         
         // Faker is available
@@ -73,21 +63,26 @@ public class OrderOverride : AutoFakerOverride<Order>
 }
 ```
 
-Then just add `AutoFakerOverride` to the `AutoFaker.Config` instance:
+Register the override in the configuration before generating:
 
 ```csharp
-autoFaker.Config.Overrides = new List<AutoFakerGeneratorOverride>();
-autoFaker.Config.Overrides.Add(new OrderOverride());
+var config = new AutoFakerConfig
+{
+    Overrides = [new OrderOverride()]
+};
+
+var faker = new AutoFaker(config);
 ```
 
 ## `AutoFaker<T>`
 
-This inherits from `Bogus.Faker`, and can be used to designate rules specific to the `AutoFaker` instance.
+`AutoFaker<T>` inherits from `Bogus.Faker<T>`, so explicit Bogus rules and automatic population can be combined. Members covered by a rule are not overwritten by automatic population.
 
 ```csharp
-var autoFaker = new AutoFaker<Order>();
-autoFaker.RuleFor(x => x.Id, f => f.Random.Number());
-var order = autoFaker.Generate();
+var orderFaker = new AutoFaker<Order>();
+orderFaker.RuleFor(x => x.Id, f => f.Random.Int(1, 10_000));
+
+Order order = orderFaker.Generate();
 ```
 
 ## Interfaces/Abstracts
@@ -98,13 +93,11 @@ The base library does not generate interfaces or abstract objects, but these ena
 - [soenneker.utils.autobogus.nsubstitute](https://github.com/soenneker/soenneker.utils.autobogus.nsubstitute)
 - [soenneker.utils.autobogus.fakeiteasy](https://github.com/soenneker/soenneker.utils.autobogus.fakeiteasy)
 
-## Tips
-- ?? Instantiating an `AutoFaker` takes a non-trivial amount of time because of Bogus `Faker` initialization (almost 1ms). It's recommended that a single instance be used if possible.
-- `AutoFaker.GenerateStatic<T>()` is also available, but should be avoided (as it creates a new `AutoFaker`/`Faker` on each call).
+## Generation boundaries
 
-## Notes
-- Some patterns that existed in AutoBogus have been removed due to the complexity and performance impact.
-- This is a work in progress. Contribution is welcomed.
+- Set `TreeDepth`, `RecursiveDepth`, `SkipTypes`, or `SkipPaths` when models contain cycles or members that should not be populated.
+- Interfaces and abstract classes require one of the mock-framework adapters listed above.
+- `GenerateStatic<T>()` creates a new faker on every call. Prefer a retained `AutoFaker` for repeated generation.
 
 ## Benchmarks
 
