@@ -45,7 +45,7 @@
         <PackageReference Include="Bogus" Version="35.6.5" />
         <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="4.0.80" />
         <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="4.0.74" />
-        <PackageReference Include="Soenneker.Reflection.Cache" Version="4.0.657" />
+        <PackageReference Include="Soenneker.Reflection.Cache" Version="4.0.664" />
         <PackageReference Include="System.Collections.Immutable" Version="10.0.11" />
     </ItemGroup>
 </Project>
