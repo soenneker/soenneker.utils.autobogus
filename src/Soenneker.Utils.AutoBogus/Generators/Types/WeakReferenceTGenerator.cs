@@ -5,6 +5,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class WeakReferenceGenerator<TType> : IAutoFakerGenerator where TType : class
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

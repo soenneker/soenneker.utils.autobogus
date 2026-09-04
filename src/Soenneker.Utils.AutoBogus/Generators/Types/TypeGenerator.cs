@@ -8,6 +8,7 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types;
 /// This is the start of the journey of any top level type, and is used recursively
 /// </summary>
 /// <typeparam name="TType"></typeparam>
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class TypeGenerator<TType> : IAutoFakerGenerator
 {
     object? IAutoFakerGenerator.Generate(AutoFakerContext context)

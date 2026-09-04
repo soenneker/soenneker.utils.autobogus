@@ -5,6 +5,7 @@ using Soenneker.Utils.AutoBogus.Generators;
 
 namespace Soenneker.Utils.AutoBogus.Config;
 
+/// <inheritdoc cref="IAutoFakerConfigBuilder" />
 internal sealed class AutoFakerConfigBuilder : IAutoFakerDefaultConfigBuilder, IAutoGenerateConfigBuilder, IAutoFakerConfigBuilder
 {
     internal readonly AutoFakerConfig AutoFakerConfig;

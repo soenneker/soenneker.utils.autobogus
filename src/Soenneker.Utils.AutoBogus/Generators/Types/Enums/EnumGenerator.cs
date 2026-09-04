@@ -4,6 +4,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class EnumGenerator<TType>: IAutoFakerGenerator where TType: struct, Enum
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

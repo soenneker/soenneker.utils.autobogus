@@ -7,6 +7,7 @@ using Soenneker.Reflection.Cache.Types;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

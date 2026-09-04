@@ -4,6 +4,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class DateTimeOffsetGenerator : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

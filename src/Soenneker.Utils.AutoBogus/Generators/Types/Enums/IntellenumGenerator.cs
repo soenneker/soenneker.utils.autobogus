@@ -6,6 +6,7 @@ using Soenneker.Reflection.Cache.Methods;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class IntellenumGenerator : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

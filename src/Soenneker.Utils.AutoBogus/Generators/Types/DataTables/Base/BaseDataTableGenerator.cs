@@ -10,6 +10,7 @@ using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Dtos;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
 {
     private static readonly ConcurrentDictionary<Type, Proxy> _proxyCache = new();

@@ -6,6 +6,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Immutables;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class ImmutableDictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

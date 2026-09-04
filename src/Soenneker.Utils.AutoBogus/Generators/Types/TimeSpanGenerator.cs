@@ -4,6 +4,7 @@ using System;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class TimeSpanGenerator: IAutoFakerGenerator
 {
     private const long _minTicks = 60000000;        // 1 minute in ticks

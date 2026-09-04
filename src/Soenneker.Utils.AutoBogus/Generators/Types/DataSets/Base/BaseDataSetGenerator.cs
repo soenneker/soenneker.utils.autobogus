@@ -5,6 +5,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal abstract class BaseDataSetGenerator : IAutoFakerGenerator
 {
     public static bool TryCreateGenerator(AutoFakerContext? context, CachedType dataSetType, out BaseDataSetGenerator? generator)

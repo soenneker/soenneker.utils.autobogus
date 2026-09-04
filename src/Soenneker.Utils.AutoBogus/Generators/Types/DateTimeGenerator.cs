@@ -5,6 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types;
 
 using System;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class DateTimeGenerator
     : IAutoFakerGenerator
 {

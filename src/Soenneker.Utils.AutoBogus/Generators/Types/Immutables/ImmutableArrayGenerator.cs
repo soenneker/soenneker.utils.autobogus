@@ -7,6 +7,7 @@ using Soenneker.Utils.AutoBogus.Generators.Abstract;
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Immutables;
 
 // ReSharper disable once InconsistentNaming
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class ImmutableArrayGenerator<TType> : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

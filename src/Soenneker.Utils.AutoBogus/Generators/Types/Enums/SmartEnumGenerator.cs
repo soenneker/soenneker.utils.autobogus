@@ -8,6 +8,7 @@ using Soenneker.Reflection.Cache.Constructors;
 
 namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 
+/// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class SmartEnumGenerator : IAutoFakerGenerator
 {
     object IAutoFakerGenerator.Generate(AutoFakerContext context)

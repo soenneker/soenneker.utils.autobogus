@@ -15,6 +15,7 @@ namespace Soenneker.Utils.AutoBogus;
 /// A class used to invoke generation requests of type <typeparamref name="TType"/>.
 /// </summary>
 /// <typeparam name="TType">The type of instance to generate.</typeparam>
+/// <inheritdoc cref="IAutoFaker{TType}" />
 public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : class
 {
     public AutoFakerConfig Config { get; set; }
