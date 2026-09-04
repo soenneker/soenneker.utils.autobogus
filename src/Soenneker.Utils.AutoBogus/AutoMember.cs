@@ -85,6 +85,7 @@ internal sealed class AutoMember
         if (config.SkipTypes != null && config.SkipTypes.Contains(CachedType.Type))
         {
             ShouldSkip = true;
+            return;
         }
 
         // Skip if the path is found

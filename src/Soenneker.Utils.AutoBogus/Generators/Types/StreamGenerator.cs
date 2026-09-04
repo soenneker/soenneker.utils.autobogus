@@ -13,10 +13,6 @@ internal sealed class StreamGenerator : IAutoFakerGenerator
         string word = context.Faker.Random.Word();
         byte[] byteArray = Encoding.UTF8.GetBytes(word);
 
-        var memoryStream = new MemoryStream(byteArray);
-
-        // Set the position to the beginning of the stream.
-        memoryStream.Seek(0, SeekOrigin.Begin);
-        return memoryStream;
+        return new MemoryStream(byteArray);
     }
 }
