@@ -49,7 +49,7 @@ internal sealed class GeneratorService
         {typeof(Stream), new Lazy<IAutoFakerGenerator>(() => new StreamGenerator())}
     };
 
-    private readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt;
+
 
     private readonly ConcurrentDictionary<int, IAutoFakerGenerator> _cachedGenerators = [];
 
@@ -62,9 +62,7 @@ internal sealed class GeneratorService
     private static readonly Lazy<IAutoFakerGenerator> _enumValuesGenerator =
         new(() => new EnumValuesGenerator());
 
-    internal GeneratorService()
-    {
-        _cachedFundamentalGeneratorsByInt = new Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>>(() =>
+    private static readonly Lazy<Dictionary<int, Lazy<IAutoFakerGenerator>>> _cachedFundamentalGeneratorsByInt = new(() =>
         {
             var hashCodesMap = new Dictionary<int, Lazy<IAutoFakerGenerator>>(_cachedFundamentalGenerators.Count);
 
@@ -76,8 +74,6 @@ internal sealed class GeneratorService
 
             return hashCodesMap;
         });
-
-    }
 
     /// <summary>
     /// Gets a built-in generator for fundamental types (primitives, strings, dates, etc.) if one exists.

@@ -41,8 +41,6 @@ internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
         }
 
         // Cache delegates to help the JIT
-        Func<TKey?> genKey = context.Generate<TKey>;
-        Func<TValue?> genVal = context.Generate<TValue>;
 
         // If we got the BCL Dictionary, avoid interface dispatch in the hot loop
         if (items is Dictionary<TKey, TValue> dict)
@@ -54,12 +52,12 @@ internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
 
             while (dict.Count < target && attemptsLeft-- > 0)
             {
-                TKey? key = genKey();
+                TKey? key = context.Generate<TKey>();
 
                 if (key is null)
                     continue;
 
-                TValue? val = genVal();
+                TValue? val = context.Generate<TValue>();
                 if (val is null)
                     continue;
 
@@ -79,11 +77,11 @@ internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
 
             while (items.Count < target && attemptsLeft-- > 0)
             {
-                TKey? key = genKey();
+                TKey? key = context.Generate<TKey>();
                 if (key is null)
                     continue;
 
-                TValue? val = genVal();
+                TValue? val = context.Generate<TValue>();
                 if (val is null)
                     continue;
 

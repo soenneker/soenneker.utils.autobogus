@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
+using System;
 using System.Collections.Immutable;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Extensions;
@@ -15,7 +16,7 @@ internal sealed class ImmutableArrayGenerator<TType> : IAutoFakerGenerator
         try
         {
             TType[] items = context.GenerateArray<TType>();
-            ImmutableArray<TType> array = ImmutableArray.CreateRange(items);
+            ImmutableArray<TType> array = ImmutableCollectionsMarshal.AsImmutableArray(items);
             return array;
         }
         catch (Exception)
