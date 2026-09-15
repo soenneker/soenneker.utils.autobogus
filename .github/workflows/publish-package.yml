@@ -48,7 +48,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 10.0.401
 
       - name: Restore tests
         run: dotnet restore test/Soenneker.Utils.AutoBogus.Tests/Soenneker.Utils.AutoBogus.Tests.csproj --verbosity minimal
