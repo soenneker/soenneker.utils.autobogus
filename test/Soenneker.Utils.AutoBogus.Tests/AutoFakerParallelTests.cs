@@ -34,7 +34,7 @@ public class AutoFakerParallelTests
     }
 
     [Test]
-    public async Task Generate_with_ParallelExecutionTasks()
+    public async ValueTask Generate_with_ParallelExecutionTasks()
     {
         // Arrange
         const int numberOfTasks = 1000;
