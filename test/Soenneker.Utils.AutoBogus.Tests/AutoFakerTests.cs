@@ -351,7 +351,7 @@ public class AutoFakerTests
     {
         var faker = new AutoFaker();
 
-        var stream = faker.Generate<MemoryStream>();
+        var stream = faker.Generate<System.IO.MemoryStream>();
         stream.Should()
               .NotBeNull();
     }

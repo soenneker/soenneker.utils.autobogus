@@ -5,7 +5,7 @@ namespace Soenneker.Utils.AutoBogus.Tests.Dtos.Complex;
 
 public class Video
 {
-    public List<MemoryStream> MemoryStreamsList { get; set; }
+    public List<System.IO.MemoryStream> MemoryStreamsList { get; set; }
 
     public Stream[] StreamsArray { get; set; }
 
