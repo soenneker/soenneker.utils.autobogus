@@ -16,6 +16,8 @@ namespace Soenneker.Utils.AutoBogus.Generators;
 /// </summary>
 public static class AutoFakerGeneratorFactory
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal static IAutoFakerGenerator GetGenerator(AutoFakerContext context)
     {
         // Attempt to get a cached generator first
@@ -58,6 +60,8 @@ public static class AutoFakerGeneratorFactory
         return generator;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal static IAutoFakerGenerator CreateGenerator(AutoFakerContext context)
     {
         CachedType? cachedType = context.CachedType;
@@ -210,30 +214,40 @@ public static class AutoFakerGeneratorFactory
     }
 
     // We run these additional methods to avoid the params array allocation overhead on common cases
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1)
     {
         CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1)!;
         return (IAutoFakerGenerator)closed.CreateInstance();
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1, CachedType arg2)
     {
         CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1, arg2)!;
         return (IAutoFakerGenerator)closed.CreateInstance();
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1, CachedType arg2, CachedType arg3)
     {
         CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1, arg2, arg3)!;
         return (IAutoFakerGenerator) closed.CreateInstance();
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, CachedType arg1, CachedType arg2, CachedType arg3, CachedType arg4)
     {
         CachedType closed = genericTypeDefinition.MakeCachedGenericType(arg1, arg2, arg3, arg4)!;
         return (IAutoFakerGenerator) closed.CreateInstance();
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IAutoFakerGenerator CreateGenericGenerator(CachedType genericTypeDefinition, params CachedType[] genericTypes)
     {
         CachedType closed = genericTypeDefinition.MakeCachedGenericType(genericTypes)!;

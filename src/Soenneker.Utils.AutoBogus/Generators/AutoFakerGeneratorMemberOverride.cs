@@ -15,6 +15,7 @@ internal sealed class AutoFakerGeneratorMemberOverride<TType, TValue> : AutoFake
 
     private Func<AutoFakerOverrideContext, TValue> Generator { get; }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal AutoFakerGeneratorMemberOverride(string memberName, Func<AutoFakerOverrideContext, TValue> generator)
     {
         if (string.IsNullOrWhiteSpace(memberName))

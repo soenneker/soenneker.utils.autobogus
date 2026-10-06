@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using Soenneker.Utils.AutoBogus.Context;
 using Soenneker.Utils.AutoBogus.Generators.Types.DataTables.Base;
@@ -46,6 +46,7 @@ internal class UntypedDataTableGenerator : BaseDataTableGenerator
         _ => typeof(object)
     };
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     protected override DataTable CreateTable(AutoFakerContext context)
     {
         var table = new DataTable();

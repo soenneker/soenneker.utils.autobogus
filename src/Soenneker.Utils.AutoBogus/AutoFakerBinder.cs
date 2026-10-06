@@ -38,6 +38,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         GeneratorService = new GeneratorService();
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public TType? CreateInstanceWithRecursionGuard<TType>(AutoFakerContext context, CachedType cachedType)
     {
         var recursionGuard = new RecursionGuard(context, cachedType.CacheKey.Value);
@@ -50,6 +52,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         return CreateInstance<TType>(context, cachedType);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public virtual TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType)
     {
         if (cachedType.IsAbstract || cachedType.IsInterface)
@@ -110,6 +114,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType)
     {
         // Iterate the members and bind a generated value
@@ -119,6 +125,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         PopulateMembers(instance, context, cachedType, autoMembers);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal static void PopulateMembers(object instance, AutoFakerContext context, CachedType cachedType, List<AutoMember>? autoMembers,
         HashSet<string>? excludedMemberNames = null)
     {
@@ -179,6 +187,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static bool ShouldSkip(AutoMember autoMember, AutoFakerContext context)
     {
         // Check if the member explicitly indicates it should be skipped.
@@ -255,6 +264,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return false;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static bool IsComplexReferenceType(CachedType cachedType, AutoMember autoMember)
     {
         // For dictionaries, skip them entirely when ShallowGenerate is enabled
@@ -345,6 +355,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return true;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static bool IsElementTypeComplex(CachedType elementCachedType)
     {
         // Value types (structs) are not complex
@@ -392,6 +403,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return true;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private CachedConstructor? GetConstructor(CachedType cachedType)
     {
         // Fast path: check the cache first.
@@ -468,6 +480,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return null;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static CachedConstructor? ResolveTypedConstructor(CachedType type, ReadOnlySpan<CachedConstructor> constructors)
     {
         for (var i = 0; i < constructors.Length; i++)
@@ -496,6 +509,8 @@ public class AutoFakerBinder : IAutoFakerBinder
         return null;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IAutoFakerGenerator GetParameterGenerator(CachedType type, CachedParameter parameter, AutoFakerContext context)
     {
         context.Setup(type, parameter.CachedParameterType, parameter.Name);
@@ -503,6 +518,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return AutoFakerGeneratorFactory.GetGenerator(context);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     internal List<AutoMember>? GetMembersToPopulate(CachedType cachedType, CacheService cacheService, AutoFakerConfig autoFakerConfig)
     {
@@ -600,6 +616,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return config.IncludeInheritedProperties;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static List<CachedProperty>? CollectDeclaredPropertiesOnly(CachedType cachedType)
     {
         CachedProperty[]? levelProps = cachedType.GetCachedProperties();
@@ -630,6 +647,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return merged;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static List<CachedProperty>? CollectInheritedProperties(CachedType cachedType, CacheService cacheService)
     {
         List<CachedProperty>? merged = null;
@@ -661,6 +679,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return merged;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static CachedType? GetBaseCachedType(CacheService cacheService, CachedType cachedType)
     {
         Type? baseType = cachedType.Type.BaseType;
@@ -670,6 +689,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         return cacheService.Cache.GetCachedType(baseType);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static void PopulateDictionary(object value, object parent, AutoMember member)
     {
         if (value is not IDictionary dictionary)
@@ -693,6 +713,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static void PopulateCollection(object value, object parent, AutoMember member)
     {
         if (value is not ICollection collection)
@@ -737,6 +758,7 @@ public class AutoFakerBinder : IAutoFakerBinder
         }
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static CachedMethod? GetAddMethod(CachedType cachedType, CachedType[] argTypes)
     {
         // Prefer CachedType[] overload to avoid allocating Type[].

@@ -17,6 +17,8 @@ internal sealed class AutoFakerGeneratorOverrideInvoker : IAutoFakerGenerator
 
     private List<AutoFakerGeneratorOverride> Overrides { get; }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         var overrideContext = new AutoFakerOverrideContext(context);

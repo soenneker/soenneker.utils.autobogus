@@ -15,6 +15,7 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
 {
     private static readonly ConcurrentDictionary<Type, Proxy> _proxyCache = new();
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
     private static Proxy GetProxy(Type dataType)
     {
         return _proxyCache.GetOrAdd(dataType, static t =>
@@ -24,6 +25,8 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         });
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     public object Generate(AutoFakerContext context)
     {
         DataTable table = CreateTable(context);
@@ -35,6 +38,7 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         return table;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static bool IsTypedDataTableType(AutoFakerContext context, CachedType cachedType, out Type rowType)
     {
         rowType = default;
@@ -56,6 +60,8 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         return false;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static bool TryCreateGenerator(AutoFakerContext context, CachedType tableType, out BaseDataTableGenerator generator)
     {
         generator = default;
@@ -72,6 +78,8 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         return generator != null;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
     public static void PopulateRows(DataTable table, AutoFakerContext context)
     {
         var rowCountIsSpecified = false;
@@ -214,6 +222,8 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         }
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
     private static object GenerateColumnValue(DataColumn dataColumn, AutoFakerContext context)
     {
         switch (Type.GetTypeCode(dataColumn.DataType))
@@ -252,5 +262,6 @@ internal abstract class BaseDataTableGenerator : IAutoFakerGenerator
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic data table generation discovers columns at runtime.")]
     protected abstract DataTable CreateTable(AutoFakerContext context);
 }

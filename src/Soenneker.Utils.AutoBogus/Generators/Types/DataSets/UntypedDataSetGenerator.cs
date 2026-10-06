@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using Soenneker.Reflection.Cache.Types;
 using Soenneker.Utils.AutoBogus.Context;
@@ -9,6 +9,8 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types.DataSets;
 
 internal class UntypedDataSetGenerator : BaseDataSetGenerator
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     public override object Generate(AutoFakerContext context)
     {
         var dataSet = new DataSet();

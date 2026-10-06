@@ -95,6 +95,7 @@ public static class AutoConfigBuilderExtension
     /// <param name="builder">The current configuration builder instance.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static IAutoFakerDefaultConfigBuilder WithOverride<TType>(this IAutoFakerDefaultConfigBuilder builder, Func<AutoFakerOverrideContext, TType> generator)
     {
         var generatorOverride = new AutoFakerGeneratorTypeOverride<TType>(generator);
@@ -108,6 +109,7 @@ public static class AutoConfigBuilderExtension
     /// <param name="builder">The current configuration builder instance.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static IAutoGenerateConfigBuilder WithOverride<TType>(this IAutoGenerateConfigBuilder builder, Func<AutoFakerOverrideContext, TType> generator)
     {
         var generatorOverride = new AutoFakerGeneratorTypeOverride<TType>(generator);
@@ -121,6 +123,7 @@ public static class AutoConfigBuilderExtension
     /// <param name="builder">The current configuration builder instance.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static IAutoFakerConfigBuilder WithOverride<TType>(this IAutoFakerConfigBuilder builder, Func<AutoFakerOverrideContext, TType> generator)
     {
         var generatorOverride = new AutoFakerGeneratorTypeOverride<TType>(generator);
@@ -136,6 +139,7 @@ public static class AutoConfigBuilderExtension
     /// <param name="member">The member to override.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static IAutoFakerDefaultConfigBuilder WithOverride<TType, TValue>(this IAutoFakerDefaultConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoFakerOverrideContext, TValue> generator)
     {
         string? memberName = GetMemberName(member);
@@ -153,6 +157,7 @@ public static class AutoConfigBuilderExtension
     /// <param name="member">The member to override.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static IAutoGenerateConfigBuilder WithOverride<TType, TValue>(this IAutoGenerateConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoFakerOverrideContext, TValue> generator)
     {
         string? memberName = GetMemberName(member);
@@ -170,6 +175,7 @@ public static class AutoConfigBuilderExtension
     /// <param name="member">The member to override.</param>
     /// <param name="generator">A handler used to generate the override.</param>
     /// <returns>The current configuration builder instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static IAutoFakerConfigBuilder WithOverride<TType, TValue>(this IAutoFakerConfigBuilder builder, Expression<Func<TType, object>> member, Func<AutoFakerOverrideContext, TValue> generator)
     {
         string? memberName = GetMemberName(member);

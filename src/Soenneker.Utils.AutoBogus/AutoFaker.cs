@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Bogus;
@@ -55,6 +55,8 @@ public sealed class AutoFaker : IAutoFaker
         Binder ??= new AutoFakerBinder();
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public TType Generate<TType>()
     {
         Initialize();
@@ -63,6 +65,8 @@ public sealed class AutoFaker : IAutoFaker
         return context.Generate<TType>()!;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public List<TType> Generate<TType>(int count)
     {
         Initialize();
@@ -71,6 +75,8 @@ public sealed class AutoFaker : IAutoFaker
         return context.GenerateMany<TType>(count);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public object Generate(Type type)
     {
         Initialize();
@@ -104,6 +110,8 @@ public sealed class AutoFaker : IAutoFaker
     /// <typeparam name="TType">The type of instance to generate.</typeparam>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static TType GenerateStatic<TType>(Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         var faker = new AutoFaker(configure);
@@ -118,6 +126,8 @@ public sealed class AutoFaker : IAutoFaker
     /// <param name="count">The number of instances to generate.</param>
     /// <param name="configure">A handler to build the generate request configuration.</param>
     /// <returns>The generated collection of instances.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static List<TType> GenerateStatic<TType>(int count, Action<IAutoGenerateConfigBuilder>? configure = null)
     {
         var faker = new AutoFaker(configure);

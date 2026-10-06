@@ -10,6 +10,8 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types;
 /// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class DictionaryGenerator<TKey, TValue> : IAutoFakerGenerator
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         int target = context.Config.RepeatCount > 0 ? context.Config.RepeatCount : 0;

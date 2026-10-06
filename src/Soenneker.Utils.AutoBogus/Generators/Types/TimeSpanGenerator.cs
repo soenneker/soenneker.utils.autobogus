@@ -10,6 +10,8 @@ internal sealed class TimeSpanGenerator: IAutoFakerGenerator
     private const long _minTicks = 60000000;        // 1 minute in ticks
     private const long _maxTicks = 36000000000;     // 1 hour in ticks
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         TimeSpan timeSpan = TimeSpan.FromTicks(context.Faker.Random.Long(_minTicks, _maxTicks));

@@ -28,6 +28,7 @@ internal sealed class AutoMember
 
     internal readonly bool IsCollection;
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal AutoMember(CachedField cachedField, CachedType parentType, CacheService cacheService, AutoFakerConfig config)
     {
         Name = cachedField.FieldInfo.Name;
@@ -46,6 +47,7 @@ internal sealed class AutoMember
         SetShouldSkip(config);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal AutoMember(CachedProperty cachedProperty, CachedType parentType, CacheService cacheService, AutoFakerConfig config)
     {
         PropertyInfo pi = cachedProperty.PropertyInfo;
@@ -67,6 +69,7 @@ internal sealed class AutoMember
         SetShouldSkip(config);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static PropertyInfo ResolvePropertyForAccessors(PropertyInfo pi)
     {
         if (pi.GetSetMethod(nonPublic: true) != null)

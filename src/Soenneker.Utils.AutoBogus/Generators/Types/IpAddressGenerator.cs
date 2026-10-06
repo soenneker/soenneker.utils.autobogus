@@ -6,6 +6,8 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types;
 /// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class IpAddressGenerator : IAutoFakerGenerator
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         return context.Faker.Internet.IpAddress();

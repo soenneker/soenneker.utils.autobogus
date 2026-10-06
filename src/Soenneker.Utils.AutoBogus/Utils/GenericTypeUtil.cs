@@ -7,6 +7,7 @@ namespace Soenneker.Utils.AutoBogus.Utils;
 
 internal static class GenericTypeUtil
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal static (CachedType?, GenericCollectionType?) GetGenericCollectionType(CachedType cachedType)
     {
         CachedType[] interfaces = cachedType.GetCachedInterfaces()!;

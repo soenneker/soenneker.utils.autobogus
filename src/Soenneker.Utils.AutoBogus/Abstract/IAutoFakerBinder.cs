@@ -23,6 +23,8 @@ public interface IAutoFakerBinder
     /// This method selects an appropriate constructor (preferring parameterless, then public constructors with generatable parameters),
     /// generates values for constructor parameters, and creates the instance. Abstract types and interfaces return <see langword="default"/>.
     /// </remarks>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     TType? CreateInstance<TType>(AutoFakerContext context, CachedType cachedType);
 
     /// <summary>
@@ -36,6 +38,8 @@ public interface IAutoFakerBinder
     /// This method prevents infinite loops when types have constructors that reference themselves (e.g., a Person constructor that takes a Person parameter).
     /// If the same type is detected in the constructor call stack, creation is aborted and <see langword="default"/> is returned.
     /// </remarks>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     TType? CreateInstanceWithRecursionGuard<TType>(AutoFakerContext context, CachedType cachedType);
 
     /// <summary>
@@ -52,5 +56,7 @@ public interface IAutoFakerBinder
     /// Due to the boxing nature of value types, the <paramref name="instance"/> parameter is an object, but the populated
     /// values are applied directly to the provided instance, not a copy.
     /// </remarks>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     void PopulateInstance<TType>(object instance, AutoFakerContext context, CachedType cachedType);
 }

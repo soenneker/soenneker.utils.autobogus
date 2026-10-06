@@ -10,6 +10,8 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types.Enums;
 /// <inheritdoc cref="IAutoFakerGenerator" />
 internal sealed class EnumValuesGenerator : IAutoFakerGenerator
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     object IAutoFakerGenerator.Generate(AutoFakerContext context)
     {
         // Soenneker.Gen.EnumValues emits: public static IReadOnlyList<T> List => __values;
@@ -49,6 +51,7 @@ internal sealed class EnumValuesGenerator : IAutoFakerGenerator
     /// <summary>
     /// Gets the static List property emitted by Soenneker.Gen.EnumValues (IReadOnlyList of all instances).
     /// </summary>
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private static IEnumerable? GetList(CachedType cachedType)
     {
         CachedProperty? listProperty = cachedType.GetCachedProperty("List");

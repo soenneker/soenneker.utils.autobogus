@@ -7,6 +7,7 @@ using Soenneker.Utils.AutoBogus.Generators.Types.Immutables;
 
 namespace Soenneker.Utils.AutoBogus.Services;
 
+[System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Generator caches discover runtime constructors and members.")]
 internal static class CachedTypeService
 {
     internal static readonly Lazy<CachedType> TypeGenerator = new(() => StaticCacheService.Cache.GetCachedType(typeof(TypeGenerator<>)), System.Threading.LazyThreadSafetyMode.PublicationOnly);

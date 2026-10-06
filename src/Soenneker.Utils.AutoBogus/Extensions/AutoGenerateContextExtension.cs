@@ -20,6 +20,8 @@ public static class AutoGenerateContextExtension
     /// <typeparam name="TType">The instance type to generate.</typeparam>
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <returns>The generated instance.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static TType? Generate<TType>(this AutoFakerContext context)
     {
         CachedType cachedType = context.CacheService.Cache.GetCachedType(typeof(TType));
@@ -44,6 +46,8 @@ public static class AutoGenerateContextExtension
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of instances.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static List<TType> GenerateMany<TType>(this AutoFakerContext context, int? count = null)
     {
         // When RecursiveDepth is 0 and we're generating nested items (stackCount > 0), return empty list
@@ -62,6 +66,8 @@ public static class AutoGenerateContextExtension
     /// Items that generate as <see langword="null"/> are skipped (consistent with <see cref="GenerateMany{TType}"/>).
     /// </summary>
     /// <returns>Generates an array of instances of type <typeparamref name="TType"/>. Items that generate as <see langword="null"/> are skipped (consistent with <see cref="GenerateMany{TType}"/>).</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static TType[] GenerateArray<TType>(this AutoFakerContext context, int? count = null)
     {
         // When RecursiveDepth is 0 and we're generating nested items (stackCount > 0), return empty array
@@ -82,6 +88,8 @@ public static class AutoGenerateContextExtension
     /// <param name="context">The <see cref="AutoFakerContext"/> instance for the current generate request.</param>
     /// <param name="count">The number of instances to generate.</param>
     /// <returns>The generated collection of unique instances.</returns>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static List<TType> GenerateUniqueMany<TType>(this AutoFakerContext context, int? count = null)
     {
         count ??= context.Config.RepeatCount;
@@ -89,6 +97,8 @@ public static class AutoGenerateContextExtension
         return GenerateMany<TType>(context, count.Value, true);
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal static List<TType> GenerateMany<TType>(AutoFakerContext context, int count, bool unique, int maxAttempts = 1, Func<TType?>? generate = null,
         IEqualityComparer<TType>? comparer = null)
     {
@@ -129,6 +139,8 @@ public static class AutoGenerateContextExtension
         return set.Count == 0 ? [] : [..set];
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal static TType[] GenerateArray<TType>(AutoFakerContext context, int count, Func<TType?>? generate = null)
     {
         if (count <= 0)

@@ -52,6 +52,8 @@ public interface IAutoFaker
     /// This method automatically creates an instance and populates all public and private properties and fields with appropriate fake data.
     /// Nested objects are also generated recursively according to the configuration settings.
     /// </remarks>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     TType Generate<TType>();
 
     /// <summary>
@@ -63,6 +65,8 @@ public interface IAutoFaker
     /// <remarks>
     /// Each instance in the collection is independently generated with its own set of random values.
     /// </remarks>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     List<TType> Generate<TType>(int count);
 
     /// <summary>
@@ -73,6 +77,8 @@ public interface IAutoFaker
     /// <remarks>
     /// This method is useful when the type is determined at runtime. For compile-time known types, prefer the generic <see cref="Generate{TType}"/> method for better type safety.
     /// </remarks>
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     object Generate(Type type);
 
     /// <summary>

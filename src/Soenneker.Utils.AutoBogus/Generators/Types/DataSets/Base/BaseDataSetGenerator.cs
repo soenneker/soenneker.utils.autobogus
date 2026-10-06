@@ -8,6 +8,7 @@ namespace Soenneker.Utils.AutoBogus.Generators.Types.DataSets.Base;
 /// <inheritdoc cref="IAutoFakerGenerator" />
 internal abstract class BaseDataSetGenerator : IAutoFakerGenerator
 {
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     public static bool TryCreateGenerator(AutoFakerContext? context, CachedType dataSetType, out BaseDataSetGenerator? generator)
     {
         generator = null;
@@ -22,5 +23,7 @@ internal abstract class BaseDataSetGenerator : IAutoFakerGenerator
         return generator != null;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     public abstract object Generate(AutoFakerContext context);
 }

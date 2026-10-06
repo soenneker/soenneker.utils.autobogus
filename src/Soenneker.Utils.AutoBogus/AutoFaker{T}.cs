@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Bogus;
 using Soenneker.Reflection.Cache.Types;
@@ -22,6 +22,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
     public AutoFakerBinder? Binder { get; set; }
 
+    private readonly Action<AutoFakerContext> _prepareCreate;
+    private readonly Action<AutoFakerContext> _prepareFinish;
     private bool _createInitialized;
 
     private bool _finishInitialized;
@@ -30,6 +32,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
     private CacheService? _cacheService;
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Automatic test data generation discovers arbitrary constructors and members at runtime.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Automatic test data generation constructs generic generators at runtime.")]
     public AutoFaker(AutoFakerConfig? autoFakerConfig = null)
     {
         if (autoFakerConfig == null)
@@ -37,6 +41,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
         else
             Config = autoFakerConfig;
 
+        _prepareCreate = PrepareCreate;
+        _prepareFinish = PrepareFinish;
         Locale = Config.Locale;
         binder = new Binder();
 
@@ -58,8 +64,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
         AutoFakerContext context = CreateContext(ruleSets);
 
-        PrepareCreate(context);
-        PrepareFinish(context);
+        _prepareCreate(context);
+        _prepareFinish(context);
 
         return base.Generate(ruleSets);
     }
@@ -70,8 +76,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
 
         AutoFakerContext context = CreateContext(ruleSets);
 
-        PrepareCreate(context);
-        PrepareFinish(context);
+        _prepareCreate(context);
+        _prepareFinish(context);
 
         return base.Generate(count, ruleSets);
     }
@@ -79,7 +85,7 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
     public override void Populate(TType instance, string? ruleSets = null)
     {
         AutoFakerContext context = CreateContext(ruleSets);
-        PrepareFinish(context);
+        _prepareFinish(context);
 
         base.Populate(instance, ruleSets);
     }
@@ -134,6 +140,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
         return validRuleSets;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private void PrepareCreate(AutoFakerContext context)
     {
         // Check a create handler hasn't previously been set or configured externally
@@ -191,6 +199,8 @@ public class AutoFaker<TType> : Faker<TType>, IAutoFaker<TType> where TType : cl
         _createInitialized = true;
     }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Runtime reflection can require generic instantiations unavailable with Native AOT. Use statically registered types and delegates instead.")]
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     private void PrepareFinish(AutoFakerContext context)
     {
         if (_finishInitialized)

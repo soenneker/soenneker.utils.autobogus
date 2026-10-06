@@ -11,6 +11,7 @@ internal sealed class AutoFakerGeneratorTypeOverride<TType> : AutoFakerGenerator
 
     private Func<AutoFakerOverrideContext, TType> Generator { get; }
 
+    [global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Runtime reflection requires members that trimming may remove. Use statically registered metadata instead.")]
     internal AutoFakerGeneratorTypeOverride(Func<AutoFakerOverrideContext, TType> generator)
     {
         Generator = generator ?? throw new ArgumentNullException(nameof(generator));
