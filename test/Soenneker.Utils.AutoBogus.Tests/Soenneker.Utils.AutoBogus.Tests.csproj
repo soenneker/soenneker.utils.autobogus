@@ -21,7 +21,7 @@
         <PackageReference Include="Microsoft.OData.Client" Version="9.0.0" />
         <PackageReference Include="Soenneker.Tests.Attributes.Local" Version="4.0.130" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="4.0.184" />
-        <PackageReference Include="TUnit" Version="1.72.16" />
+        <PackageReference Include="TUnit" Version="1.73.0" />
     </ItemGroup>
 
     <ItemGroup>
