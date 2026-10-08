@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Soenneker.Utils.AutoBogus.Tests.Dtos.Simple;
+using System.Threading;
 
 namespace Soenneker.Utils.AutoBogus.Tests;
 
@@ -34,7 +35,7 @@ public class AutoFakerParallelTests
     }
 
     [Test]
-    public async ValueTask Generate_with_ParallelExecutionTasks()
+    public async ValueTask Generate_with_ParallelExecutionTasks(CancellationToken cancellationToken)
     {
         // Arrange
         const int numberOfTasks = 1000;
