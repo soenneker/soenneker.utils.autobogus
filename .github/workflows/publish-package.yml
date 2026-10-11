@@ -39,10 +39,14 @@ jobs:
         shell: bash
         run: |
           notes="$(git log -1 --pretty=%B | sed '/^Co-authored-by:/d')"
+          delimiter="RELEASE_NOTES_${RANDOM}_${RANDOM}_${RANDOM}"
+          while [[ "$notes" == *"$delimiter"* ]]; do
+            delimiter="RELEASE_NOTES_${RANDOM}_${RANDOM}_${RANDOM}"
+          done
           {
-            echo "PACKAGE_RELEASE_NOTES<<EOF"
+            echo "PACKAGE_RELEASE_NOTES<<$delimiter"
             printf '%s\n' "$notes"
-            echo "EOF"
+            echo "$delimiter"
           } >> "$GITHUB_ENV"
 
       - name: Setup .NET
@@ -129,4 +133,4 @@ jobs:
         run: |
           gh release create "v$BUILD_VERSION" \
             --title "v$BUILD_VERSION" \
-            --notes "${{ env.PACKAGE_RELEASE_NOTES }}"
+            --notes "$PACKAGE_RELEASE_NOTES"
