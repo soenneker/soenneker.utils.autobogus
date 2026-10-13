@@ -36,18 +36,7 @@ jobs:
           echo "BUILD_VERSION=4.0.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
 
       - name: Get release notes from latest commit
-        shell: bash
-        run: |
-          notes="$(git log -1 --pretty=%B | sed '/^Co-authored-by:/d')"
-          delimiter="RELEASE_NOTES_${RANDOM}_${RANDOM}_${RANDOM}"
-          while [[ "$notes" == *"$delimiter"* ]]; do
-            delimiter="RELEASE_NOTES_${RANDOM}_${RANDOM}_${RANDOM}"
-          done
-          {
-            echo "PACKAGE_RELEASE_NOTES<<$delimiter"
-            printf '%s\n' "$notes"
-            echo "$delimiter"
-          } >> "$GITHUB_ENV"
+        uses: soenneker/release-notes-from-commits@v2
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
@@ -86,37 +75,10 @@ jobs:
           user: soenneker
 
       - name: Publish to NuGet
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          for i in 1 2; do
-            output_file="$(mktemp)"
-
-            set +e
-            dotnet nuget push ./artifacts/*.nupkg \
-              --source "https://api.nuget.org/v3/index.json" \
-              --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" \
-              --skip-duplicate 2>&1 | tee "$output_file"
-            exit_code=${PIPESTATUS[0]}
-            set -e
-
-            if [ $exit_code -eq 0 ]; then
-              exit 0
-            fi
-
-            if grep -qiE 'Quota Exceeded|retry after:' "$output_file"; then
-              echo "NuGet throttled this publish. Not retrying inside the same job."
-              exit 1
-            fi
-
-            if [ "$i" -lt 2 ]; then
-              echo "Transient failure, retrying once in 15 seconds..."
-              sleep 15
-            else
-              exit $exit_code
-            fi
-          done
+        uses: soenneker/nuget-resilient-publish@v2
+        with:
+          api-key: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          packages: 'artifacts/*.nupkg'
 
       - name: Publish to GitHub Packages
         shell: bash
