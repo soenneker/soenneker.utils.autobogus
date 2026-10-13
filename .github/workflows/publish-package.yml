@@ -69,13 +69,13 @@ jobs:
             --output ./artifacts
 
       - name: Log in to NuGet
-        uses: soenneker/nuget-resilient-login@v5
+        uses: soenneker/nuget-resilient-login@v6
         id: nuget-login
         with:
           user: soenneker
 
       - name: Publish to NuGet
-        uses: soenneker/nuget-resilient-publish@v2
+        uses: soenneker/nuget-resilient-publish@v3
         with:
           api-key: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
           packages: 'artifacts/*.nupkg'
