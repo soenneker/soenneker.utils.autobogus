@@ -13,7 +13,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: write
   packages: write
 
@@ -68,16 +67,10 @@ jobs:
             --no-restore \
             --output ./artifacts
 
-      - name: Log in to NuGet
-        uses: soenneker/nuget-resilient-login@v7
-        id: nuget-login
-        with:
-          user: soenneker
-
       - name: Publish to NuGet
         uses: soenneker/nuget-resilient-publish@v4
         with:
-          api-key: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          api-key: ${{ secrets.nuget__token }}
           packages: 'artifacts/*.nupkg'
 
       - name: Publish to GitHub Packages
