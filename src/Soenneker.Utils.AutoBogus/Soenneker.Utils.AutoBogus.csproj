@@ -45,7 +45,7 @@
         <PackageReference Include="Bogus" Version="35.6.5" />
         <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="11.0.93" />
         <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="11.0.88" />
-        <PackageReference Include="Soenneker.Reflection.Cache" Version="4.0.737" />
+        <PackageReference Include="Soenneker.Reflection.Cache" Version="11.0.744" />
         <PackageReference Condition="'$(TargetFramework)' != 'net11.0'" Include="System.Collections.Immutable" Version="10.0.14" />
         <PackageReference Condition="'$(TargetFramework)' == 'net11.0'" Include="System.Collections.Immutable" Version="11.0.0-rc.3.26522.148" />
     </ItemGroup>
