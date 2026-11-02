@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net9.0;net10.0;net11.0</TargetFrameworks>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU</Platforms>
         <NoWarn>$(NoWarn);1591</NoWarn>
@@ -46,6 +46,5 @@
         <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="11.0.93" />
         <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="11.0.88" />
         <PackageReference Include="Soenneker.Reflection.Cache" Version="11.0.745" />
-        <PackageReference Condition="'$(TargetFramework)' == 'net9.0'" Include="System.Collections.Immutable" Version="10.0.14" />
     </ItemGroup>
 </Project>
