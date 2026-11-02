@@ -43,8 +43,8 @@
 
     <ItemGroup>
         <PackageReference Include="Bogus" Version="35.6.5" />
-        <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="11.0.93" />
-        <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="11.0.88" />
-        <PackageReference Include="Soenneker.Reflection.Cache" Version="11.0.745" />
+        <PackageReference Include="Soenneker.Extensions.FieldInfo" Version="11.0.94" />
+        <PackageReference Include="Soenneker.Extensions.MemberInfo" Version="11.0.89" />
+        <PackageReference Include="Soenneker.Reflection.Cache" Version="11.0.749" />
     </ItemGroup>
 </Project>
