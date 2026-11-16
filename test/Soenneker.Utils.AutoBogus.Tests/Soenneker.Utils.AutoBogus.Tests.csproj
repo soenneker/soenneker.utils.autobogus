@@ -20,9 +20,9 @@
         <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
         <PackageReference Include="Intellenum" Version="2.0.1" />
         <PackageReference Include="Microsoft.OData.Client" Version="9.0.0" />
-        <PackageReference Include="Soenneker.Tests.Attributes.Local" Version="11.0.175" />
+        <PackageReference Include="Soenneker.Tests.Attributes.Local" Version="11.0.176" />
         <PackageReference Include="Soenneker.Tests.Benchmark" Version="11.0.240" />
-        <PackageReference Include="TUnit" Version="1.85.0" />
+        <PackageReference Include="TUnit" Version="1.85.7" />
     </ItemGroup>
 
     <ItemGroup>
