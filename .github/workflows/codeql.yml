@@ -5,10 +5,8 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - 'test/**'
+  schedule:
+    - cron: '35 15 * * *'
   workflow_dispatch:
 
 env:
